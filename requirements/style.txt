@@ -1,0 +1,22 @@
+-r prod.txt
+black==24.3.0
+flake8==7.0.0
+flake8-import-order
+flake8-quotes
+flake8-commas
+flake8-eradicate
+flake8-comprehensions
+flake8-dunder-all
+flake8-builtins
+flake8-print
+flake8-type-ignore
+flake8-use-pathlib
+flake8-return
+flake8-clean-block
+flake8-expression-complexity
+flake8-bugbear
+flake8-simplify
+flake8-unused-arguments
+flake8-class-attributes-order
+flake8-variables-names
+flake8-django

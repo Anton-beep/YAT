@@ -1,0 +1,24 @@
+stages:
+  - linting
+  - test
+
+flake8:
+  stage: linting
+  image: registry.gitlab.com/pipeline-components/flake8:latest
+  script:
+    - pip install -r requirements/style.txt
+    - flake8 .
+
+black:
+  stage: linting
+  image: registry.gitlab.com/pipeline-components/black:latest
+  script:
+    - black --check --diff --color .
+
+test:
+  stage: test
+  image: python:3.12
+  script:
+    - pip install -r requirements/test.txt
+    - cd lyceum
+    - python manage.py test
