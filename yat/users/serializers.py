@@ -1,6 +1,8 @@
 from django.contrib.auth import get_user_model
 from rest_framework import serializers
 
+__all__ = []
+
 User = get_user_model()
 
 
@@ -9,6 +11,9 @@ class UserSerializer(serializers.ModelSerializer):
         model = User
         fields = ["email", "password", "first_name", "last_name"]
         extra_kwargs = {"password": {"write_only": True}}
+
+    first_name = serializers.CharField(required=True)
+    last_name = serializers.CharField(required=True)
 
     def create(self, validated_data):
         password = validated_data.pop("password")

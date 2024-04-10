@@ -16,7 +16,6 @@ flake8-clean-block
 flake8-expression-complexity
 flake8-bugbear
 flake8-simplify
-flake8-unused-arguments
 flake8-class-attributes-order
 flake8-variables-names
 flake8-django

@@ -1,3 +1,3 @@
 [tool.black]
 line-length = 79
-exclude = "venv|migrations"
+exclude = "venv|migrations|yat-ui"
