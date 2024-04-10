@@ -3,4 +3,4 @@ inline-quotes = double
 exclude = venv, migrations
 max-complexity = 10
 import-order-style = google
-application-import-names = homepage, about
+application-import-names = homepage, about, auth

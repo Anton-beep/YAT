@@ -13,3 +13,20 @@ black --color .
 ```bash
 flake8 .
 ```
+
+## Run tests
+```bash
+cd yat
+python manage.py test
+```
+
+## Run all
+```bash
+cd yat
+python manage.py runserver
+```
+In another terminal:
+```bash
+cd yat-ui
+npm start
+```
