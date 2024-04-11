@@ -4,6 +4,8 @@ from django.urls import reverse
 from rest_framework.test import APIClient
 from rest_framework.views import status
 
+__all__ = []
+
 User = get_user_model()
 
 
