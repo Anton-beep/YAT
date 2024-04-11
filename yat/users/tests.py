@@ -78,7 +78,14 @@ class TestConfirmation(BaseViewTest):
         self.assertEqual(user.is_active, False)
 
         response = self.client.get(
-            reverse("confirm", kwargs={"token": settings.FERNET_CRYPT_EMAIL.encrypt(user.email.encode()).decode()}),
+            reverse(
+                "confirm",
+                kwargs={
+                    "token": settings.FERNET_CRYPT_EMAIL.encrypt(
+                        user.email.encode(),
+                    ).decode(),
+                },
+            ),
         )
         user.refresh_from_db()
 
