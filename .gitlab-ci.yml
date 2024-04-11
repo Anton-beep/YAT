@@ -20,5 +20,5 @@ test:
   image: python:3.12
   script:
     - pip install -r requirements/test.txt
-    - cd lyceum
+    - cd yat
     - python manage.py test

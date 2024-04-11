@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.test import TestCase
 from django.urls import reverse
@@ -75,10 +76,9 @@ class TestConfirmation(BaseViewTest):
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         user = User.objects.get(email="newusernotactive@example.com")
         self.assertEqual(user.is_active, False)
-        self.assertIsNotNone(user.activation_token)
 
         response = self.client.get(
-            reverse("confirm", kwargs={"token": user.activation_token}),
+            reverse("confirm", kwargs={"token": settings.FERNET_CRYPT_EMAIL.encrypt(user.email.encode()).decode()}),
         )
         user.refresh_from_db()
 
