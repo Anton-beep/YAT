@@ -18,6 +18,10 @@ black:
 test:
   stage: test
   image: python:3.12
+  variables:
+    POSTGRES_DB: postgres
+    POSTGRES_USER: admin
+    POSTGRES_PASSWORD: admin
   script:
     - pip install -r requirements/test.txt
     - cd yat
