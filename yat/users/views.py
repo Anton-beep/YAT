@@ -1,5 +1,4 @@
-from uuid import uuid4
-
+from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.core.mail import send_mail
 from django.http import HttpResponse
@@ -11,7 +10,6 @@ from rest_framework.views import APIView
 from rest_framework_simplejwt.views import TokenObtainPairView
 
 from users.serializers import UserSerializer
-
 
 __all__ = []
 
@@ -25,8 +23,9 @@ class RegisterUserView(APIView):
         serializer = UserSerializer(data=request.data)
         if serializer.is_valid():
             user = serializer.save()
-            token = uuid4()
-            user.activation_token = token
+            token = settings.FERNET_CRYPT_EMAIL.encrypt(
+                user.email.encode(),
+            ).decode()
             confirm_url = request.build_absolute_uri(
                 reverse("confirm", kwargs={"token": token}),
             )
@@ -44,22 +43,24 @@ class RegisterUserView(APIView):
 
 
 class ConfirmEmailView(APIView):
-    def get(self, request, token):
+    def get(self, request, token, new_email=None):
         try:
-            user = User.objects.get(activation_token=token)
+            email = settings.FERNET_CRYPT_EMAIL.decrypt(
+                token.encode(),
+            ).decode()
+            user = User.objects.get(email=email)
+            if new_email:
+                user.email = settings.FERNET_CRYPT_EMAIL.decrypt(
+                    new_email,
+                ).decode()
         except User.DoesNotExist:
             return Response(
                 {"message": "Invalid token."},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        if user.is_active:
-            return HttpResponse(
-                "Почта уже подтверждена. Вы можете закрыть эту страницу",
-                status=status.HTTP_200_OK,
-            )
-
         user.is_active = True
+        user.activation_token = ""
         user.save()
         return HttpResponse(
             "Почта подтверждена. Вы можете закрыть эту страницу",
@@ -91,3 +92,48 @@ class SecretView(APIView):
                 " authenticated users only.",
             },
         )
+
+
+class ChangeUserView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def put(self, request):
+        user = request.user
+        serializer = UserSerializer(user, data=request.data, partial=True)
+        if serializer.is_valid():
+            if (
+                "email" in serializer.validated_data
+                and serializer.validated_data["email"] != user.email
+            ):
+                token = settings.FERNET_CRYPT_EMAIL.encrypt(
+                    user.email.encode(),
+                ).decode()
+                user.activation_token = token
+                confirm_url = request.build_absolute_uri(
+                    reverse(
+                        "confirm",
+                        kwargs={
+                            "token": token,
+                            "new_email": settings.FERNET_CRYPT_EMAIL.encrypt(
+                                serializer.validated_data["email"].encode(),
+                            ).decode(),
+                        },
+                    ),
+                )
+                send_mail(
+                    "Confirm your new email",
+                    f"To confirm your new email, "
+                    f"please go to the following link: {confirm_url}",
+                    "yat@bibbob.com",
+                    [serializer.validated_data["email"]],
+                    fail_silently=False,
+                )
+                serializer.validated_data["email"] = user.email
+
+            user.set_password(
+                serializer.validated_data.pop("password", user.password),
+            )
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

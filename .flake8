@@ -1,6 +1,6 @@
 [flake8]
 inline-quotes = double
-exclude = venv, migrations, yat-ui
+exclude = venv, migrations, yat-ui, .venv
 max-complexity = 10
 import-order-style = google
 application-import-names = homepage, about, users
