@@ -34,7 +34,10 @@ const LoginForm = () => {
                     </label>
                 </div>
                 <div>
-                    <button type="submit">Login</button>
+                    <a href="/forgotpassword">Забыл пароль</a>
+                </div>
+                <div>
+                    <button type="submit">Войти</button>
                 </div>
             </form>
         </Layout>
