@@ -31,6 +31,7 @@ INSTALLED_APPS = [
     "rest_framework.authtoken",
     "users",
     "corsheaders",
+    "homepage.apps.HomepageConfig"
 ]
 
 REST_FRAMEWORK = {
