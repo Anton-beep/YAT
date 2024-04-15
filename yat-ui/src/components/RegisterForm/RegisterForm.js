@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import Auth from '../../pkg/auth';
 import Layout from "./../Layout";
-import './RegisterForm.css'; // Import the CSS file
+import styles from './RegisterForm.module.css'; // Import the CSS file
 
 const RegisterForm = () => {
     const [email, setEmail] = useState('');
@@ -20,35 +20,36 @@ const RegisterForm = () => {
 
     return (
         <Layout>
-            <form onSubmit={handleSubmit} className="container">
+            <form onSubmit={handleSubmit} className={styles.container}>
+                <h1>Регистрация</h1>
                 <div>
                     <label>
-                        First Name:
+                        Имя:
                         <input type="text" value={firstName} onChange={e => setFirstName(e.target.value)}
-                               required/> {/* New input field for first name */}
+                               required/>
                     </label>
                 </div>
                 <div>
                     <label>
-                        Last Name:
+                        Фамилия:
                         <input type="text" value={lastName} onChange={e => setLastName(e.target.value)}
-                               required/> {/* New input field for last name */}
+                               required/>
                     </label>
                 </div>
                 <div>
                     <label>
-                        Email:
+                        Почта:
                         <input type="email" value={email} onChange={e => setEmail(e.target.value)} required/>
                     </label>
                 </div>
                 <div>
                     <label>
-                        Password:
+                        Пароль:
                         <input type="password" value={password} onChange={e => setPassword(e.target.value)} required/>
                     </label>
                 </div>
                 <div>
-                    <button type="submit">Register</button>
+                    <button type="submit">Зарегестрироваться</button>
                 </div>
             </form>
         </Layout>

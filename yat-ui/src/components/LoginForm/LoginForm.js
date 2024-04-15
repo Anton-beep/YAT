@@ -1,7 +1,8 @@
 import React, {useState} from 'react';
 import Auth from '../../pkg/auth';
 import Layout from "./../Layout";
-import './LoginForm.css'; // Import the CSS file
+import styles from './LoginForm.module.css'; // Import the CSS file
+
 
 const LoginForm = () => {
     const [email, setEmail] = useState('');
@@ -18,16 +19,17 @@ const LoginForm = () => {
 
     return (
         <Layout>
-            <form onSubmit={handleSubmit} className="container">
+            <form onSubmit={handleSubmit} className={styles.container}>
+                <h1>Вход</h1>
                 <div>
+                    Почта:
                     <label>
-                        Email:
                         <input type="text" value={email} onChange={e => setEmail(e.target.value)} required/>
                     </label>
                 </div>
                 <div>
                     <label>
-                        Password:
+                        Пароль:
                         <input type="password" value={password} onChange={e => setPassword(e.target.value)} required/>
                     </label>
                 </div>
