@@ -15,3 +15,4 @@ class User(AbstractUser):
     username = None
     email = models.EmailField(unique=True)
     is_active = models.BooleanField(default=False)
+    activation_token = models.UUIDField(blank=True, null=True)

@@ -1,17 +1,16 @@
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, {useEffect} from 'react';
+import {useNavigate} from 'react-router-dom';
 import Auth from '../pkg/auth';
 
 const Logout = () => {
-    const navigate = useNavigate();
-
-    const handleLogout = () => {
+    useEffect(() => {
         Auth.logout();
-        navigate('/login');
-    };
+        window.location = '/';
+    }, []);
 
     return (
-        <button onClick={handleLogout}>Logout</button>
+        <>
+        </>
     );
 };
 

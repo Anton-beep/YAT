@@ -140,3 +140,5 @@ EMAIL_BACKEND = "django.core.mail.backends.filebased.EmailBackend"
 EMAIL_FILE_PATH = BASE_DIR / "sent_emails"
 
 FERNET_CRYPT_EMAIL = Fernet(Fernet.generate_key())
+
+REACT_APP_URL = os.environ.get("REACT_APP_URL", "http://localhost:3000")

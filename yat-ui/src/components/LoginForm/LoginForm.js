@@ -7,12 +7,33 @@ import styles from './LoginForm.module.css'; // Import the CSS file
 const LoginForm = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [message, setMessage] = useState('');
+    const [error, setError] = useState(false);
+
 
     const handleSubmit = async (event) => {
         event.preventDefault();
         try {
-            await Auth.login({email: email, password: password});
+            Auth.login({email: email, password: password})
+                .then(
+                    response => {
+                        if (response.access) {
+                            setMessage("Успешный вход");
+                            setError(false);
+                        }
+                        //window.location = '/dashboard';
+                    }
+                )
+                .catch(
+                    error => {
+                        setMessage("Неверный логин или пароль");
+                        setError(true);
+                        console.error(error);
+                    }
+                )
         } catch (error) {
+            setMessage("Неверный логин или пароль");
+            setError(true);
             console.error(error);
         }
     };
@@ -39,6 +60,9 @@ const LoginForm = () => {
                 <div>
                     <button type="submit">Войти</button>
                 </div>
+                {message === "" ? null : <div className={error ? "alert alert-danger" : "alert alert-success"}>
+                    {message}
+                </div>}
             </form>
         </Layout>
     );

@@ -1,14 +1,34 @@
 import React, {useState} from 'react';
 import styles from './Restoration.module.css';
 import Layout from "../Layout";
+import {useParams} from "react-router-dom";
+import Auth from "../../pkg/auth";
 
 const Restoration = () => {
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
+    const {token} = useParams();
+    const [message, setMessage] = useState('');
+    const [error, setError] = useState(false);
 
     const handleSubmit = async (event) => {
         event.preventDefault();
-        // Here you should implement the logic to handle the password restoration
+        Auth.restore(token, password)
+            .then(
+                response => {
+                    if (response.data) {
+                        setMessage("Пароль успешно изменен");
+                        setError(false);
+                    }
+                }
+            )
+            .catch(
+                error => {
+                    setMessage("Ошибка изменения пароля");
+                    setError(true);
+                    console.error(error);
+                }
+            )
     };
 
     return (
@@ -33,6 +53,9 @@ const Restoration = () => {
                     <div>
                         <button type="submit">Поменять пароль</button>
                     </div>
+                    {message === "" ? null : <div className={error ? "alert alert-danger" : "alert alert-success"}>
+                    {message}
+                </div>}
                 </form>
             </div>
         </Layout>

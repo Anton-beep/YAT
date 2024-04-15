@@ -1,3 +1,5 @@
+from uuid import uuid4
+
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.core.mail import send_mail
@@ -23,12 +25,9 @@ class RegisterUserView(APIView):
         serializer = UserSerializer(data=request.data)
         if serializer.is_valid():
             user = serializer.save()
-            token = settings.FERNET_CRYPT_EMAIL.encrypt(
-                user.email.encode(),
-            ).decode()
-            confirm_url = request.build_absolute_uri(
-                reverse("confirm", kwargs={"token": token}),
-            )
+            token = uuid4()
+            user.activation_token = token
+            confirm_url = settings.REACT_APP_URL + f"/confirm/{token}"
             send_mail(
                 "Подтверждение почты",
                 f"Для подтверждения перейдите по ссылке: {confirm_url}",
@@ -43,12 +42,9 @@ class RegisterUserView(APIView):
 
 
 class ConfirmEmailView(APIView):
-    def get(self, request, token, new_email=None):
+    def post(self, request, token, new_email=None):
         try:
-            email = settings.FERNET_CRYPT_EMAIL.decrypt(
-                token.encode(),
-            ).decode()
-            user = User.objects.get(email=email)
+            user = User.objects.get(activation_token=token)
             if new_email:
                 user.email = settings.FERNET_CRYPT_EMAIL.decrypt(
                     new_email,
@@ -60,7 +56,7 @@ class ConfirmEmailView(APIView):
             )
 
         user.is_active = True
-        user.activation_token = ""
+        user.activation_token = None
         user.save()
         return HttpResponse(
             "Почта подтверждена. Вы можете закрыть эту страницу",
@@ -105,20 +101,13 @@ class ChangeUserView(APIView):
                 "email" in serializer.validated_data
                 and serializer.validated_data["email"] != user.email
             ):
-                token = settings.FERNET_CRYPT_EMAIL.encrypt(
-                    user.email.encode(),
-                ).decode()
+                token = uuid4()
                 user.activation_token = token
-                confirm_url = request.build_absolute_uri(
-                    reverse(
-                        "confirm",
-                        kwargs={
-                            "token": token,
-                            "new_email": settings.FERNET_CRYPT_EMAIL.encrypt(
-                                serializer.validated_data["email"].encode(),
-                            ).decode(),
-                        },
-                    ),
+                new_email = settings.FERNET_CRYPT_EMAIL.encrypt(
+                    serializer.validated_data["email"].encode(),
+                ).decode()
+                confirm_url = (
+                    settings.REACT_APP_URL + f"/confirm/{token}/{new_email}"
                 )
                 send_mail(
                     "Confirm your new email",
@@ -137,3 +126,60 @@ class ChangeUserView(APIView):
             return Response(serializer.data, status=status.HTTP_200_OK)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class ForgotPasswordView(APIView):
+    def post(self, request):
+        email = request.data.get("email")
+        user = User.objects.filter(email=email).first()
+        if user:
+            token = uuid4()
+            user.activation_token = token
+            confirm_url = settings.REACT_APP_URL + f"/restoration/{token}"
+            send_mail(
+                "Восстановление пароля",
+                f"Чтобы восстановить пароль, "
+                f"пожалуйста перейдите по ссылке: {confirm_url}",
+                "yat@bibbob.com",
+                [user.email],
+                fail_silently=False,
+            )
+            user.save()
+        return Response(
+            {"message": "ok"},
+            status=status.HTTP_200_OK,
+        )
+
+
+class RestorationView(APIView):
+    def post(self, request):
+        token = request.data.get("token")
+        user = User.objects.filter(activation_token=token).first()
+        if not user:
+            return Response(
+                {"message": "Invalid token"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        password = request.data.get("password")
+        if not password:
+            return Response(
+                {"message": "Password is required"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        user.set_password(password)
+        user.activation_token = None
+        user.save()
+        return Response(
+            {"message": "Password restored"},
+            status=status.HTTP_200_OK,
+        )
+
+
+class UserView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        user = request.user
+        serializer = UserSerializer(user)
+        return Response(serializer.data, status=status.HTTP_200_OK)

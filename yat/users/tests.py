@@ -1,5 +1,8 @@
+from uuid import uuid4
+
 from django.conf import settings
 from django.contrib.auth import get_user_model
+from django.core import mail
 from django.test import TestCase
 from django.urls import reverse
 from rest_framework.test import APIClient
@@ -77,16 +80,43 @@ class TestConfirmation(BaseViewTest):
         user = User.objects.get(email="newusernotactive@example.com")
         self.assertEqual(user.is_active, False)
 
-        response = self.client.get(
+        self.client.get(
             reverse(
                 "confirm",
                 kwargs={
-                    "token": settings.FERNET_CRYPT_EMAIL.encrypt(
-                        user.email.encode(),
-                    ).decode(),
+                    "token": user.activation_token,
                 },
             ),
         )
         user.refresh_from_db()
+        user.refresh_from_db()
 
         self.assertEqual(user.is_active, True)
+
+class TestPasswordReset(BaseViewTest):
+
+    def test_forgot_password(self):
+        response = self.client.post(
+            reverse("forgotpassword"),
+            data={"email": "testuser@example.com"},
+            format="json",
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(mail.outbox), 1)
+        self.assertIn("Восстановление пароля", mail.outbox[0].subject)
+
+    def test_password_restoration(self):
+        user = User.objects.get(email="testuser@example.com")
+        test_token = uuid4()
+        user.activation_token = test_token
+        user.save()
+
+        response = self.client.post(
+            reverse("restoration"),
+            data={"token": test_token, "password": "newpassword"},
+            format="json",
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        user.refresh_from_db()
+        self.assertTrue(user.check_password("newpassword"))

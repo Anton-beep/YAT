@@ -1,18 +1,35 @@
 import React, {useState} from 'react';
 import Auth from '../../pkg/auth';
 import Layout from "./../Layout";
-import styles from './RegisterForm.module.css'; // Import the CSS file
+import styles from './RegisterForm.module.css';
 
 const RegisterForm = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
+    const [message, setMessage] = useState('');
+    const [error, setError] = useState(false);
 
     const handleSubmit = async (event) => {
         event.preventDefault();
         try {
-            await Auth.register({email: email, password: password, first_name: firstName, last_name: lastName}); // Include first and last names in the registration request
+            Auth.register({email: email, password: password, first_name: firstName, last_name: lastName})
+                .then(
+                    response => {
+                        if (response.data) {
+                            setMessage("Успешная регистрация, подтвердите почту перейдя по ссылке в письме");
+                            setError(false);
+                        }
+                    }
+                )
+                .catch(
+                    error => {
+                        setMessage("Ошибка регистрации");
+                        setError(true);
+                        console.error(error);
+                    }
+                )
         } catch (error) {
             console.error(error);
         }
@@ -51,6 +68,9 @@ const RegisterForm = () => {
                 <div>
                     <button type="submit">Зарегестрироваться</button>
                 </div>
+                {message === "" ? null : <div className={error ? "alert alert-danger" : "alert alert-success"}>
+                    {message}
+                </div>}
             </form>
         </Layout>
     );

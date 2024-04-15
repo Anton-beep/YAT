@@ -1,5 +1,6 @@
 import axios from 'axios';
 import Cookies from 'js-cookie';
+import React from 'react';
 
 const API_URL = 'http://localhost:8000/';
 
@@ -22,8 +23,8 @@ class Auth {
                 }
                 return config;
             },
-            error => {
-                return Promise.reject(error);
+            (error) => {
+                //return Promise.reject(error);
             }
         );
 
@@ -45,15 +46,18 @@ class Auth {
     async refreshToken() {
         const refresh_token = Cookies.get('refresh');
         try {
-            const response = await this.axiosInstance.post('api/v1/users/refresh/', {refresh: refresh_token});
+            const response = await this.axiosInstance.post('api/v1/users/refresh/', {refresh: refresh_token}).catch(error => {
+                return null;
+            });
             return response.data.access;
         } catch (error) {
+            return null;
         }
     }
 
     login(user) {
         return axios
-            .post(API_URL + '/api/v1/users/login/', {
+            .post(API_URL + 'api/v1/users/login/', {
                 email: user.email,
                 password: user.password
             })
@@ -72,16 +76,34 @@ class Auth {
     }
 
     register(user) {
-        return axios.post(API_URL + '/api/v1/users/register/', {
+        return axios.post(API_URL + 'api/v1/users/register/', {
             email: user.email,
             password: user.password,
             first_name: user.first_name,
             last_name: user.last_name
         })
-            .catch(error => {
-                console.error(error);
-            });
+    }
+
+    forgotPassword(email) {
+        return axios.post(API_URL + 'api/v1/users/forgotpassword/', {
+            email: email
+        })
+    }
+
+    restore(token, password) {
+        return axios.post(API_URL + 'api/v1/users/restoration/', {
+            token: token,
+            password: password
+        })
+    }
+
+    confirm(token, email) {
+        if (email === undefined) {
+            return axios.post(API_URL + 'api/v1/users/confirm/' + token + '/')
+        }
+        return axios.post(API_URL + 'api/v1/users/confirm/' + token + '/' + email + '/')
     }
 }
 
 export default new Auth();
+
