@@ -1,6 +1,5 @@
 from uuid import uuid4
 
-from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.core import mail
 from django.test import TestCase
@@ -80,7 +79,7 @@ class TestConfirmation(BaseViewTest):
         user = User.objects.get(email="newusernotactive@example.com")
         self.assertEqual(user.is_active, False)
 
-        self.client.get(
+        self.client.post(
             reverse(
                 "confirm",
                 kwargs={
@@ -89,9 +88,9 @@ class TestConfirmation(BaseViewTest):
             ),
         )
         user.refresh_from_db()
-        user.refresh_from_db()
 
         self.assertEqual(user.is_active, True)
+
 
 class TestPasswordReset(BaseViewTest):
 

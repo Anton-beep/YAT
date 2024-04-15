@@ -1,3 +1,5 @@
+import uuid
+
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
@@ -15,4 +17,4 @@ class User(AbstractUser):
     username = None
     email = models.EmailField(unique=True)
     is_active = models.BooleanField(default=False)
-    activation_token = models.UUIDField(blank=True, null=True)
+    activation_token = models.UUIDField(blank=True, default=uuid.uuid4)

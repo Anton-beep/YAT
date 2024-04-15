@@ -5,10 +5,10 @@ from users.views import (
     ChangeUserView,
     ConfirmEmailView,
     CustomTokenObtainPairView,
-    RegisterUserView,
-    SecretView,
-    RestorationView,
     ForgotPasswordView,
+    RegisterUserView,
+    RestorationView,
+    SecretView,
     UserView,
 )
 
@@ -30,7 +30,11 @@ urlpatterns = [
         ConfirmEmailView.as_view(),
         name="confirm",
     ),
-    path("forgotpassword/", ForgotPasswordView.as_view(), name="forgotpassword"),
+    path(
+        "forgotpassword/",
+        ForgotPasswordView.as_view(),
+        name="forgotpassword",
+    ),
     path("restoration/", RestorationView.as_view(), name="restoration"),
     path("secret/", SecretView.as_view(), name="secret"),
     path("settings/", ChangeUserView.as_view(), name="settings"),

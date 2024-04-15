@@ -4,7 +4,6 @@ from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.core.mail import send_mail
 from django.http import HttpResponse
-from django.urls import reverse
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -56,7 +55,7 @@ class ConfirmEmailView(APIView):
             )
 
         user.is_active = True
-        user.activation_token = None
+        user.activation_token = uuid4()
         user.save()
         return HttpResponse(
             "Почта подтверждена. Вы можете закрыть эту страницу",
@@ -145,6 +144,7 @@ class ForgotPasswordView(APIView):
                 fail_silently=False,
             )
             user.save()
+
         return Response(
             {"message": "ok"},
             status=status.HTTP_200_OK,
@@ -167,8 +167,9 @@ class RestorationView(APIView):
                 {"message": "Password is required"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
+
         user.set_password(password)
-        user.activation_token = None
+        user.activation_token = uuid4()
         user.save()
         return Response(
             {"message": "Password restored"},
