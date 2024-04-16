@@ -170,8 +170,15 @@ const EventsList = ({created, finished}) => {
                 <EventForm tags={tags} icons={iconComponents} initialFactors={factors}/>
             </Modal>
 
-            <button className="button-green button-gap" onClick={() => setIsFormOpen(true)}>Добавить новое событие</button>
-            <button className="button-orange button-gap" onClick={() => setIsFilterOpen(true)}>Фильтр по тегам</button>
+            <div className="header">
+                <h1>События</h1>
+            </div>
+            <div className="buttons">
+                <button className="button-green button-gap" onClick={() => setIsFormOpen(true)}>Добавить новое событие
+                </button>
+                <button className="button-orange button-gap" onClick={() => setIsFilterOpen(true)}>Фильтр по тегам
+                </button>
+            </div>
 
             {Boolean(selectedTags.length !== 0) && <button className="button-orange button-gap" onClick={() => {
                 setSelectedTags([]);
@@ -196,8 +203,6 @@ const EventsList = ({created, finished}) => {
                                     <IconComponent fill={event.icon.color}/>
                                     <h2>{activities[event.activity_id]}</h2>
                                 </div>
-
-                                <p>{event.description}</p>
 
                                 <div className="text-with-icon">
                                     <Clock />

@@ -6,6 +6,7 @@ import SecretPage from './components/SecretPage';
 import Logout from './components/Logout';
 import EventList from "./components/EventList";
 import Homepage from './components/Homepage';
+import Dashboard from './components/Dashboard/Dashboard';
 
 import './bootstrap/bootstrap.min.css';
 import 'jquery';
@@ -23,7 +24,8 @@ function App() {
             <Route path="/register" element={<RegisterForm/>}/>
             <Route path="/secret" element={<SecretPage/>}/>
             <Route path="/logout" element={<Logout/>}/>
-            <Route path="eventList/" element={<EventList created={['123', '123']} finished={['123', '123']}/>}/>
+            <Route path="/eventList" element={<EventList created={['123', '123']} finished={['123', '123']}/>}/>
+            <Route path="/dashboard" element={<Dashboard/>}/>
         </Routes>
     </Router>
 )

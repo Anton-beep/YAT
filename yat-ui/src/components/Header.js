@@ -7,6 +7,7 @@ const Header = () => {
             <h3>YAT</h3>
             <nav className="nav">
                 <NavLink className="nav-link" activeClassName="nav-link active" to="/">Главная страница</NavLink>
+                <NavLink className="nav-link" activeClassName="nav-link active" to="/dashboard">Панель</NavLink>
                 <NavLink className="nav-link" activeClassName="nav-link active" to="/login">Войти</NavLink>
                 <NavLink className="nav-link" activeClassName="nav-link active" to="/register">Зарегестрироваться</NavLink>
             </nav>
