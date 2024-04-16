@@ -26,6 +26,8 @@ function App() {
             <Route path="/logout" element={<Logout/>}/>
             <Route path="/eventList" element={<EventList created={['123', '123']} finished={['123', '123']}/>}/>
             <Route path="/dashboard" element={<Dashboard/>}/>
+
+            <Route path="/dev" element={<EventList />}/>
         </Routes>
     </Router>
 )

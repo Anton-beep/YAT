@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import Modal from 'react-modal';
 import {ReactComponent as Bib} from '../icons/bib.svg';
 import {ReactComponent as Bob} from '../icons/bob.svg';
@@ -94,11 +94,11 @@ const EventsList = ({created, finished}) => {
     useEffect(() => {
         Auth.axiosInstance.get('/api/v1/homepage/factors')
             .then(response => {
-                const new_factors = response.data.factors.reduce((acc, factor) => ({
-                    ...acc,
-                    [factor.id]: factor.name,
-                }), {});
-                setFactors(new_factors);
+                    const new_factors = response.data.factors.reduce((acc, factor) => ({
+                        ...acc,
+                        [factor.id]: factor.name,
+                    }), {});
+                    setFactors(new_factors);
                 }
             )
             .catch(error => {
@@ -113,8 +113,8 @@ const EventsList = ({created, finished}) => {
                 onRequestClose={() => setIsFilterOpen(false)}
                 style={{
                     content: {
-                        width: '15%',
-                        height: '40%',
+                        width: '35%',
+                        height: '50%',
                         margin: 'auto',
                     }
                 }}
@@ -122,8 +122,8 @@ const EventsList = ({created, finished}) => {
                 Фильтрация по тегам
                 {tags.map(tag => (
                     <div key={tag.id}>
-                        <input type="checkbox" checked={tag.checked} onChange={() => handleTagCheckChange(tag.id)}/>
-                        <label>{tag.name}</label>
+                        <input className="form-check-input" type="checkbox" checked={tag.checked} onChange={() => handleTagCheckChange(tag.id)}/>
+                        <label className="form-check-label">{tag.name}</label>
                     </div>
                 ))}
             </Modal>
@@ -133,12 +133,12 @@ const EventsList = ({created, finished}) => {
                 onRequestClose={() => setIsCardOpen(false)}
                 style={{
                     content: {
-                        width: '200px',
-                        height: '355px',
+                        width: '35%',
+                        height: '70%',
                         margin: 'auto',
                     }
                 }}
-                >
+            >
                 {selectedEvent && (
                     <>
                         <h2>{activities[selectedEvent.activity_id]}</h2>
@@ -149,7 +149,7 @@ const EventsList = ({created, finished}) => {
                         {selectedEvent.factors.map((factor, index) => (
                             <div key={index}>
                                 <label>{factors[factor.id]}: </label>
-                                <input type="range" min="-20" max="20" step="1" value={factor.value} disabled />
+                                <input type="range" min="-20" max="20" step="1" value={factor.value} disabled/>
                             </div>
                         ))}
                     </>
@@ -161,13 +161,17 @@ const EventsList = ({created, finished}) => {
                 onRequestClose={() => setIsFormOpen(false)}
                 style={{
                     content: {
-                        width: '200px',
-                        height: '355px',
+                        width: '40%',
+                        height: '80%',
                         margin: 'auto',
                     }
                 }}
             >
-                <EventForm tags={tags} icons={iconComponents} initialFactors={factors}/>
+                <EventForm
+                    tags={tags}
+                    initialFactors={factors}
+                    activities={activities}
+                />
             </Modal>
 
             <div className="header">
@@ -180,13 +184,16 @@ const EventsList = ({created, finished}) => {
                 </button>
             </div>
 
-            {Boolean(selectedTags.length !== 0) && <button className="button-orange button-gap" onClick={() => {
-                setSelectedTags([]);
-                setTags(tags.map(tag => ({...tag, checked: false})));
-            }}>
-                {tags.filter(tag => tag.checked).map(tag => tag.name).join(', ')}
-                {"  "} <X fill="red"/>
-            </button>}
+            <div className="buttons" style={{marginTop: "10px"}}>
+                {Boolean(selectedTags.length !== 0) && <button className="button-orange button-gap" onClick={() => {
+                    setSelectedTags([]);
+                    setTags(tags.map(tag => ({...tag, checked: false})));
+                }}>
+                    {tags.filter(tag => tag.checked).map(tag => tag.name).join(', ')}
+                    {"  "} <X fill="red"/>
+                </button>}
+
+            </div>
 
             <div className="event-container">
 
@@ -198,19 +205,22 @@ const EventsList = ({created, finished}) => {
                         const factorMean = event.factors.reduce((sum, factor) => sum + factor.value, 0) / event.factors.length;
                         const factorColor = factorMean > 10 ? 'green' : factorMean < 0 ? 'red' : 'black';
                         return (
-                            <div key={event.id} className="event-card" onClick={() => {setSelectedEvent(event); setIsCardOpen(true);}}>
+                            <div key={event.id} className="event-card" onClick={() => {
+                                setSelectedEvent(event);
+                                setIsCardOpen(true);
+                            }}>
                                 <div className="text-with-icon">
                                     <IconComponent fill={event.icon.color}/>
                                     <h2>{activities[event.activity_id]}</h2>
                                 </div>
 
                                 <div className="text-with-icon">
-                                    <Clock />
+                                    <Clock/>
                                     <span>{formatTime(event.created)} - {formatTime(event.finished)}</span>
                                 </div>
 
                                 <div className="text-with-icon factor-right">
-                                    <Star fill={factorColor} />
+                                    <Star fill={factorColor}/>
                                     <span style={{color: factorColor}}>{factorMean}</span>
                                 </div>
                             </div>
