@@ -8,6 +8,7 @@ import EventList from "./components/EventList";
 import Homepage from './components/Homepage';
 import ForgotPassword from "./components/ForgotPassword/ForgotPassword";
 import Restoration from "./components/Restoration/Restoration";
+import Confirm from "./components/Confirm/Confirm";
 
 import './bootstrap/bootstrap.min.css';
 import 'jquery';
@@ -23,7 +24,9 @@ function App() {
             <Route path="/" element={<Homepage/>}/>
             <Route path="/login" element={<LoginForm/>}/>
             <Route path="/forgotpassword" element={<ForgotPassword/>}/>
-            <Route path="/restoration" element={<Restoration/>}/>
+            <Route path="/confirm/:token" element={<Confirm/>}/>
+            <Route path="/confirm/:token/:email" element={<Confirm/>}/>
+            <Route path="/restoration/:token" element={<Restoration/>}/>
             <Route path="/register" element={<RegisterForm/>}/>
             <Route path="/secret" element={<SecretPage/>}/>
             <Route path="/logout" element={<Logout/>}/>

@@ -2,7 +2,7 @@
 
 ## Run database
 ```bash
-docker run --name yat_db --detach -p 5432:5432 -e POSTGRES_USER=admin -e POSTGRES_PASSWORD=admin -e -d postgres:16
+docker run --name yat-db --detach -p 5432:5432 -e POSTGRES_USER=admin -e POSTGRES_PASSWORD=admin -e -d postgres:16
 ```
 
 ## Run formatters

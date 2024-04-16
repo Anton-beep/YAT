@@ -2,21 +2,52 @@ from rest_framework import serializers
 
 from homepage import models
 
+__all__ = []
+
 
 class ActivitySerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Activity
-        fields = "__all__"
+        fields = ["id", "name", "icon", "icon_name", "icon_color"]
+
+    icon = serializers.SerializerMethodField()
+
+    @staticmethod
+    def get_icon(obj):
+        return {
+            "name": obj.icon_name,
+            "color": obj.icon_color,
+        }
+
+    def to_internal_value(self, data):
+        icon = data.pop("icon", None)
+        if icon is not None:
+            data["icon_name"] = icon.get("name")
+            data["icon_color"] = icon.get("color")
+
+        return super().to_internal_value(data)
 
     def create(self, validated_data):
-        return models.Activity.objects.create(**validated_data)
+        return models.Activity.objects.create(
+            user=self.context["request"].user,
+            **validated_data,
+        )
 
-    def update(self, instance: models.Activity, validated_data: dict[str, str]):
+    def update(
+        self,
+        instance: models.Activity,
+        validated_data: dict[str, str],
+    ):
         instance.user = validated_data.get("user", instance.user)
         instance.name = validated_data.get("name", instance.name)
-        instance.icon_name = validated_data.get("icon_name", instance.icon_name)
-        instance.icon_color = validated_data.get("icon_color", instance.icon_color)
+        instance.icon_name = validated_data.get(
+            "icon_name",
+            instance.icon_name,
+        )
+        instance.icon_color = validated_data.get(
+            "icon_color",
+            instance.icon_color,
+        )
         instance.user = validated_data.get("user", instance.user)
         instance.save()
         return instance
-

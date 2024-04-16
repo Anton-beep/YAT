@@ -1,3 +1,4 @@
+from datetime import timedelta
 import os
 from pathlib import Path
 
@@ -31,7 +32,7 @@ INSTALLED_APPS = [
     "rest_framework.authtoken",
     "users",
     "corsheaders",
-    "homepage.apps.HomepageConfig"
+    "homepage.apps.HomepageConfig",
 ]
 
 REST_FRAMEWORK = {
@@ -47,6 +48,8 @@ SIMPLE_JWT = {
     "AUTH_COOKIE_HTTP_ONLY": True,
     "AUTH_COOKIE_PATH": "/",
     "AUTH_COOKIE_SAMESITE": "Lax",
+    "SLIDING_TOKEN_LIFETIME": timedelta(minutes=120),
+    "SLIDING_TOKEN_REFRESH_LIFETIME": timedelta(days=1),
 }
 
 MIDDLEWARE = [
