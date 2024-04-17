@@ -14,6 +14,7 @@ import 'popper.js';
 import 'bootstrap/dist/js/bootstrap.min.js';
 
 import './App.css'
+import TaskList from "./components/TaskList/TaskList";
 
 function App() {
     return (
@@ -23,11 +24,10 @@ function App() {
             <Route path="/login" element={<LoginForm/>}/>
             <Route path="/register" element={<RegisterForm/>}/>
             <Route path="/secret" element={<SecretPage/>}/>
-            <Route path="/logout" element={<Logout/>}/>
-            <Route path="/eventList" element={<EventList created={['123', '123']} finished={['123', '123']}/>}/>
+            <Route path="/logout" element={<Logout/>} />
             <Route path="/dashboard" element={<Dashboard/>}/>
 
-            <Route path="/dev" element={<EventList />}/>
+            <Route path="/dev" element={<TaskList created={['123', '123']} finished={['123', '123']} done="not done" />}/>
         </Routes>
     </Router>
 )

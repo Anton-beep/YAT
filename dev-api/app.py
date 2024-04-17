@@ -1,5 +1,5 @@
 from flask import Flask, request
-from flask_cors import CORS, cross_origin
+from flask_cors import cross_origin
 
 app = Flask(__name__)
 
@@ -55,6 +55,51 @@ def events():
         }
 
 
+@app.route('/api/v1/homepage/tasks', methods=['GET', 'POST'])
+@cross_origin()
+def tasks():
+    if request.method == "GET":
+        return {
+              "tasks": [
+                {
+                  "id": 1,
+                  "name": "name1",
+                  "description": "description1",
+                  "tags": [1],
+                  "status": "not done",
+                  "deadline": "1713387598",
+                  "factors": [],
+                  "created": "1712605504"
+                },
+                  {
+                      "id": 2,
+                      "name": "name2",
+                      "description": "description2",
+                      "tags": [1, 2],
+                      "status": "not done",
+                      "deadline": "1712605504",
+                      "factors": [],
+                      "created": "1712605504"
+                  },
+                  {
+                      "id": 3,
+                      "name": "name3",
+                      "description": "description3",
+                      "tags": [2],
+                      "status": "not done",
+                      "deadline": "1713473998",
+                      "factors": [],
+                      "created": "1712605504"
+                  },
+              ],
+            }
+    elif request.method == "POST":
+        print(request.json)
+        return {
+            "status": "OK"
+        }
+
+
 @app.route('/api/v1/homepage/tags', methods=['GET'])
 @cross_origin()
 def tags():
@@ -76,21 +121,6 @@ def tags():
                     "name": "tag3",
                     "visible": False
                 },
-                {
-                    "id": 3,
-                    "name": "tag3",
-                    "visible": False
-                },
-                {
-                    "id": 3,
-                    "name": "tag3",
-                    "visible": False
-                },
-                {
-                    "id": 3,
-                    "name": "tag3",
-                    "visible": False
-                }
             ]
         }
 
