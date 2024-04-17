@@ -4,7 +4,7 @@ from flask_cors import CORS, cross_origin
 app = Flask(__name__)
 
 
-@app.route('/api/v1/homepage/events', methods=['GET'])
+@app.route('/api/v1/homepage/events', methods=['GET', 'POST'])
 @cross_origin()
 def events():
     if request.method == "GET":
@@ -51,6 +51,11 @@ def events():
                     "finished": "1712605504",
                 },
             ],
+        }
+    elif request.method == "POST":
+        print(request.json)
+        return {
+            "status": "OK"
         }
 
 

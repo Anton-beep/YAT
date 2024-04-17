@@ -1,40 +1,10 @@
 import React, {useState} from 'react';
-
-
-const FactorsComponent = ({ factors }) => {
-  const [factorValues, setFactorValues] = useState(factors.map(factor => factor.value));
-
-  const handleFactorChange = (index, newValue) => {
-    const newFactorValues = [...factorValues];
-    newFactorValues[index] = newValue;
-    setFactorValues(newFactorValues);
-  };
-
-  return (
-    <div className="mb-3">
-      {factors.map((factor, index) => (
-        <div key={index} className="input-group mb-3">
-          <span className="input-group-text" id="inputGroup-sizing-default">{factor.name} {factorValues[index]}</span>
-          <input
-            type="range"
-            className="form-control"
-            value={factorValues[index]}
-            min="-10"
-            max="10"
-            step="1"
-            onChange={(e) => handleFactorChange(index, parseInt(e.target.value))}
-          />
-        </div>
-      ))}
-    </div>
-  );
-};
-
+import Auth from '../pkg/auth';
 
 
 function EventForm({tags = [], icons = {}, initialFactors = {}, activities = {}}) {
     const activitiesArray = Object.keys(activities).map((id) => ({id, name: activities[id]}));
-    const factors = Object.keys(initialFactors).map((id) => ({id, name: activities[id], value: 0}));
+    const factorsArray = Object.keys(initialFactors).map((id) => ({id, name: activities[id], value: 0}));
 
     const [selectedActivity, setSelectedActivity] = useState(activitiesArray[0].name);
     const updateSelection = (activityName) => {
@@ -42,34 +12,133 @@ function EventForm({tags = [], icons = {}, initialFactors = {}, activities = {}}
 
     };
 
+    const [description, setDescription] = useState('');
+    const [selectedTags, setSelectedTags] = useState([]);
+    const [icon, setIcon] = useState({name: 'bib.svg', color: '#2a82a8'});
+    const [created, setCreated] = useState(Date.now().toString());
+    const [finished, setFinished] = useState('');
+    const [factors, setFactors] = useState([{id: 1, value: 10}]);
+    const [activityId, setActivityId] = useState(1);
+    const [factorValues, setFactorValues] = useState(factorsArray.map(() => 0));
+
+    const handleSubmit = (event) => {
+        event.preventDefault();
+
+        const factorsToSend = factorsArray.map((factor, index) => ({
+            id: factor.id, value: factorValues[index]
+        }));
+
+        const data = {
+            description,
+            tags: selectedTags,
+            created,
+            finished,
+            factors: finished !== '' ? factorsToSend : [],
+            activity_id: activityId
+        };
+
+        Auth.axiosInstance.post('/api/v1/homepage/events', data)
+            .then(response => {
+                console.log("OK");
+            })
+            .catch(error => {
+                console.log("NE OK");
+            });
+    };
+
+    const handleFinishedonChange = (event) => {
+        const date = new Date(event.target.value);
+        const timestamp = Math.floor(date.getTime() / 1000); // convert to seconds
+        setFinished(timestamp.toString());
+    };
+const handleCreatedOnChange = (event) => {
+        const date = new Date(event.target.value);
+        const timestamp = Math.floor(date.getTime() / 1000); // convert to seconds
+        setCreated(timestamp.toString());
+    };
+
+const handleDescriptionOnChange = (event) => {
+        setDescription(event.target.value);
+}
+
+    const handleActivityChange = (event) => {
+        setActivityId(event.target.value);
+    }
+
+    const handleTagChange = (event) => {
+    if (event.target.checked) {
+        setSelectedTags([...selectedTags, parseInt(event.target.value)]);
+    } else {
+        setSelectedTags(selectedTags.filter(tagId => tagId !== parseInt(event.target.value)));
+    }
+};
+
     return (<div>
-        <form>
+        <form onSubmit={handleSubmit}>
             <h4>Добавить новое событие</h4>
             <div className="mb-3">
                 <label htmlFor='activity'>Активность</label>
-                <select id="activity" className="form-select" aria-label="Default select example">
+                <select id="activity" className="form-select" aria-label="Default select example"
+                        onChange={handleActivityChange}>
                     {activitiesArray.map((activity) => (<option value={activity.id}>{activity.name}</option>))}
                 </select>
             </div>
 
             <div className="mb-3">
+                <label htmlFor="date" className="form-label">Конец</label>
+                <input type="date" id="date" className="form-control" onChange={handleFinishedonChange}/>
+            </div>
+
+            {Boolean(finished) && <div className="mb-3">
+                <label htmlFor="date" className="form-label">Начало</label>
+                <input type="date" id="date" className="form-control" onChange={handleCreatedOnChange}/>
+            </div>}
+
+            <div className="mb-3">
                 <label htmlFor="textarea" className="form-label">Описание</label>
-                <textarea className="form-control" id="textarea" rows="2"></textarea>
+                <textarea className="form-control" id="textarea" rows="2"
+                          onChange={handleDescriptionOnChange}></textarea>
             </div>
 
             <div className="mb-3">
                 {tags.map(tag => (<div key={tag.id}>
-                        <input value={tag.id} className="form-check-input" type="checkbox"/>
-                        <label className="form-check-label">{tag.name}</label>
-                    </div>))}</div>
+                    <input value={tag.id} className="form-check-input" type="checkbox" onChange={handleTagChange}/>
+                    <label className="form-check-label">{tag.name}</label>
+                </div>))}
+            </div>
 
-            <FactorsComponent factors={factors} />
+            {Boolean(finished) && <FactorsComponent factors={factorsArray} factorValues={factorValues}
+                                                    setFactorValues={setFactorValues}/>}
 
-          <button type="submit" className="btn btn-primary">Добавить</button>
+            <button type="submit" className="btn btn-primary">Добавить</button>
         </form>
-        </div>
-    );
+    </div>);
 }
+
+const FactorsComponent = ({factors, factorValues, setFactorValues}) => {
+    const handleFactorChange = (index, newValue) => {
+        const newFactorValues = [...factorValues];
+        newFactorValues[index] = newValue;
+        setFactorValues(newFactorValues);
+    };
+
+    return (<div className="mb-3">
+            {factors.map((factor, index) => (<div key={index} className="input-group mb-3">
+                    <span className="input-group-text"
+                          id="inputGroup-sizing-default">{factor.name} {factorValues[index]}</span>
+                    <input
+                        type="range"
+                        className="form-control"
+                        value={factorValues[index]}
+                        min="-10"
+                        max="10"
+                        step="1"
+                        onChange={(e) => handleFactorChange(index, parseInt(e.target.value))}
+                    />
+                </div>))}
+        </div>);
+};
+
 
 export default EventForm;
 
