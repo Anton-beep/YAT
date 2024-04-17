@@ -6,4 +6,16 @@ app_name = "homepage"
 
 urlpatterns = [
     path("activities/", views.ActivityAPIView.as_view(), name="activities"),
+    path(
+        "tags/",
+        views.TagViewSet.as_view(
+            {
+                "get": "list",
+                "post": "create",
+                "put": "update",
+                "delete": "destroy",
+            },
+        ),
+        name="tags",
+    ),
 ]

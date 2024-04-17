@@ -5,7 +5,20 @@ from homepage import models
 __all__ = []
 
 
-class ActivitySerializer(serializers.ModelSerializer):
+class UserContextSerializer(serializers.ModelSerializer):
+    def create(self, validated_data):
+        return self.Meta.model.objects.create(
+            user=self.context["request"].user,
+            **validated_data,
+        )
+
+    def update(self, instance: models.Tag, validated_data: dict[str, str]):
+        instance.name = validated_data.get("name", instance.name)
+        instance.save()
+        return instance
+
+
+class ActivitySerializer(UserContextSerializer):
     class Meta:
         model = models.Activity
         fields = ["id", "name", "icon", "icon_name", "icon_color"]
@@ -27,12 +40,6 @@ class ActivitySerializer(serializers.ModelSerializer):
 
         return super().to_internal_value(data)
 
-    def create(self, validated_data):
-        return models.Activity.objects.create(
-            user=self.context["request"].user,
-            **validated_data,
-        )
-
     def update(
         self,
         instance: models.Activity,
@@ -51,3 +58,9 @@ class ActivitySerializer(serializers.ModelSerializer):
         instance.user = validated_data.get("user", instance.user)
         instance.save()
         return instance
+
+
+class TagSerializer(UserContextSerializer):
+    class Meta:
+        model = models.Tag
+        fields = ["id", "name", "visible"]

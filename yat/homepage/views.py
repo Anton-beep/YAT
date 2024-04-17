@@ -3,10 +3,25 @@ from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework.viewsets import ModelViewSet
 
 from homepage import models, serializers
 
 __all__ = []
+
+
+class UserContextViewSet(ModelViewSet):
+    model = None
+    permission_classes = [IsAuthenticated]
+    lookup_field = "id"
+
+    def get_queryset(self, *args, **kwargs):
+        self.kwargs.update(self.request.data)
+        return self.model.objects.filter(user=self.request.user)
+
+    def get_serializer(self, *args, **kwargs):
+        kwargs["context"] = {"request": self.request}
+        return super().get_serializer(*args, **kwargs)
 
 
 class ActivityAPIView(APIView):
@@ -38,7 +53,8 @@ class ActivityAPIView(APIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
         return Response(
-            serializer.errors, status=status.HTTP_400_BAD_REQUEST,
+            serializer.errors,
+            status=status.HTTP_400_BAD_REQUEST,
         )
 
     def put(self, request, *args, **kwargs):
@@ -52,3 +68,10 @@ class ActivityAPIView(APIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class TagViewSet(UserContextViewSet):
+    serializer_class = serializers.TagSerializer
+    permission_classes = [IsAuthenticated]
+    model = models.Tag
+    lookup_field = "id"
