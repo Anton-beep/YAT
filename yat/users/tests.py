@@ -1,21 +1,14 @@
-<<<<<<< HEAD
 from uuid import uuid4
 
 from django.contrib.auth import get_user_model
 from django.core import mail
-=======
-from django.contrib.auth import get_user_model
->>>>>>> 4cf1508 (auth tests)
 from django.test import TestCase
 from django.urls import reverse
 from rest_framework.test import APIClient
 from rest_framework.views import status
 
-<<<<<<< HEAD
 __all__ = []
 
-=======
->>>>>>> 4cf1508 (auth tests)
 User = get_user_model()
 
 
@@ -85,7 +78,6 @@ class TestConfirmation(BaseViewTest):
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         user = User.objects.get(email="newusernotactive@example.com")
         self.assertEqual(user.is_active, False)
-<<<<<<< HEAD
 
         self.client.post(
             reverse(
@@ -94,17 +86,10 @@ class TestConfirmation(BaseViewTest):
                     "token": user.activation_token,
                 },
             ),
-=======
-        self.assertIsNotNone(user.activation_token)
-
-        response = self.client.get(
-            reverse("confirm", kwargs={"token": user.activation_token}),
->>>>>>> 4cf1508 (auth tests)
         )
         user.refresh_from_db()
 
         self.assertEqual(user.is_active, True)
-<<<<<<< HEAD
 
 
 class TestPasswordReset(BaseViewTest):
@@ -134,5 +119,3 @@ class TestPasswordReset(BaseViewTest):
 
         user.refresh_from_db()
         self.assertTrue(user.check_password("newpassword"))
-=======
->>>>>>> 4cf1508 (auth tests)

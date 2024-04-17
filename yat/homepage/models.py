@@ -30,3 +30,17 @@ class Tag(models.Model):
 
     def __str__(self):
         return f"Тег {self.name}"
+
+
+class Note(models.Model):
+    name = models.CharField(max_length=100)
+    created = models.DateTimeField(auto_now=True)
+    description = models.TextField()
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        related_name="notes",
+        on_delete=models.CASCADE,
+    )
+
+    def __str__(self):
+        return f"Примечание: {self.name}"

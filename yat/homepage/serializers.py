@@ -60,3 +60,9 @@ class TagSerializer(UserContextSerializer):
     class Meta:
         model = models.Tag
         fields = ["id", "name", "visible"]
+
+
+class NoteSerializer(UserContextSerializer):
+    class Meta:
+        model = models.Note
+        fields = ["id", "name", "description"]

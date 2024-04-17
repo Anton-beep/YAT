@@ -29,3 +29,8 @@ class ActivityViewSet(UserContextViewSet):
 class TagViewSet(UserContextViewSet):
     serializer_class = serializers.TagSerializer
     permission_classes = [IsAuthenticated]
+
+
+class NoteViewSet(UserContextViewSet):
+    serializer_class = serializers.NoteSerializer
+    permission_classes = [IsAuthenticated]

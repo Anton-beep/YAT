@@ -29,4 +29,16 @@ urlpatterns = [
         ),
         name="tags",
     ),
+    path(
+        "notes/",
+        views.NoteViewSet.as_view(
+            {
+                "get": "list",
+                "post": "create",
+                "put": "update",
+                "delete": "destroy",
+            },
+        ),
+        name="notes",
+    ),
 ]
