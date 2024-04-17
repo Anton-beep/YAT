@@ -9,6 +9,7 @@ import EventForm from "./EventForm";
 
 import Auth from '../pkg/auth';
 import '../App.css';
+import {fireInputEvent} from "@testing-library/user-event/dist/keyboard/shared";
 
 const iconComponents = {
     "bib.svg": Bib,
@@ -143,15 +144,23 @@ const EventsList = ({created, finished}) => {
                     <>
                         <h2>{activities[selectedEvent.activity_id]}</h2>
                         <p>{selectedEvent.description}</p>
-                        <p>Start Time: {formatTime(selectedEvent.created)}</p>
-                        <p>End Time: {formatTime(selectedEvent.finished)}</p>
+                        {Boolean(selectedEvent.finished) && <div>
+                            <p>Start Time: {formatTime(selectedEvent.created)}</p>
+                            <p>End Time: {formatTime(selectedEvent.finished)}</p>
+                        </div>}
                         <p>Tags: {selectedEvent.tags.map(tagId => tags.find(tag => tag.id === tagId).name).join(', ')}</p>
                         {selectedEvent.factors.map((factor, index) => (
                             <div key={index}>
                                 <label>{factors[factor.id]}: </label>
-                                <input type="range" min="-20" max="20" step="1" value={factor.value} disabled/>
+
+                                <div className="progress" role="progressbar" aria-label="Basic example">
+                                    <div className="progress-bar" style={{width: `${(factor.value * 5 + 50)}%`}}>{factor.value}</div>
+                                </div>
                             </div>
                         ))}
+                        {!Boolean(selectedEvent.finished) && <div>
+                            <button type="button" className="btn btn-primary">Начать событие</button>
+                            </div>}
                     </>
                 )}
             </Modal>
@@ -203,7 +212,7 @@ const EventsList = ({created, finished}) => {
                     .map((event, index) => {
                         const IconComponent = iconComponents[event.icon.name];
                         const factorMean = event.factors.reduce((sum, factor) => sum + factor.value, 0) / event.factors.length;
-                        const factorColor = factorMean > 10 ? 'green' : factorMean < 0 ? 'red' : 'black';
+                        const factorColor = factorMean > 5 ? 'green' : factorMean < -5 ? 'red' : 'black';
                         return (
                             <div key={event.id} className="event-card" onClick={() => {
                                 setSelectedEvent(event);
@@ -214,15 +223,23 @@ const EventsList = ({created, finished}) => {
                                     <h2>{activities[event.activity_id]}</h2>
                                 </div>
 
-                                <div className="text-with-icon">
-                                    <Clock/>
-                                    <span>{formatTime(event.created)} - {formatTime(event.finished)}</span>
-                                </div>
+                                {Boolean(event.finished) && <div>
+                                    <div className="text-with-icon">
+                                        <Clock/>
+                                        <span>{formatTime(event.created)} - {formatTime(event.finished)}</span>
+                                    </div>
 
-                                <div className="text-with-icon factor-right">
-                                    <Star fill={factorColor}/>
-                                    <span style={{color: factorColor}}>{factorMean}</span>
-                                </div>
+                                    <div className="text-with-icon factor-right">
+                                        <Star fill={factorColor}/>
+                                        <span style={{color: factorColor}}>{factorMean}</span>
+                                    </div>
+                                </div>}
+                                {!Boolean(event.finished) && <div>
+                                    <div className="text-with-icon">
+                                        <Clock/>
+                                        <span>{formatTime(event.created)}</span>
+                                    </div>
+                                </div>}
                             </div>
                         )
                     })}

@@ -21,11 +21,11 @@ def events():
                     "factors": [
                         {
                             "id": 1,
-                            "value": 16
+                            "value": 5
                         },
                         {
                             "id": 2,
-                            "value": 15
+                            "value": -3
                         }
                     ],
                     "activity_id": 1,
@@ -41,14 +41,10 @@ def events():
                         "color": "#c26336",
                     },
                     "factors": [
-                        {
-                            "id": 1,
-                            "value": 10
-                        }
                     ],
                     "activity_id": 2,
                     "created": "1712605504",
-                    "finished": "1712605504",
+                    "finished": "",
                 },
             ],
         }
