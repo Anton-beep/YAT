@@ -20,7 +20,6 @@ class ActivityTestCase(APITestCase):
     def setUpClass(cls):
         super().setUpClass()
 
-        # test user
         cls.client = APIClient()
 
         cls.user = User.objects.create_user(
@@ -33,6 +32,8 @@ class ActivityTestCase(APITestCase):
         cls.user.save()
 
         cls.token = str(AccessToken.for_user(cls.user))
+
+        cls.client.credentials(HTTP_AUTHORIZATION=f"Bearer {cls.token}")
 
         # test activities
         cls.activity1 = models.Activity.objects.create(
@@ -76,13 +77,16 @@ class ActivityTestCase(APITestCase):
         response = self.client.put(
             reverse("homepage:activities"),
             data={
+                "id": self.activity1.id,
                 "name": "test_name_new",
                 "icon": {"name": "test_icon_name", "color": "test_icon_color"},
             },
             HTTP_AUTHORIZATION=f"Bearer {self.token}",
             format="json",
         )
-        self.assertEqual(response.status_code, HTTPStatus.CREATED)
+        self.assertEqual(response.status_code, HTTPStatus.OK)
+        self.activity1.refresh_from_db()
+        self.assertEqual(self.activity1.name, "test_name_new")
 
     def test_activity_delete(self):
         response = self.client.delete(
@@ -91,8 +95,20 @@ class ActivityTestCase(APITestCase):
             HTTP_AUTHORIZATION=f"Bearer {self.token}",
             format="json",
         )
-        self.assertEqual(response.status_code, HTTPStatus.OK)
+        self.assertEqual(response.status_code, HTTPStatus.NO_CONTENT)
         self.assertEqual(models.Activity.objects.count(), 1)
+
+    def test_activity_put_not_found(self):
+        response = self.client.put(
+            reverse("homepage:activities"),
+            data={
+                "name": "test_name_new",
+                "icon": {"name": "test_icon_name", "color": "test_icon_color"},
+            },
+            HTTP_AUTHORIZATION=f"Bearer {self.token}",
+            format="json",
+        )
+        self.assertEqual(response.status_code, HTTPStatus.NOT_FOUND)
 
 
 class TagTestCase(APITestCase):
@@ -170,3 +186,12 @@ class TagTestCase(APITestCase):
         )
         self.assertEqual(response.status_code, HTTPStatus.NO_CONTENT)
         self.assertEqual(models.Tag.objects.count(), tag_count - 1)
+
+    def test_tag_put_not_found(self):
+        response = self.client.put(
+            reverse("homepage:tags"),
+            data={"name": "test_name_new"},
+            HTTP_AUTHORIZATION=f"Bearer {self.token}",
+            format="json",
+        )
+        self.assertEqual(response.status_code, HTTPStatus.NOT_FOUND)
