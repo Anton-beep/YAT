@@ -44,3 +44,16 @@ class Note(models.Model):
 
     def __str__(self):
         return f"Примечание: {self.name}"
+
+
+class Factor(models.Model):
+    name = models.CharField(max_length=100)
+    visible = models.BooleanField(default=True)
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        related_name="factors",
+        on_delete=models.CASCADE,
+    )
+
+    def __str__(self):
+        return f"Фактор: {self.name}"

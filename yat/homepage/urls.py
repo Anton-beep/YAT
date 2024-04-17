@@ -41,4 +41,16 @@ urlpatterns = [
         ),
         name="notes",
     ),
+    path(
+        "factors/",
+        views.FactorViewSet.as_view(
+            {
+                "get": "list",
+                "post": "create",
+                "put": "update",
+                "delete": "destroy",
+            },
+        ),
+        name="factors",
+    ),
 ]

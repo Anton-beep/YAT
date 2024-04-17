@@ -34,3 +34,8 @@ class TagViewSet(UserContextViewSet):
 class NoteViewSet(UserContextViewSet):
     serializer_class = serializers.NoteSerializer
     permission_classes = [IsAuthenticated]
+
+
+class FactorViewSet(UserContextViewSet):
+    serializer_class = serializers.FactorSerializer
+    permission_classes = [IsAuthenticated]
