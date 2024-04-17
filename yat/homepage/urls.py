@@ -5,7 +5,6 @@ from homepage import views
 app_name = "homepage"
 
 urlpatterns = [
-    # path("activities/", views.ActivityAPIView.as_view(), name="activities"),
     path(
         "activities/",
         views.ActivityViewSet.as_view(

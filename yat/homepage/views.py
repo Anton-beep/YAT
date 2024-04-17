@@ -1,11 +1,7 @@
-from django.core.exceptions import ObjectDoesNotExist
-from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.response import Response
-from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet
 
-from homepage import models, serializers
+from homepage import serializers
 
 __all__ = []
 
@@ -15,8 +11,10 @@ class UserContextViewSet(ModelViewSet):
     lookup_field = "id"
 
     def get_queryset(self, *args, **kwargs):
-        self.kwargs["id"] = self.request.data.get("id", None)
-        return self.serializer_class.Meta.model.objects.filter(user=self.request.user)
+        self.kwargs["id"] = self.request.data.get("id")
+        return self.serializer_class.Meta.model.objects.filter(
+            user=self.request.user,
+        )
 
     def get_serializer(self, *args, **kwargs):
         kwargs["context"] = {"request": self.request}
