@@ -41,11 +41,13 @@ class FactorTestCase(APITestCase):
         cls.factor1 = models.Factor.objects.create(
             user=cls.user,
             name="test_name1",
+            visible=True,
         )
 
         cls.factor2 = models.Factor.objects.create(
             user=cls.user,
             name="test_name2",
+            visible=True,
         )
 
     def test_factor_get(self):

@@ -71,4 +71,4 @@ class NoteSerializer(UserContextSerializer):
 class FactorSerializer(UserContextSerializer):
     class Meta:
         model = models.Factor
-        fields = ["id", "name"]
+        fields = ["id", "name", "visible"]
