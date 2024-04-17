@@ -28,6 +28,7 @@ function App() {
             <Route path="/dashboard" element={<Dashboard/>}/>
 
             <Route path="/dev" element={<TaskList created={['123', '123']} finished={['123', '123']} done="not done" />}/>
+            <Route path="/dev2" element={<EventList created={['123', '123']} finished={['123', '123']} />}/>
         </Routes>
     </Router>
 )

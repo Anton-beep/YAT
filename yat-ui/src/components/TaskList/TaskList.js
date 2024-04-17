@@ -9,6 +9,8 @@ import {ReactComponent as Star} from "../../icons/star.svg";
 
 import Auth from '../../pkg/auth';
 import '../../App.css';
+import TaskForm from "../TaskForm/TaskForm";
+import TaskFinish from "../TaskFinish/TaskFinish";
 
 const iconComponents = {
     "done": SquareCheck,
@@ -21,6 +23,7 @@ const TaskList = ({created, finished, done}) => {
     const [tags, setTags] = useState([]);
     const [selectedTags, setSelectedTags] = useState([]);
     const [isFilterOpen, setIsFilterOpen] = useState(false);
+    const [isFinished, setFinished] = useState(false);
     const [factors, setFactors] = useState({});
 
     const handleTagCheckChange = (tagId) => {
@@ -30,7 +33,7 @@ const TaskList = ({created, finished, done}) => {
     };
 
     const [isCardOpen, setIsCardOpen] = useState(false);
-    const [selectedEvent, setSelectedEvent] = useState(null);
+    const [selectedTask, setSelectedTask] = useState(null);
 
     const [isFormOpen, setIsFormOpen] = useState(false);
 
@@ -128,7 +131,32 @@ const TaskList = ({created, finished, done}) => {
                     }
                 }}
             >
+                {selectedTask && (
+                    <>
+                        <h2>{selectedTask.name}</h2>
+                        <p>Дедлайн: {formatTime(selectedTask.deadline)}</p>
+                        <p>Статус: {selectedTask.status}</p>
+                        <p>{selectedTask.description}</p>
+                        {Boolean(selectedTask.finished) && <div>
+                            <p>Вермя начала: {formatTime(selectedTask.created)}</p>
+                            <p>Время конца: {formatTime(selectedTask.finished)}</p>
+                        </div>}
+                        <p>Теги: {selectedTask.tags.map(tagId => tags.find(tag => tag.id === tagId).name).join(', ')}</p>
+                        {selectedTask.factors.map((factor, index) => (
+                            <div key={index}>
+                                <label>{factors[factor.id]}: </label>
 
+                                <div className="progress" role="progressbar" aria-label="Basic example">
+                                    <div className="progress-bar" style={{width: `${(factor.value * 5 + 50)}%`}}>{factor.value}</div>
+                                </div>
+                            </div>
+                        ))}
+                        <p>Создано {formatTime(selectedTask.created)}</p>
+                        {!Boolean(selectedTask.finished) && <div>
+                            <button type="button" className="btn btn-primary" onClick={() => {setIsCardOpen(false); setFinished(true)}}>Завершить задачу</button>
+                        </div>}
+                    </>
+                )}
 
 
             </Modal>
@@ -144,7 +172,21 @@ const TaskList = ({created, finished, done}) => {
                     }
                 }}
             >
+                <TaskForm tags={tags} />
+            </Modal>
 
+            <Modal
+                isOpen={isFinished}
+                onRequestClose={() => setFinished(false)}
+                style={{
+                    content: {
+                        width: '40%',
+                        height: '80%',
+                        margin: 'auto',
+                    }
+                }}
+                >
+                <TaskFinish task={selectedTask} initialFactors={factors} />
             </Modal>
 
             <div className="header">
@@ -193,7 +235,7 @@ if (deadlineDate < currentDate) {
                         const deadlineColor = diffDays <= 1 ? 'red' : 'black';
                         return (
                             <div key={task.id} className="event-card" onClick={() => {
-                                setSelectedEvent(task);
+                                setSelectedTask(task);
                                 setIsCardOpen(true);
                             }}>
                                 <div className="text-with-icon">
@@ -223,7 +265,6 @@ if (deadlineDate < currentDate) {
                         )
                     })}
             </div>
-
         </div>
     )
 };

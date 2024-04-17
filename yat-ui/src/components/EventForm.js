@@ -4,7 +4,7 @@ import Auth from '../pkg/auth';
 
 function EventForm({tags = [], icons = {}, initialFactors = {}, activities = {}}) {
     const activitiesArray = Object.keys(activities).map((id) => ({id, name: activities[id]}));
-    const factorsArray = Object.keys(initialFactors).map((id) => ({id, name: activities[id], value: 0}));
+    const factorsArray = Object.keys(initialFactors).map((id) => ({id, name: initialFactors[id], value: 0}));
 
     const [selectedActivity, setSelectedActivity] = useState(activitiesArray[0].name);
     const updateSelection = (activityName) => {
@@ -39,10 +39,10 @@ function EventForm({tags = [], icons = {}, initialFactors = {}, activities = {}}
 
         Auth.axiosInstance.post('/api/v1/homepage/events', data)
             .then(response => {
-                console.log("OK");
+                window.location.reload();
             })
             .catch(error => {
-                console.log("NE OK");
+                console.log(error);
             });
     };
 
@@ -110,7 +110,7 @@ const handleDescriptionOnChange = (event) => {
             {Boolean(finished) && <FactorsComponent factors={factorsArray} factorValues={factorValues}
                                                     setFactorValues={setFactorValues}/>}
 
-            <button type="submit" className="btn btn-primary">Добавить</button>
+            <button type="submit"   className="btn btn-primary">Добавить</button>
         </form>
     </div>);
 }

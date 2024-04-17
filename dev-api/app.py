@@ -55,7 +55,7 @@ def events():
         }
 
 
-@app.route('/api/v1/homepage/tasks', methods=['GET', 'POST'])
+@app.route('/api/v1/homepage/tasks', methods=['GET', 'POST', 'PUT'])
 @cross_origin()
 def tasks():
     if request.method == "GET":
@@ -94,6 +94,11 @@ def tasks():
               ],
             }
     elif request.method == "POST":
+        print(request.json)
+        return {
+            "status": "OK"
+        }
+    elif request.method == "PUT":
         print(request.json)
         return {
             "status": "OK"
