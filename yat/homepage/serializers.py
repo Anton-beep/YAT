@@ -74,19 +74,14 @@ class ScoreSerializer(serializers.ModelSerializer):
         fields = ["factor", "value"]
 
 
-class TaskSerializer(UserContextSerializer):
+class SerializerWithTagsAndScores(UserContextSerializer):
     class Meta:
-        model = models.Task
-        fields = [
-            "id",
-            "name",
-            "description",
-            "tags",
-            "status",
-            "deadline",
-            "created",
-            "scores",
-        ]
+        fields = []
+
+    def __init__(self, *args, **kwargs):
+        assert "tags" in self.Meta.fields, "tags field is required"
+        assert "scores" in self.Meta.fields, "scores field is required"
+        super().__init__(*args, **kwargs)
 
     tags = serializers.PrimaryKeyRelatedField(
         queryset=models.Tag.objects.all(),
@@ -94,8 +89,6 @@ class TaskSerializer(UserContextSerializer):
         required=False,
     )
     scores = ScoreSerializer(many=True, required=False)
-    deadline = TimestampField(required=False)
-    created = TimestampField(required=False)
 
     def create(self, validated_data):
         scores_data = validated_data.pop('scores')
@@ -131,3 +124,21 @@ class TaskSerializer(UserContextSerializer):
             for score in instance.scores.all()
         ]
         return data
+
+
+class TaskSerializer(SerializerWithTagsAndScores):
+    class Meta:
+        model = models.Task
+        fields = [
+            "id",
+            "name",
+            "description",
+            "tags",
+            "status",
+            "deadline",
+            "created",
+            "scores",
+        ]
+
+    deadline = TimestampField(required=False)
+    created = TimestampField(required=False)
