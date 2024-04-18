@@ -9,6 +9,8 @@ import Homepage from './components/Homepage';
 import ForgotPassword from "./components/ForgotPassword/ForgotPassword";
 import Restoration from "./components/Restoration/Restoration";
 import Confirm from "./components/Confirm/Confirm";
+import Dashboard from './components/Dashboard/Dashboard';
+import Statistics from './components/Statistics/Statistics';
 
 import './bootstrap/bootstrap.min.css';
 import 'jquery';
@@ -16,6 +18,7 @@ import 'popper.js';
 import 'bootstrap/dist/js/bootstrap.min.js';
 
 import './App.css'
+import TaskList from "./components/TaskList/TaskList";
 
 function App() {
     return (
@@ -29,12 +32,11 @@ function App() {
             <Route path="/restoration/:token" element={<Restoration/>}/>
             <Route path="/register" element={<RegisterForm/>}/>
             <Route path="/secret" element={<SecretPage/>}/>
-            <Route path="/logout" element={<Logout/>}/>
-            <Route path="eventList/" element={<EventList created={['123', '123']} finished={['123', '123']}/>}/>
+            <Route path="/dashboard" element={<Dashboard/>}/>
+            <Route path="/statistics" element={<Statistics/>}/>
         </Routes>
     </Router>
-)
-    ;
+);
 }
 
 export default App;

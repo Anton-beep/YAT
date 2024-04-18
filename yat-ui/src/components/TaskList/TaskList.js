@@ -1,30 +1,31 @@
 import React, {useEffect, useState} from 'react';
 import Modal from 'react-modal';
-import {ReactComponent as Bib} from '../icons/bib.svg';
-import {ReactComponent as Bob} from '../icons/bob.svg';
-import {ReactComponent as Star} from '../icons/star.svg';
-import {ReactComponent as Clock} from '../icons/clock.svg';
-import {ReactComponent as X} from '../icons/x-lg.svg';
-import EventForm from "./EventForm";
+import {ReactComponent as Square} from "../../icons/square.svg";
+import {ReactComponent as SquareCheck} from "../../icons/check-square.svg";
+import {ReactComponent as SquareX} from "../../icons/x-square.svg";
+import {ReactComponent as X} from "../../icons/x-lg.svg";
+import {ReactComponent as Clock} from "../../icons/clock.svg";
+import {ReactComponent as Star} from "../../icons/star.svg";
 
-import Auth from '../pkg/auth';
-import '../App.css';
-import {fireInputEvent} from "@testing-library/user-event/dist/keyboard/shared";
+import Auth from '../../pkg/auth';
+import '../../App.css';
+import TaskForm from "../TaskForm/TaskForm";
+import TaskFinish from "../TaskFinish/TaskFinish";
 
 const iconComponents = {
-    "bib.svg": Bib,
-    "bob.svg": Bob,
+    "done": SquareCheck,
+    "not done": Square,
+    "failed": SquareX,
 };
 
-
-const EventsList = ({created, finished}) => {
-    const [events, setEvents] = useState([]);
-    const [activities, setActivities] = useState({});
+const TaskList = ({created, finished, done}) => {
+    const [tasks, setTasks] = useState([]);
     const [tags, setTags] = useState([]);
-    const [factors, setFactors] = useState({});
     const [selectedTags, setSelectedTags] = useState([]);
-
     const [isFilterOpen, setIsFilterOpen] = useState(false);
+    const [isFinished, setFinished] = useState(false);
+    const [factors, setFactors] = useState({});
+
     const handleTagCheckChange = (tagId) => {
         setTags(tags.map(tag => tag.id === tagId ? {...tag, checked: !tag.checked} : tag));
         setSelectedTags(tags.filter(tag => tag.checked).map(tag => tag.id));
@@ -32,48 +33,35 @@ const EventsList = ({created, finished}) => {
     };
 
     const [isCardOpen, setIsCardOpen] = useState(false);
-    const [selectedEvent, setSelectedEvent] = useState(null);
+    const [selectedTask, setSelectedTask] = useState(null);
 
     const [isFormOpen, setIsFormOpen] = useState(false);
 
     const formatTime = (timestamp) => {
-        const date = new Date(timestamp * 1000);
-        const day = date.getDate().toString().padStart(2, '0');
-        const month = (date.getMonth() + 1).toString().padStart(2, '0'); // +1 because getMonth() returns month index starting from 0
-        const year = date.getFullYear();
-        const hours = date.getHours().toString().padStart(2, '0');
-        const minutes = date.getMinutes().toString().padStart(2, '0');
-        return `${day}-${month}-${year} ${hours}:${minutes}`;
+    const date = new Date(timestamp * 1000);
+    const day = date.getDate().toString().padStart(2, '0');
+    const month = (date.getMonth() + 1).toString().padStart(2, '0'); // +1 because getMonth() returns month index starting from 0
+    const year = date.getFullYear();
+    const hours = date.getHours().toString().padStart(2, '0');
+    const minutes = date.getMinutes().toString().padStart(2, '0');
+    return `${day}-${month}-${year} ${hours}:${minutes}`;
     };
 
-
     useEffect(() => {
-        Auth.axiosInstance.get('/api/v1/homepage/events', {
-            params: {"created": created,
-            "finished": finished,
-            "tags": [],}
+        Auth.axiosInstance.get('/api/v1/homepage/tasks', {params: {
+                "created": created,
+                "finished": finished,
+                "tags": [],
+                "status": done,
+            }
         })
             .then(response => {
-                setEvents(response.data.events);
+                setTasks(response.data.tasks);
             })
             .catch(error => {
                 console.error(error);
             })
-    }, [created, finished]);
-
-    useEffect(() => {
-        Auth.axiosInstance.get('/api/v1/homepage/activities')
-            .then(response => {
-                const activities = response.data.activities.reduce((acc, activity) => ({
-                    ...acc,
-                    [activity.id]: activity.name,
-                }), {});
-                setActivities(activities);
-            })
-            .catch(error => {
-                console.error(error);
-            })
-    }, []);
+    }, [created, finished, done]);
 
     useEffect(() => {
         Auth.axiosInstance.get('/api/v1/homepage/tags')
@@ -144,16 +132,18 @@ const EventsList = ({created, finished}) => {
                     }
                 }}
             >
-                {selectedEvent && (
+                {selectedTask && (
                     <>
-                        <h2>{activities[selectedEvent.activity_id]}</h2>
-                        <p>{selectedEvent.description}</p>
-                        {Boolean(selectedEvent.finished) && <div>
-                            <p>Start Time: {formatTime(selectedEvent.created)}</p>
-                            <p>End Time: {formatTime(selectedEvent.finished)}</p>
+                        <h2>{selectedTask.name}</h2>
+                        <p>Дедлайн: {formatTime(selectedTask.deadline)}</p>
+                        <p>Статус: {selectedTask.status}</p>
+                        <p>{selectedTask.description}</p>
+                        {Boolean(selectedTask.finished) && <div>
+                            <p>Вермя начала: {formatTime(selectedTask.created)}</p>
+                            <p>Время конца: {formatTime(selectedTask.finished)}</p>
                         </div>}
-                        <p>Tags: {selectedEvent.tags.map(tagId => tags.find(tag => tag.id === tagId).name).join(', ')}</p>
-                        {selectedEvent.factors.map((factor, index) => (
+                        <p>Теги: {selectedTask.tags.map(tagId => tags.find(tag => tag.id === tagId).name).join(', ')}</p>
+                        {selectedTask.factors.map((factor, index) => (
                             <div key={index}>
                                 <label>{factors[factor.id]}: </label>
 
@@ -162,11 +152,14 @@ const EventsList = ({created, finished}) => {
                                 </div>
                             </div>
                         ))}
-                        {!Boolean(selectedEvent.finished) && <div>
-                            <button type="button" className="btn btn-primary">Начать событие</button>
-                            </div>}
+                        <p>Создано {formatTime(selectedTask.created)}</p>
+                        {!Boolean(selectedTask.finished) && <div>
+                            <button type="button" className="btn btn-primary" onClick={() => {setIsCardOpen(false); setFinished(true)}}>Завершить задачу</button>
+                        </div>}
                     </>
                 )}
+
+
             </Modal>
 
             <Modal
@@ -180,18 +173,28 @@ const EventsList = ({created, finished}) => {
                     }
                 }}
             >
-                <EventForm
-                    tags={tags}
-                    initialFactors={factors}
-                    activities={activities}
-                />
+                <TaskForm tags={tags} />
+            </Modal>
+
+            <Modal
+                isOpen={isFinished}
+                onRequestClose={() => setFinished(false)}
+                style={{
+                    content: {
+                        width: '40%',
+                        height: '80%',
+                        margin: 'auto',
+                    }
+                }}
+                >
+                <TaskFinish task={selectedTask} initialFactors={factors} />
             </Modal>
 
             <div className="header">
-                <h1>События</h1>
+                <h1>Текущие задачи</h1>
             </div>
             <div className="buttons">
-                <button className="button-green button-gap" onClick={() => setIsFormOpen(true)}>Добавить новое событие
+                <button className="button-green button-gap" onClick={() => setIsFormOpen(true)}>Добавить новую задачу
                 </button>
                 <button className="button-orange button-gap" onClick={() => setIsFilterOpen(true)}>Фильтр по тегам
                 </button>
@@ -209,28 +212,42 @@ const EventsList = ({created, finished}) => {
             </div>
 
             <div className="event-container">
+                {tasks
+                    .filter(task => selectedTags.length === 0 || selectedTags
+                        .every(tagId => task.tags.includes(tagId)))
+                    .map((task, index) => {
+                        const currentDate = new Date();
+const deadlineDate = new Date(task.deadline * 1000); // Convert to milliseconds as JavaScript Date object takes time in milliseconds
 
-                {events
-                    .filter(event => selectedTags.length === 0 || selectedTags
-                        .every(tagId => event.tags.includes(tagId)))
-                    .map((event, index) => {
-                        const IconComponent = iconComponents[event.icon.name];
-                        const factorMean = event.factors.reduce((sum, factor) => sum + factor.value, 0) / event.factors.length;
+let IconComponent;
+if (deadlineDate < currentDate) {
+    IconComponent = iconComponents["failed"];
+} else {
+    IconComponent = iconComponents[task.status] || Star;
+}
+                        const factorMean = task.factors.reduce((sum, factor) => sum + factor.value, 0) / task.factors.length;
                         const factorColor = factorMean > 5 ? 'green' : factorMean < -5 ? 'red' : 'black';
+
+                        const oneDay = 24 * 60 * 60 * 1000; // milliseconds in a day
+
+                        const diffTime = Math.abs(deadlineDate - currentDate);
+                        const diffDays = Math.ceil(diffTime / oneDay);
+
+                        const deadlineColor = diffDays <= 1 ? 'red' : 'black';
                         return (
-                            <div key={event.id} className="event-card" onClick={() => {
-                                setSelectedEvent(event);
+                            <div key={task.id} className="event-card" onClick={() => {
+                                setSelectedTask(task);
                                 setIsCardOpen(true);
                             }}>
                                 <div className="text-with-icon">
-                                    <IconComponent fill={event.icon.color}/>
-                                    <h2>{activities[event.activity_id]}</h2>
+                                    <IconComponent />
+                                    <h2>{task.name}</h2>
                                 </div>
 
-                                {Boolean(event.finished) && <div>
+                                {Boolean(task.finished) && <div>
                                     <div className="text-with-icon">
-                                        <Clock/>
-                                        <span>{formatTime(event.created)} - {formatTime(event.finished)}</span>
+                                        <Clock />
+                                        <span>{formatTime(task.deadline)}</span>
                                     </div>
 
                                     <div className="text-with-icon factor-right">
@@ -238,19 +255,19 @@ const EventsList = ({created, finished}) => {
                                         <span style={{color: factorColor}}>{factorMean}</span>
                                     </div>
                                 </div>}
-                                {!Boolean(event.finished) && <div>
+
+                                {!Boolean(task.finished) && <div>
                                     <div className="text-with-icon">
-                                        <Clock/>
-                                        <span>{formatTime(event.created)}</span>
+                                        <Clock fill={deadlineColor}/>
+                                        <span style={{color: deadlineColor}}>{formatTime(task.deadline)}</span>
                                     </div>
                                 </div>}
                             </div>
                         )
                     })}
             </div>
-
         </div>
     )
 };
 
-export default EventsList;
+export default TaskList;
