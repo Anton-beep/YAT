@@ -42,7 +42,8 @@ const Statistics = () => {
     }, [factorNames, factorValues]);
 
 
-    return (<Layout>
+    return (
+        <Layout>
         <h1 style={{marginLeft: "25px"}}>Статистика</h1>
         <MyRadarChart data={radarData} keys={["value"]} indexBy="name"/>
     </Layout>);
