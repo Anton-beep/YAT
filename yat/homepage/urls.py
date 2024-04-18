@@ -53,4 +53,16 @@ urlpatterns = [
         ),
         name="factors",
     ),
+    path(
+        "tasks/",
+        views.TaskViewSet.as_view(
+            {
+                "get": "list",
+                "post": "create",
+                "put": "update",
+                "delete": "destroy",
+            },
+        ),
+        name="tasks",
+    ),
 ]

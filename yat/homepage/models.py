@@ -57,3 +57,41 @@ class Factor(models.Model):
 
     def __str__(self):
         return f"Фактор: {self.name}"
+
+
+class Score(models.Model):
+    value = models.IntegerField()
+    factor = models.ForeignKey(
+        Factor,
+        related_name="scores",
+        on_delete=models.CASCADE,
+    )
+
+    def __str__(self):
+        return f"Оценка фактора {self.factor.name}: {self.value}"
+
+
+class Task(models.Model):
+    class Statuses(models.TextChoices):
+        DONE = "done", "Выполнена"
+        NOT_DONE = "not done", "Не выполнена"
+
+    name = models.CharField(max_length=100)
+    description = models.TextField()
+    status = models.CharField(
+        max_length=10,
+        choices=Statuses,
+        default=Statuses.NOT_DONE,
+    )
+    created = models.DateTimeField(auto_now=True)
+    deadline = models.DateTimeField()
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        related_name="tasks",
+        on_delete=models.CASCADE,
+    )
+    tags = models.ManyToManyField(Tag, related_name="tasks")
+    scores = models.ManyToManyField(Score, related_name="tasks")
+
+    def __str__(self):
+        return f"Задача: {self.name}"
