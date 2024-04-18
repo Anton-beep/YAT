@@ -95,3 +95,21 @@ class Task(models.Model):
 
     def __str__(self):
         return f"Задача: {self.name}"
+
+
+class Event(models.Model):
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        related_name="events",
+        on_delete=models.CASCADE,
+    )
+    description = models.TextField()
+    tags = models.ManyToManyField(Tag, related_name="events")
+    activity = models.ForeignKey(
+        Activity,
+        related_name="events",
+        on_delete=models.CASCADE,
+    )
+    scores = models.ManyToManyField(Score, related_name="events")
+    created = models.DateTimeField(auto_now=True)
+    finished = models.DateTimeField(blank=True, null=True)

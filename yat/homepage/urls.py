@@ -65,4 +65,16 @@ urlpatterns = [
         ),
         name="tasks",
     ),
+    path(
+        "events/",
+        views.EventViewSet.as_view(
+            {
+                "get": "list",
+                "post": "create",
+                "put": "update",
+                "delete": "destroy",
+            },
+        ),
+        name="events",
+    )
 ]
