@@ -48,11 +48,12 @@ const TaskList = ({created, finished, done}) => {
     };
 
     useEffect(() => {
-        Auth.axiosInstance.get('/api/v1/homepage/tasks', {
-            "created": created,
-            "finished": finished,
-            "tags": [],
-            "status": done,
+        Auth.axiosInstance.get('/api/v1/homepage/tasks', {params: {
+                "created": created,
+                "finished": finished,
+                "tags": [],
+                "status": done,
+            }
         })
             .then(response => {
                 setTasks(response.data.tasks);
@@ -240,7 +241,7 @@ if (deadlineDate < currentDate) {
                             }}>
                                 <div className="text-with-icon">
                                     <IconComponent />
-                                    {task.name}
+                                    <h2>{task.name}</h2>
                                 </div>
 
                                 {Boolean(task.finished) && <div>

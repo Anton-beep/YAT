@@ -38,16 +38,20 @@ const EventsList = ({created, finished}) => {
 
     const formatTime = (timestamp) => {
         const date = new Date(timestamp * 1000);
+        const day = date.getDate().toString().padStart(2, '0');
+        const month = (date.getMonth() + 1).toString().padStart(2, '0'); // +1 because getMonth() returns month index starting from 0
+        const year = date.getFullYear();
         const hours = date.getHours().toString().padStart(2, '0');
         const minutes = date.getMinutes().toString().padStart(2, '0');
-        return `${hours}:${minutes}`;
+        return `${day}-${month}-${year} ${hours}:${minutes}`;
     };
+
 
     useEffect(() => {
         Auth.axiosInstance.get('/api/v1/homepage/events', {
-            "created": created,
+            params: {"created": created,
             "finished": finished,
-            "tags": [],
+            "tags": [],}
         })
             .then(response => {
                 setEvents(response.data.events);

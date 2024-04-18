@@ -67,7 +67,7 @@ def tasks():
                   "description": "description1",
                   "tags": [1],
                   "status": "not done",
-                  "deadline": "1713387598",
+                  "deadline": "1713587598",
                   "factors": [],
                   "created": "1712605504"
                 },
@@ -105,7 +105,7 @@ def tasks():
         }
 
 
-@app.route('/api/v1/homepage/tags', methods=['GET'])
+@app.route('/api/v1/homepage/tags', methods=['GET', 'POST'])
 @cross_origin()
 def tags():
     if request.method == "GET":
@@ -128,26 +128,37 @@ def tags():
                 },
             ]
         }
+    elif request.method == "POST":
+        print(request.json)
+        return {
+            "status": "OK"
+        }
 
 
-@app.route('/api/v1/homepage/factors', methods=['GET'])
+@app.route('/api/v1/homepage/factors', methods=['GET', 'POST'])
 @cross_origin()
 def factors():
-    return {
-        "factors":
-            [
-                {
-                    "id": 1,
-                    "name": "factor1",
-                    "visible": True,
-                },
-                {
-                    "id": 2,
-                    "name": "factor2",
-                    "visible": True,
-                }
-            ]
-    }
+    if request.method == "GET":
+        return {
+            "factors":
+                [
+                    {
+                        "id": 1,
+                        "name": "factor1",
+                        "visible": True,
+                    },
+                    {
+                        "id": 2,
+                        "name": "factor2",
+                        "visible": True,
+                    }
+                ]
+        }
+    elif request.method == "POST":
+        print(request.json)
+        return {
+            "status": "OK"
+        }
 
 
 @app.route('/api/v1/homepage/activities', methods=['GET'])

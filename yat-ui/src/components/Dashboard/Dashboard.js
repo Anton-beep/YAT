@@ -1,67 +1,100 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './Dashboard.css';
 import Layout from "./../Layout";
 import EventsList from "../EventList";
+import TasList from "../TaskList/TaskList";
+import AddTagForm from "../AddTagForm/AddTagForm";
+import AddFactorForm from "../AddFactorForm/AddFactorForm";
 import { Chart } from "react-google-charts";
+import {ReactComponent as Plus} from "../../icons/plus-lg.svg";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import {createBrowserRouter} from "react-router-dom";
+import Modal from "react-modal";
 
-const Dashboard = ({created, finished}) => {
-    const [startDate, setStartDate] = useState(new Date());
-    const data = [
-        ['Task', 'Hours per Day'],
-        ['Work',     11],
-        ['Eat',      2],
-        ['Commute',  2],
-        ['Watch TV', 2],
-        ['Sleep',    7]
-    ];
+const Dashboard = () => {
+    const [startDate, setStartDate] = useState(localStorage.getItem('date') ? new Date(localStorage.getItem('date')) : new Date());
+    const [addTagFormOpen, setAddTagFormOpen] = useState(false);
+    const [addFactorFormOpen, setAddFactorFormOpen] = useState(false);
 
-    const timelineData = [
-        ['Term', 'Start', 'End'],
-        ['Term 1', new Date(2022, 0, 1), new Date(2022, 0, 31)],
-        ['Term 2', new Date(2022, 1, 1), new Date(2022, 1, 28)],
-    ];
+    useEffect(() => {
+        localStorage.setItem('date', startDate.toISOString());
+    }, [startDate]);
+
+    const resetDate = () => {
+        setStartDate(new Date());
+        window.location.reload();
+    };
 
     return (
         <Layout>
-            <div className="dashboard-container">
 
+            <Modal
+                isOpen={addTagFormOpen}
+                onRequestClose={() => setAddTagFormOpen(false)}
+                style={{
+                    content: {
+                        width: '25%',
+                        height: '50%',
+                        margin: 'auto',
+                    }
+                }}
+            >
+                <AddTagForm/>
+            </Modal>
 
-                <div className="left-side">
-                    {/*<DatePicker selected={startDate} onChange={(date) => setStartDate(date)} />*/}
-                    <div className="event-list-container">
-                        <EventsList />
-                        <EventsList />
-                    </div>
+            <Modal
+                isOpen={addFactorFormOpen}
+                onRequestClose={() => setAddFactorFormOpen(false)}
+                style={{
+                    content: {
+                        width: '35%',
+                        height: '50%',
+                        margin: 'auto',
+                    }
+                }}
+            >
+                <AddFactorForm/>
+            </Modal>
+
+            <div className="row">
+
+                <div className="col-6" style={{marginLeft: "10px"}}>
+                    Дата{" "}
+                    <DatePicker selected={startDate} onChange={date => {
+                        setStartDate(date);
+                        window.location.reload();
+                    }}/>
+                    {startDate.toDateString() !== new Date().toDateString() &&
+                        <button className="button-light-blue" style={{marginLeft: "10px"}} onClick={resetDate}>Сбросить
+                            дату</button>
+                    }
                 </div>
-                <div className="right-side">
-                    <Chart
-                        width={'500px'}
-                        height={'500px'}
-                        chartType="PieChart"
-                        loader={<div>Loading Chart</div>}
-                        data={data}
-                        options={{
-                            title: 'My Daily Activities',
-                            pieHole: 0.4,
-                        }}
-                        rootProps={{ 'data-testid': '1' }}
-                    />
+
+                <div className="col-5">
+                    <button className="button-light-blue button-gap" style={{marginLeft: "10px"}}
+                            onClick={() => {setAddTagFormOpen(true)}}>
+                        <Plus /> Добавить тег
+                    </button>
+                    <button className="button-light-blue button-gap" style={{marginLeft: "10px"}}
+                            onClick={() => {setAddFactorFormOpen(true)}}>
+                        <Plus/> Добавить фактор
+                    </button>
+                </div>
+
+            </div>
+
+
+            <div className="row">
+                <div className="col-6">
+                    <EventsList created={Math.floor(startDate.getTime() / 1000)}
+                                finished={Math.floor(startDate.getTime() / 1000)}/>
+                </div>
+                <div className="col-6">
+                    <TasList created={Math.floor(startDate.getTime() / 1000)}
+                             finished={Math.floor(startDate.getTime() / 1000)}/>
                 </div>
             </div>
-            <Chart
-                style={{marginLeft: '10px'}}
-                width={'90%'}
-                height={'400px'}
-                chartType="Timeline"
-                loader={<div>Loading Timeline</div>}
-                data={timelineData}
-                options={{
-                    showRowNumber: true,
-                }}
-                rootProps={{ 'data-testid': '2' }}
-            />
         </Layout>
     );
 };
