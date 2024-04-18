@@ -98,12 +98,14 @@ class Task(models.Model):
 
 
 class Event(models.Model):
+    description = models.TextField()
+    created = models.DateTimeField(auto_now=True)
+    finished = models.DateTimeField(blank=True, null=True)
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         related_name="events",
         on_delete=models.CASCADE,
     )
-    description = models.TextField()
     tags = models.ManyToManyField(Tag, related_name="events")
     activity = models.ForeignKey(
         Activity,
@@ -111,5 +113,6 @@ class Event(models.Model):
         on_delete=models.CASCADE,
     )
     scores = models.ManyToManyField(Score, related_name="events")
-    created = models.DateTimeField(auto_now=True)
-    finished = models.DateTimeField(blank=True, null=True)
+
+    def __str__(self):
+        return f"Событие: {self.description}"

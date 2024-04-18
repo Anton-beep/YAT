@@ -76,5 +76,5 @@ urlpatterns = [
             },
         ),
         name="events",
-    )
+    ),
 ]

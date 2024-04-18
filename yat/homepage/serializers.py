@@ -35,9 +35,9 @@ class ActivitySerializer(UserContextSerializer):
         return super().to_internal_value(data)
 
     def update(
-            self,
-            instance: models.Activity,
-            validated_data: dict[str, str],
+        self,
+        instance: models.Activity,
+        validated_data: dict[str, str],
     ):
         instance.icon_name = validated_data.get(
             "icon_name",
@@ -78,11 +78,6 @@ class SerializerWithTagsAndScores(UserContextSerializer):
     class Meta:
         fields = []
 
-    def __init__(self, *args, **kwargs):
-        assert "tags" in self.Meta.fields, "tags field is required"
-        assert "scores" in self.Meta.fields, "scores field is required"
-        super().__init__(*args, **kwargs)
-
     tags = serializers.PrimaryKeyRelatedField(
         queryset=models.Tag.objects.all(),
         many=True,
@@ -90,11 +85,17 @@ class SerializerWithTagsAndScores(UserContextSerializer):
     )
     scores = ScoreSerializer(many=True, required=False)
 
+    def __init__(self, *args, **kwargs):
+        assert "tags" in self.Meta.fields, "tags field is required"
+        assert "scores" in self.Meta.fields, "scores field is required"
+        super().__init__(*args, **kwargs)
+
     def to_internal_value(self, data):
         factors = data.pop("factors", [])
         data["scores"] = factors
         for el in data["scores"]:
             el["factor"] = el.pop("id")
+
         return super().to_internal_value(data)
 
     def to_representation(self, instance):
@@ -124,7 +125,7 @@ class TaskSerializer(SerializerWithTagsAndScores):
     created = TimestampField(required=False)
 
     def create(self, validated_data):
-        scores_data = validated_data.pop('scores')
+        scores_data = validated_data.pop("scores")
         task = super().create(validated_data)
         for score_data in scores_data:
             score, created = models.Score.objects.get_or_create(**score_data)
@@ -133,7 +134,7 @@ class TaskSerializer(SerializerWithTagsAndScores):
         return task
 
     def update(self, instance, validated_data):
-        scores_data = validated_data.pop('scores')
+        scores_data = validated_data.pop("scores")
         task = super().update(instance, validated_data)
         task.scores.set([])
         for score_data in scores_data:
@@ -165,14 +166,14 @@ class EventSerializer(SerializerWithTagsAndScores):
         return data
 
     def to_internal_value(self, data):
-        #data = dict(data)
         activity_id = data.pop("activity_id", None)
         if activity_id is not None:
             data["activity"] = activity_id
+
         return super().to_internal_value(data)
 
     def create(self, validated_data):
-        scores_data = validated_data.pop('scores')
+        scores_data = validated_data.pop("scores")
         event = super().create(validated_data)
         for score_data in scores_data:
             score, created = models.Score.objects.get_or_create(**score_data)
@@ -181,7 +182,7 @@ class EventSerializer(SerializerWithTagsAndScores):
         return event
 
     def update(self, instance, validated_data):
-        scores_data = validated_data.pop('scores')
+        scores_data = validated_data.pop("scores")
         event = super().update(instance, validated_data)
         event.scores.set([])
         for score_data in scores_data:

@@ -87,7 +87,10 @@ class EventTestCase(APITestCase):
         self.assertEqual(response.status_code, HTTPStatus.OK)
         self.assertEqual(event_count, len(response.data))
 
-        self.assertEqual(response.data[0]["description"], self.event.description)
+        self.assertEqual(
+            response.data[0]["description"],
+            self.event.description,
+        )
         self.assertEqual(response.data[0]["tags"][0], self.tag1.id)
         self.assertEqual(response.data[0]["factors"][0]["id"], self.factor1.id)
         self.assertEqual(response.data[0]["activity_id"], self.activity1.id)
@@ -151,5 +154,6 @@ class EventTestCase(APITestCase):
         )
         self.assertEqual(response.status_code, HTTPStatus.NO_CONTENT)
         self.assertEqual(event_count - 1, models.Event.objects.count())
-        self.assertFalse(models.Event.objects.filter(id=self.event.id).exists())
-
+        self.assertFalse(
+            models.Event.objects.filter(id=self.event.id).exists(),
+        )
