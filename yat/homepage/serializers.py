@@ -8,10 +8,8 @@ __all__ = []
 
 class UserContextSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
-        return self.Meta.model.objects.create(
-            user=self.context["request"].user,
-            **validated_data,
-        )
+        validated_data["user"] = self.context["request"].user
+        return super().create(validated_data)
 
 
 class ActivitySerializer(UserContextSerializer):
@@ -73,12 +71,7 @@ class FactorSerializer(UserContextSerializer):
 class ScoreSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Score
-        fields = ["id", "value"]
-
-    id = serializers.IntegerField(required=False)
-
-    def update(self, instance, validated_data):
-        return super().update(instance, validated_data)
+        fields = ["factor", "value"]
 
 
 class TaskSerializer(UserContextSerializer):
@@ -91,48 +84,50 @@ class TaskSerializer(UserContextSerializer):
             "tags",
             "status",
             "deadline",
-            "factors",
             "created",
             "scores",
         ]
 
-    scores = serializers.SerializerMethodField()
-    factors = ScoreSerializer(many=True, required=False)
+    tags = serializers.PrimaryKeyRelatedField(
+        queryset=models.Tag.objects.all(),
+        many=True,
+        required=False,
+    )
+    scores = ScoreSerializer(many=True, required=False)
     deadline = TimestampField(required=False)
     created = TimestampField(required=False)
 
-    @staticmethod
-    def get_scores(obj):
-        return [
-            {"id": score.factor.id, "value": score.value}
-            for score in obj.scores.all()
-        ]
+    def create(self, validated_data):
+        scores_data = validated_data.pop('scores')
+        task = super().create(validated_data)
+        for score_data in scores_data:
+            score, created = models.Score.objects.get_or_create(**score_data)
+            score.tasks.add(task)
+
+        return task
 
     def update(self, instance, validated_data):
-        tags = validated_data.pop("tags", [])
-        factors = validated_data.pop("factors", [])
+        scores_data = validated_data.pop('scores')
         task = super().update(instance, validated_data)
-        task.tags.set(tags)
         task.scores.set([])
-        for factor in factors:
-            score, created = models.Score.objects.get_or_create(
-                factor_id=factor["id"],
-                value=factor["value"],
-            )
+        for score_data in scores_data:
+            score, created = models.Score.objects.get_or_create(**score_data)
             score.tasks.add(task)
 
         return task
 
-    def create(self, validated_data):
-        tags = validated_data.pop("tags", [])
-        factors = validated_data.pop("factors", [])
-        task = super().create(validated_data)
-        task.tags.set(tags)
-        for factor in factors:
-            score, created = models.Score.objects.get_or_create(
-                factor_id=factor["id"],
-                value=factor["value"],
-            )
-            score.tasks.add(task)
+    def to_internal_value(self, data):
+        factors = data.pop("factors", [])
+        data["scores"] = factors
+        for el in data["scores"]:
+            el["factor"] = el.pop("id")
+        data = super().to_internal_value(data)
+        return data
 
-        return task
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        data["factors"] = [
+            {"id": score.factor.id, "value": score.value}
+            for score in instance.scores.all()
+        ]
+        return data

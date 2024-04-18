@@ -85,6 +85,14 @@ class TaskTestCase(APITestCase):
         self.assertEqual(response.status_code, HTTPStatus.OK)
         self.assertEqual(task_count, len(response.data))
 
+        self.assertEqual(response.data[0]["name"], self.task1.name)
+        self.assertEqual(response.data[0]["description"], self.task1.description)
+        self.assertEqual(response.data[0]["status"], self.task1.status)
+        self.assertEqual(response.data[0]["deadline"], str(self.task1.deadline.timestamp()).split(".")[0])
+        self.assertEqual(response.data[0]["tags"][0], self.tag1.id)
+        self.assertEqual(response.data[0]["factors"][0]["id"], self.factor1.id)
+        self.assertEqual(response.data[0]["factors"][0]["value"], self.score1.value)
+
     def test_task_post(self):
         task_count = models.Task.objects.count()
         time_now = datetime.datetime.now().replace(microsecond=0)
@@ -119,6 +127,7 @@ class TaskTestCase(APITestCase):
         self.assertEqual(created_task.status, models.Task.Statuses.NOT_DONE)
         self.assertEqual(created_task.deadline, timezone.make_aware(time_now))
         self.assertEqual(created_task.tags.first().id, self.tag1.id)
+        bib = created_task.scores.all()
         self.assertEqual(
             created_task.scores.first().factor.id, self.factor1.id,
         )
