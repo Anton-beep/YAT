@@ -7,6 +7,7 @@ import Logout from './components/Logout';
 import EventList from "./components/EventList";
 import Homepage from './components/Homepage';
 import Dashboard from './components/Dashboard/Dashboard';
+import Statistics from './components/Statistics/Statistics';
 
 import './bootstrap/bootstrap.min.css';
 import 'jquery';
@@ -18,21 +19,19 @@ import TaskList from "./components/TaskList/TaskList";
 
 function App() {
     return (
-    <Router>
-        <Routes>
-            <Route path="/" element={<Homepage/>}/>
-            <Route path="/login" element={<LoginForm/>}/>
-            <Route path="/register" element={<RegisterForm/>}/>
-            <Route path="/secret" element={<SecretPage/>}/>
-            <Route path="/logout" element={<Logout/>} />
-            <Route path="/dashboard" element={<Dashboard/>}/>
-
-            <Route path="/dev" element={<TaskList created={['123', '123']} finished={['123', '123']} done="not done" />}/>
-            <Route path="/dev2" element={<EventList created={['123', '123']} finished={['123', '123']} />}/>
-        </Routes>
-    </Router>
-)
-    ;
+        <Router>
+            <Routes>
+                <Route path="/" element={<Homepage/>}/>
+                <Route path="/login" element={<LoginForm/>}/>
+                <Route path="/register" element={<RegisterForm/>}/>
+                <Route path="/secret" element={<SecretPage/>}/>
+                <Route path="/logout" element={<Logout/>}/>
+                <Route path="/dashboard" element={<Dashboard/>}/>
+                <Route path="/statistics" element={<Statistics/>}/>
+            </Routes>
+        </Router>
+    )
+        ;
 }
 
 export default App;
