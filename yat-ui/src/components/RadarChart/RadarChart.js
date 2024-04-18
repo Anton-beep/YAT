@@ -22,12 +22,12 @@ const MyRadarChart = ({ data, keys, indexBy }) => {
                 dotBorderWidth={2}
                 dotBorderColor={{ from: 'color' }}
                 enableDotLabel={true}
-                dotLabel={(datum) => `${datum.value - 10}`} // Custom label
+                dotLabel={(datum) => `${datum.value - 10}`}
                 dotLabelYOffset={-12}
                 colors={() => 'lightblue'}
                 fillOpacity={0.25}
                 blendMode="multiply"
-                animate={true}
+                animate={false}
                 motionConfig="wobbly"
                 isInteractive={true}
             />

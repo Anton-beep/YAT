@@ -151,6 +151,21 @@ def factors():
                         "id": 2,
                         "name": "factor2",
                         "visible": True,
+                    },
+                    {
+                        "id": 3,
+                        "name": "factor3",
+                        "visible": True,
+                    },
+                    {
+                        "id": 4,
+                        "name": "factor4",
+                        "visible": True,
+                    },
+                    {
+                        "id": 5,
+                        "name": "factor5",
+                        "visible": True,
                     }
                 ]
         }
@@ -159,6 +174,24 @@ def factors():
         return {
             "status": "OK"
         }
+
+
+@app.route('/api/v1/statistics/wheel', methods=['GET'])
+@cross_origin()
+def wheel():
+    return {
+        'factors': [
+            {
+                1: 5
+            },
+            {
+                2: -3,
+            },
+            {3: 8},
+            {4: 2},
+            {5: 0},
+        ],
+    }
 
 
 @app.route('/api/v1/homepage/activities', methods=['GET'])

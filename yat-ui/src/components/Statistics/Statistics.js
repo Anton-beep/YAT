@@ -1,43 +1,51 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import Layout from "../Layout";
 import MyRadarChart from "../RadarChart/RadarChart";
+import Auth from "../../pkg/auth";
 
 const Statistics = () => {
-    const data = [
-        {
-            taste: "fruity",
-            chardonay: -3 + 10
-        },
-        {
-            taste: "bitter",
-            chardonay: 8 + 10
-        },
-        {
-            taste: "heavy",
-            chardonay: 0 + 10
-        },
-        {
-            taste: "strong",
-            chardonay: 5 + 10
-        },
-        {
-            taste: "sunny",
-            chardonay: 4 + 10
-        }
-    ];
+    const [factorNames, setFactorNames] = useState({});
+    const [factorValues, setFactorValues] = useState({});
+    const [radarData, setRadarData] = useState({});
 
-    const keys = ["chardonay"];
-    const indexBy = "taste";
+    useEffect(() => {
+        Auth.axiosInstance.get('/api/v1/homepage/factors')
+            .then(response => {
+                const new_factors = response.data.factors.reduce((acc, factor) => ({
+                    ...acc, [factor.id]: factor.name,
+                }), {});
+                setFactorNames(new_factors);
+            })
+            .catch(error => {
+                console.error(error);
+            })
+    }, []);
+
+    useEffect(() => {
+        Auth.axiosInstance.get('/api/v1/statistics/wheel')
+            .then(response => {
+                const new_factors = response.data.factors.reduce((acc, factor) => {
+                    const [key, value] = Object.entries(factor)[0];
+                    return {...acc, [key]: value + 10};
+                }, {});
+                setFactorValues(new_factors);
+            })
+            .catch(error => {
+                console.log(error);
+            })
+    }, []);
+
+    useEffect(() => {
+        setRadarData(Object.keys(factorNames).map(key => ({
+            name: factorNames[key], value: factorValues[key]
+        })));
+    }, [factorNames, factorValues]);
 
 
-    return (
-        <Layout>
-            <h1 style={{marginLeft: "25px"}}>Статистика</h1>
-
-            <MyRadarChart data={data} keys={keys} indexBy={indexBy} />
-
-        </Layout>
-    );
+    return (<Layout>
+        <h1 style={{marginLeft: "25px"}}>Статистика</h1>
+        <MyRadarChart data={radarData} keys={["value"]} indexBy="name"/>
+    </Layout>);
 }
 
 export default Statistics;
