@@ -33,7 +33,7 @@ INSTALLED_APPS = [
     "users",
     "corsheaders",
     "homepage.apps.HomepageConfig",
-    "statistics.apps.StatisticsConfig",
+    "stats.apps.StatisticsConfig",
 ]
 
 REST_FRAMEWORK = {
