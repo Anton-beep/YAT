@@ -84,7 +84,8 @@ class Task(models.Model):
         default=Statuses.NOT_DONE,
     )
     created = models.DateTimeField(auto_now_add=True)
-    deadline = models.DateTimeField()
+    deadline = models.DateTimeField(blank=True, null=True)
+    done = models.DateTimeField(blank=True, null=True)
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         related_name="tasks",

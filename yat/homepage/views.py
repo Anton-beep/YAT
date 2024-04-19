@@ -1,7 +1,6 @@
 import datetime
 
 from django.utils import timezone
-from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.viewsets import ModelViewSet
 
@@ -108,7 +107,6 @@ class TaskViewSet(WithCreatedViewSet, WithTagsViewSet):
     serializer_class = serializers.TaskSerializer
     permission_classes = [IsAuthenticated]
 
-    @action(detail=False, methods=["get"])
     def get_queryset(self, *args, **kwargs):
         if self.request.method == "GET":
             queryset = super().get_queryset(*args, **kwargs)
@@ -130,7 +128,6 @@ class EventViewSet(WithCreatedViewSet, WithTagsViewSet):
     serializer_class = serializers.EventSerializer
     permission_classes = [IsAuthenticated]
 
-    @action(detail=False, methods=["get"])
     def get_queryset(self, *args, **kwargs):
         if self.request.method == "GET":
             return filter_by_field_timestamp(
