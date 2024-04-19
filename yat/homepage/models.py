@@ -83,7 +83,7 @@ class Task(models.Model):
         choices=Statuses,
         default=Statuses.NOT_DONE,
     )
-    created = models.DateTimeField(auto_now=True)
+    created = models.DateTimeField(auto_now_add=True)
     deadline = models.DateTimeField()
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
@@ -99,7 +99,7 @@ class Task(models.Model):
 
 class Event(models.Model):
     description = models.TextField()
-    created = models.DateTimeField(auto_now=True)
+    created = models.DateTimeField(auto_now_add=True)
     finished = models.DateTimeField(blank=True, null=True)
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,

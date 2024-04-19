@@ -1,5 +1,6 @@
 import datetime
 from http import HTTPStatus
+import json
 
 from django.contrib.auth import get_user_model
 from django.urls import reverse
@@ -110,7 +111,7 @@ class TaskTestCase(APITestCase):
             data={
                 "name": "test_name_new",
                 "description": "test_description_new",
-                "status": "not done",
+                "status": "done",
                 "tags": [self.tag1.id],
                 "factors": [
                     {
@@ -133,7 +134,7 @@ class TaskTestCase(APITestCase):
         # check all fields
         self.assertEqual(created_task.name, "test_name_new")
         self.assertEqual(created_task.description, "test_description_new")
-        self.assertEqual(created_task.status, models.Task.Statuses.NOT_DONE)
+        self.assertEqual(created_task.status, models.Task.Statuses.DONE)
         self.assertEqual(created_task.deadline, timezone.make_aware(time_now))
         self.assertEqual(created_task.tags.first().id, self.tag1.id)
         self.assertEqual(
@@ -150,7 +151,7 @@ class TaskTestCase(APITestCase):
                 "id": self.task1.id,
                 "name": "test_name_new",
                 "description": "test_description_new",
-                "status": "not done",
+                "status": "done",
                 "tags": [self.tag2.id],
                 "factors": [
                     {
@@ -172,7 +173,7 @@ class TaskTestCase(APITestCase):
         # check all fields
         self.assertEqual(self.task1.name, "test_name_new")
         self.assertEqual(self.task1.description, "test_description_new")
-        self.assertEqual(self.task1.status, models.Task.Statuses.NOT_DONE)
+        self.assertEqual(self.task1.status, models.Task.Statuses.DONE)
         self.assertEqual(self.task1.deadline, timezone.make_aware(new_time))
         self.assertEqual(self.task1.tags.first().id, self.tag2.id)
         self.assertEqual(self.task1.scores.first().value, -1)
@@ -196,3 +197,81 @@ class TaskTestCase(APITestCase):
             format="json",
         )
         self.assertEqual(response.status_code, HTTPStatus.NOT_FOUND)
+
+    def test_task_status_filter(self):
+        models.Task.objects.create(
+            user=self.user,
+            name="test_name_new",
+            description="test_description_new",
+            status=models.Task.Statuses.DONE,
+            deadline=timezone.now(),
+        )
+
+        data = json.dumps({"status": "not done"})
+
+        response = self.client.generic(
+            path=reverse("homepage:tasks"),
+            data=data,
+            method="GET",
+            HTTP_AUTHORIZATION=f"Bearer {self.token}",
+            content_type="application/json",
+        )
+        self.assertEqual(response.status_code, HTTPStatus.OK)
+        self.assertEqual(len(response.data), 1)
+        self.assertEqual(response.data[0]["id"], self.task1.id)
+
+    def test_task_tags_filter(self):
+        new_tag = models.Tag.objects.create(
+            user=self.user,
+            name="new_tag",
+        )
+
+        task_with_tag = models.Task.objects.create(
+            user=self.user,
+            name="test_name_new",
+            description="test_description_new",
+            status=models.Task.Statuses.NOT_DONE,
+            deadline=timezone.now(),
+        )
+        task_with_tag.tags.add(new_tag)
+
+        data = json.dumps({"tags": [new_tag.id]})
+
+        response = self.client.generic(
+            path=reverse("homepage:tasks"),
+            data=data,
+            method="GET",
+            HTTP_AUTHORIZATION=f"Bearer {self.token}",
+            content_type="application/json",
+        )
+        self.assertEqual(response.status_code, HTTPStatus.OK)
+        self.assertEqual(len(response.data), 1)
+        self.assertEqual(response.data[0]["name"], task_with_tag.name)
+
+    def test_task_status_validator(self):
+        response = self.client.post(
+            reverse("homepage:tasks"),
+            data={
+                "name": "test_name_new",
+                "description": "test_description_new",
+                "status": "not done",
+                "tags": [self.tag1.id],
+                "factors": [
+                    {
+                        "id": self.factor1.id,
+                        "value": 10,
+                    },
+                    {
+                        "id": self.factor2.id,
+                        "value": 0,
+                    },
+                ],
+                "deadline": str(datetime.datetime.now().timestamp()).split(
+                    ".",
+                )[0],
+            },
+            HTTP_AUTHORIZATION=f"Bearer {self.token}",
+            format="json",
+        )
+
+        self.assertEqual(response.status_code, HTTPStatus.BAD_REQUEST)

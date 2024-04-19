@@ -1,7 +1,9 @@
+import datetime
 from http import HTTPStatus
 
 from django.contrib.auth import get_user_model
 from django.urls import reverse
+from django.utils import timezone
 from rest_framework.test import APIClient, APITestCase
 from rest_framework_simplejwt.tokens import AccessToken
 
@@ -157,3 +159,36 @@ class EventTestCase(APITestCase):
         self.assertFalse(
             models.Event.objects.filter(id=self.event.id).exists(),
         )
+
+    def test_event_finished_validator(self):
+        response = self.client.post(
+            reverse("homepage:events"),
+            {
+                "description": "test_description3",
+                "tags": [self.tag2.id],
+                "factors": [{"id": self.factor2.id, "value": 20}],
+                "activity_id": self.activity1.id,
+            },
+            HTTP_AUTHORIZATION=f"Bearer {self.token}",
+            format="json",
+        )
+        self.assertEqual(response.status_code, HTTPStatus.BAD_REQUEST)
+
+    def test_priority_create_from_user(self):
+        created = datetime.datetime(2010, 10, 10, 10, 10, 10)
+        response = self.client.post(
+            reverse("homepage:events"),
+            {
+                "description": "test_description3",
+                "tags": [self.tag2.id],
+                "activity_id": self.activity1.id,
+                "created": str(created.timestamp()).split(".")[0],
+            },
+            HTTP_AUTHORIZATION=f"Bearer {self.token}",
+            format="json",
+        )
+
+        self.assertEqual(response.status_code, HTTPStatus.CREATED)
+        new_event_id = response.data["id"]
+        event = models.Event.objects.get(id=new_event_id)
+        self.assertEqual(event.created, timezone.make_aware(created))

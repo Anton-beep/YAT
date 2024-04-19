@@ -104,6 +104,7 @@ class SerializerWithTagsAndScores(UserContextSerializer):
             {"id": score.factor.id, "value": score.value}
             for score in instance.scores.all()
         ]
+        del data["scores"]
         return data
 
 
@@ -127,6 +128,11 @@ class TaskSerializer(SerializerWithTagsAndScores):
     def create(self, validated_data):
         scores_data = validated_data.pop("scores")
         task = super().create(validated_data)
+        created = validated_data.get("created")
+        if created:
+            task.created = created
+            task.save()
+
         for score_data in scores_data:
             score, created = models.Score.objects.get_or_create(**score_data)
             score.tasks.add(task)
@@ -142,6 +148,14 @@ class TaskSerializer(SerializerWithTagsAndScores):
             score.tasks.add(task)
 
         return task
+
+    def validate(self, data):
+        if data.get("status") != "done" and "scores" in data:
+            raise serializers.ValidationError(
+                {"factors": 'Factors can only be sent if status is "done".'},
+            )
+
+        return data
 
 
 class EventSerializer(SerializerWithTagsAndScores):
@@ -175,9 +189,17 @@ class EventSerializer(SerializerWithTagsAndScores):
     def create(self, validated_data):
         scores_data = validated_data.pop("scores")
         event = super().create(validated_data)
-        for score_data in scores_data:
-            score, created = models.Score.objects.get_or_create(**score_data)
-            score.events.add(event)
+        created = validated_data.get("created")
+        if created:
+            event.created = created
+            event.save()
+
+        if scores_data:
+            for score_data in scores_data:
+                score, created = models.Score.objects.get_or_create(
+                    **score_data,
+                )
+                score.events.add(event)
 
         return event
 
@@ -190,3 +212,11 @@ class EventSerializer(SerializerWithTagsAndScores):
             score.events.add(event)
 
         return event
+
+    def validate(self, data):
+        if not data.get("finished") and ("scores" in data and data["scores"]):
+            raise serializers.ValidationError(
+                {"factors": "Factors can only be sent if event is finished."},
+            )
+
+        return data
