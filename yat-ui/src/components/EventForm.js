@@ -130,7 +130,7 @@ const FactorsComponent = ({factors, factorValues, setFactorValues}) => {
                         type="range"
                         className="form-control"
                         value={factorValues[index]}
-                        min="-10"
+                        min="0"
                         max="10"
                         step="1"
                         onChange={(e) => handleFactorChange(index, parseInt(e.target.value))}

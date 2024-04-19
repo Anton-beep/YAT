@@ -18,7 +18,7 @@ const iconComponents = {
     "failed": SquareX,
 };
 
-const TaskList = ({created, finished, done}) => {
+const TaskList = ({created, finished, done, onMain}) => {
     const [tasks, setTasks] = useState([]);
     const [tags, setTags] = useState([]);
     const [selectedTags, setSelectedTags] = useState([]);
@@ -194,8 +194,8 @@ const TaskList = ({created, finished, done}) => {
                 <h1>Текущие задачи</h1>
             </div>
             <div className="buttons">
-                <button className="button-green button-gap" onClick={() => setIsFormOpen(true)}>Добавить новую задачу
-                </button>
+                {onMain && <button className="button-green button-gap" onClick={() => setIsFormOpen(true)}>Добавить новую задачу
+                </button>}
                 <button className="button-orange button-gap" onClick={() => setIsFilterOpen(true)}>Фильтр по тегам
                 </button>
             </div>

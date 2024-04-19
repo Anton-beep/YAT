@@ -7,6 +7,7 @@
   },
   "dependencies": {
     "@nivo/calendar": "^0.85.1",
+    "@nivo/pie": "^0.85.1",
     "@nivo/radar": "^0.85.1",
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
