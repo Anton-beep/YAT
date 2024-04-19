@@ -83,7 +83,8 @@
 }
 
 .button-gap {
-  margin-right: 10px; /* Adjust as needed */
+  margin-right: 10px;
+  margin-top: 10px;
 }
 
 .button-green {

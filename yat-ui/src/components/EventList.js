@@ -17,7 +17,7 @@ const iconComponents = {
 };
 
 
-const EventsList = ({created, finished}) => {
+const EventsList = ({created, finished, onMain}) => {
     const [events, setEvents] = useState([]);
     const [activities, setActivities] = useState({});
     const [tags, setTags] = useState([]);
@@ -191,8 +191,8 @@ const EventsList = ({created, finished}) => {
                 <h1>События</h1>
             </div>
             <div className="buttons">
-                <button className="button-green button-gap" onClick={() => setIsFormOpen(true)}>Добавить новое событие
-                </button>
+                {onMain && <button className="button-green button-gap" onClick={() => setIsFormOpen(true)}>Добавить новое событие
+                </button>}
                 <button className="button-orange button-gap" onClick={() => setIsFilterOpen(true)}>Фильтр по тегам
                 </button>
             </div>

@@ -143,6 +143,19 @@ def factors():
         return {"status": "OK"}
 
 
+@app.route("/api/v1/statistics/activity_duration", methods=["GET", "POST"])
+@cross_origin()
+def duration():
+    return {
+        "activities": [
+            {"id": "activity_name1", "value": 10},
+            {"id": "activity_name2", "value": 20},
+            {"id": "activity_name3", "value": 30},
+            {"id": "activity_name4", "value": 40},
+        ],
+    }
+
+
 @app.route("/api/v1/statistics/wheel", methods=["GET"])
 @cross_origin()
 def wheel():
@@ -150,13 +163,40 @@ def wheel():
         "factors": [
             {1: 5},
             {
-                2: -3,
+                2: 3,
             },
             {3: 8},
             {4: 2},
             {5: 0},
         ],
     }
+
+
+@app.route("/api/v1/statistics/event_count", methods=['GET'])
+@cross_origin()
+def count():
+    return [
+        {
+            "day": "2024-05-18",
+            "value": 5,
+        },
+        {
+            "day": "2024-05-20",
+            "value": 5,
+        },
+        {
+            "day": "2024-05-03",
+            "value": 5,
+        },
+        {
+            "day": "2024-05-15",
+            "value": 5,
+        },
+        {
+            "day": "2024-05-21",
+            "value": 5,
+        }
+    ]
 
 
 @app.route("/api/v1/homepage/activities", methods=["GET"])

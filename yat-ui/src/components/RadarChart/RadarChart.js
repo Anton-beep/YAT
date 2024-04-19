@@ -3,12 +3,11 @@ import { ResponsiveRadar } from '@nivo/radar';
 
 const MyRadarChart = ({ data, keys, indexBy }) => {
     return (
-        <div style={{width: '100vw', height: '100vh'}}>
             <ResponsiveRadar
                 data={data}
                 keys={keys}
                 indexBy={indexBy}
-                maxValue={20}
+                maxValue={10}
                 margin={{ top: 50, right: 10, bottom: 10, left: 10 }}
                 curve="linearClosed"
                 borderWidth={2}
@@ -22,7 +21,6 @@ const MyRadarChart = ({ data, keys, indexBy }) => {
                 dotBorderWidth={2}
                 dotBorderColor={{ from: 'color' }}
                 enableDotLabel={true}
-                dotLabel={(datum) => `${datum.value - 10}`}
                 dotLabelYOffset={-12}
                 colors={() => 'lightblue'}
                 fillOpacity={0.25}
@@ -31,7 +29,6 @@ const MyRadarChart = ({ data, keys, indexBy }) => {
                 motionConfig="wobbly"
                 isInteractive={true}
             />
-        </div>
     );
 }
 
