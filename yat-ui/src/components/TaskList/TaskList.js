@@ -106,8 +106,8 @@ const TaskList = ({created, finished, done, onMain}) => {
                 onRequestClose={() => setIsFilterOpen(false)}
                 style={{
                     content: {
-                        width: '35%',
-                        height: '50%',
+                        width: '200px',
+                        height: '400px',
                         margin: 'auto',
                     }
                 }}
@@ -127,7 +127,7 @@ const TaskList = ({created, finished, done, onMain}) => {
                 style={{
                     content: {
                         width: '35%',
-                        height: '70%',
+                        height: '45%',
                         margin: 'auto',
                     }
                 }}
@@ -219,12 +219,7 @@ const TaskList = ({created, finished, done, onMain}) => {
                         const currentDate = new Date();
 const deadlineDate = new Date(task.deadline * 1000); // Convert to milliseconds as JavaScript Date object takes time in milliseconds
 
-let IconComponent;
-if (deadlineDate < currentDate) {
-    IconComponent = iconComponents["failed"];
-} else {
-    IconComponent = iconComponents[task.status] || Star;
-}
+const    IconComponent = iconComponents[task.status] || Star;
                         const factorMean = task.factors.reduce((sum, factor) => sum + factor.value, 0) / task.factors.length;
                         const factorColor = factorMean > 5 ? 'green' : factorMean < -5 ? 'red' : 'black';
 

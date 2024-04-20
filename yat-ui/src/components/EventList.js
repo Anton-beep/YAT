@@ -23,6 +23,7 @@ const EventsList = ({created, finished, onMain}) => {
     const [tags, setTags] = useState([]);
     const [factors, setFactors] = useState({});
     const [selectedTags, setSelectedTags] = useState([]);
+    const [elapsedTimes, setElapsedTimes] = useState({});
 
     const [isFilterOpen, setIsFilterOpen] = useState(false);
     const handleTagCheckChange = (tagId) => {
@@ -46,6 +47,19 @@ const EventsList = ({created, finished, onMain}) => {
         return `${day}-${month}-${year} ${hours}:${minutes}`;
     };
 
+    useEffect(() => {
+        Auth.axiosInstance.get('/api/v1/homepage/activities')
+            .then(response => {
+                const new_activities = response.data.activities.reduce((acc, activity) => ({
+                    ...acc,
+                    [activity.id]: {"name": activity.name, "icon": {"name": activity.icon.name, "color": activity.icon.color}},
+                }), {});
+                setActivities(new_activities);
+            })
+            .catch(error => {
+                console.error(error);
+            })
+    }, []);
 
     useEffect(() => {
         Auth.axiosInstance.get('/api/v1/homepage/events', {
@@ -60,20 +74,6 @@ const EventsList = ({created, finished, onMain}) => {
                 console.error(error);
             })
     }, [created, finished]);
-
-    useEffect(() => {
-        Auth.axiosInstance.get('/api/v1/homepage/activities')
-            .then(response => {
-                const activities = response.data.activities.reduce((acc, activity) => ({
-                    ...acc,
-                    [activity.id]: activity.name,
-                }), {});
-                setActivities(activities);
-            })
-            .catch(error => {
-                console.error(error);
-            })
-    }, []);
 
     useEffect(() => {
         Auth.axiosInstance.get('/api/v1/homepage/tags')
@@ -111,6 +111,54 @@ const EventsList = ({created, finished, onMain}) => {
             })
     }, []);
 
+    useEffect(() => {
+        const intervalIds = {};
+
+        events.forEach(event => {
+            if (event.finished) {
+                return;
+            }
+
+            const startTime = event.created;
+            intervalIds[event.id] = setInterval(() => {
+                const currentTime = Math.floor(Date.now() / 1000); // текущее время в секундах
+                setElapsedTimes(prevTimes => ({
+                    ...prevTimes,
+                    [event.id]: currentTime - startTime,
+                }));
+            }, 1000);
+        });
+        return () => {
+            Object.values(intervalIds).forEach(clearInterval);
+        };
+    }, [events]);
+
+    const handleFinishEvent = (event) => {
+        Auth.axiosInstance.put(`/api/v1/homepage/events`, {
+            data: {
+                id: event.id,
+                finished: Math.floor(Date.now() / 1000),
+                description: event.description,
+                tags: event.tags,
+                factors: event.factors,
+                activity_id: event.activity_id,
+            }
+        })
+            .then(response => {
+                window.location.reload();
+            })
+            .catch(error => {
+                console.error(error);
+            })
+    }
+
+    const formatElapsedTime = (seconds) => {
+        const hours = Math.floor(seconds / 3600);
+        const minutes = Math.floor((seconds % 3600) / 60);
+        const secs = seconds % 60;
+        return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+    };
+
     return (
         <div>
             <Modal
@@ -118,8 +166,8 @@ const EventsList = ({created, finished, onMain}) => {
                 onRequestClose={() => setIsFilterOpen(false)}
                 style={{
                     content: {
-                        width: '35%',
-                        height: '50%',
+                        width: '200px',
+                        height: '400px',
                         margin: 'auto',
                     }
                 }}
@@ -139,14 +187,14 @@ const EventsList = ({created, finished, onMain}) => {
                 style={{
                     content: {
                         width: '35%',
-                        height: '70%',
+                        height: '45%',
                         margin: 'auto',
                     }
                 }}
             >
                 {selectedEvent && (
                     <>
-                        <h2>{activities[selectedEvent.activity_id]}</h2>
+                        <h2>{activities[selectedEvent.activity_id].name}</h2>
                         <p>{selectedEvent.description}</p>
                         {Boolean(selectedEvent.finished) && <div>
                             <p>Start Time: {formatTime(selectedEvent.created)}</p>
@@ -163,8 +211,12 @@ const EventsList = ({created, finished, onMain}) => {
                             </div>
                         ))}
                         {!Boolean(selectedEvent.finished) && <div>
-                            <button type="button" className="btn btn-primary">Начать событие</button>
-                            </div>}
+                            <div className="text-with-icon">
+                                <Clock/>
+                                <span>{!Boolean(selectedEvent.finished) ? formatElapsedTime(elapsedTimes[selectedEvent.id] || 0) : formatTime(selectedEvent.created)}</span>
+                            </div>
+                            <button type="button" className="btn btn-primary">Завершить событие</button>
+                        </div>}
                     </>
                 )}
             </Modal>
@@ -214,7 +266,7 @@ const EventsList = ({created, finished, onMain}) => {
                     .filter(event => selectedTags.length === 0 || selectedTags
                         .every(tagId => event.tags.includes(tagId)))
                     .map((event, index) => {
-                        const IconComponent = iconComponents[event.icon.name];
+                        const IconComponent = activities[event.activity_id] && iconComponents[activities[event.activity_id].icon.name];
                         const factorMean = event.factors.reduce((sum, factor) => sum + factor.value, 0) / event.factors.length;
                         const factorColor = factorMean > 5 ? 'green' : factorMean < -5 ? 'red' : 'black';
                         return (
@@ -224,7 +276,7 @@ const EventsList = ({created, finished, onMain}) => {
                             }}>
                                 <div className="text-with-icon">
                                     <IconComponent fill={event.icon.color}/>
-                                    <h2>{activities[event.activity_id]}</h2>
+                                    <h2>{activities[event.activity_id].name}</h2>
                                 </div>
 
                                 {Boolean(event.finished) && <div>
@@ -241,7 +293,7 @@ const EventsList = ({created, finished, onMain}) => {
                                 {!Boolean(event.finished) && <div>
                                     <div className="text-with-icon">
                                         <Clock/>
-                                        <span>{formatTime(event.created)}</span>
+                                        <span>{!Boolean(event.finished) ? formatElapsedTime(elapsedTimes[event.id] || 0) : formatTime(event.created)}</span>
                                     </div>
                                 </div>}
                             </div>

@@ -33,7 +33,7 @@ const Dashboard = () => {
             onRequestClose={() => setAddTagFormOpen(false)}
             style={{
                 content: {
-                    width: '25%', height: '50%', margin: 'auto',
+                    width: '25%', height: '30%', margin: 'auto',
                 }
             }}
         >
@@ -45,7 +45,7 @@ const Dashboard = () => {
             onRequestClose={() => setAddFactorFormOpen(false)}
             style={{
                 content: {
-                    width: '35%', height: '50%', margin: 'auto',
+                    width: '35%', height: '30%', margin: 'auto',
                 }
             }}
         >
@@ -89,7 +89,7 @@ const Dashboard = () => {
                 </div>
             </div>
 
-            <div className="col">
+            <div className="col-8">
                 <button className="button-light-blue button-gap" style={{marginLeft: "10px"}}
                         onClick={() => {
                             setAddTagFormOpen(true)
