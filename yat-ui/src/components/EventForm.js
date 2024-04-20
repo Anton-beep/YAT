@@ -3,8 +3,8 @@ import Auth from '../pkg/auth';
 
 
 function EventForm({tags = [], icons = {}, initialFactors = {}, activities = {}}) {
-    const activitiesArray = Object.keys(activities).map((id) => ({id, name: activities[id]}));
-    const factorsArray = Object.keys(initialFactors).map((id) => ({id, name: initialFactors[id], value: 0}));
+    const activitiesArray = Object.keys(activities).map((id) => ({id, name: activities[id].name}));
+    const factorsArray = Object.keys(initialFactors).map((id) => ({id, name: initialFactors[id], value: 5}));
 
     const [selectedActivity, setSelectedActivity] = useState(activitiesArray[0].name);
     const updateSelection = (activityName) => {

@@ -19,6 +19,8 @@ import 'bootstrap/dist/js/bootstrap.min.js';
 
 import './App.css'
 import TaskList from "./components/TaskList/TaskList";
+import ActivityList from "./ActivityList/ActivityList";
+import EventsList from "./components/EventList";
 
 function App() {
     return (

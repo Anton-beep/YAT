@@ -98,7 +98,7 @@ const Statistics = () => {
         localStorage.setItem('endDate', endDate.toISOString());
     }, [startDate, endDate]);
 
-    const width = window.innerWidth * 0.7;
+    const width = window.innerWidth * 0.5;
 
     return (<Layout>
         <h1 style={{marginLeft: "25px"}}>Статистика</h1>
@@ -126,10 +126,10 @@ const Statistics = () => {
             />
         </div>
 
-        <div style={{height: `${width}px`, width: "auto", marginLeft: "25px", marginRight: "25px"}}>
+        <div style={{height: `${width}px`, width: "auto"}}>
             <MyRadarChart data={radarData} keys={["value"]} indexBy="name"/>
         </div>
-        <div style={{height: `${width}px`, width: "auto", marginLeft: "25px", marginRight: "25px"}}>
+        <div style={{height: `${width}px`, width: "auto"}}>
             <MyPieChart data={pieData}/>
         </div>
         <div style={{height: `${width}px`, width: "auto"}}>

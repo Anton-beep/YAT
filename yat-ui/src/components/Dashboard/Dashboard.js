@@ -9,6 +9,7 @@ import {ReactComponent as Plus} from "../../icons/plus-lg.svg";
 import "react-datepicker/dist/react-datepicker.css";
 import Modal from "react-modal";
 import AddActivityForm from "../AddActivityForm/AddActivityForm";
+import ActivityList from "../../ActivityList/ActivityList";
 
 const Dashboard = () => {
     const [startDate, setStartDate] = useState(localStorage.getItem('date') ? new Date(localStorage.getItem('date')) : new Date());
@@ -32,7 +33,7 @@ const Dashboard = () => {
             onRequestClose={() => setAddTagFormOpen(false)}
             style={{
                 content: {
-                    width: '25%', height: '50%', margin: 'auto',
+                    width: '25%', height: '30%', margin: 'auto',
                 }
             }}
         >
@@ -44,7 +45,7 @@ const Dashboard = () => {
             onRequestClose={() => setAddFactorFormOpen(false)}
             style={{
                 content: {
-                    width: '35%', height: '50%', margin: 'auto',
+                    width: '35%', height: '30%', margin: 'auto',
                 }
             }}
         >
@@ -88,7 +89,7 @@ const Dashboard = () => {
                 </div>
             </div>
 
-            <div className="col">
+            <div className="col-8">
                 <button className="button-light-blue button-gap" style={{marginLeft: "10px"}}
                         onClick={() => {
                             setAddTagFormOpen(true)
@@ -113,18 +114,21 @@ const Dashboard = () => {
 
 
         <div className="row">
-            <div className="col-6">
+            <div className="col-4">
                 <EventsList created={Math.floor(startDate.getTime() / 1000)}
                             finished={Math.floor(startDate.getTime() / 1000)}
                             onMain={true}
                 />
             </div>
-            <div className="col-6">
+            <div className="col-4">
                 <TasList created={Math.floor(startDate.getTime() / 1000)}
                          finished={Math.floor(startDate.getTime() / 1000)}
                          done="not done"
                          onMain={true}
                 />
+            </div>
+            <div className="col-4">
+                <ActivityList  />
             </div>
         </div>
     </Layout>);

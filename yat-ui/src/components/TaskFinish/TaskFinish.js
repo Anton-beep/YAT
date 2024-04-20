@@ -3,7 +3,7 @@ import Auth from '../../pkg/auth';
 
 
 function TaskFinish({task = {}, initialFactors = {}}) {
-    const factorsArray = Object.keys(initialFactors).map((id) => ({id, name: initialFactors[id], value: 0}));
+    const factorsArray = Object.keys(initialFactors).map((id) => ({id, name: initialFactors[id], value: 5}));
     const [factors, setFactors] = useState([{id: 1, value: 10}]);
     const [factorValues, setFactorValues] = useState(factorsArray.map(() => 0));
 
@@ -61,7 +61,7 @@ const FactorsComponent = ({factors, factorValues, setFactorValues}) => {
                 type="range"
                 className="form-control"
                 value={factorValues[index]}
-                min="-10"
+                min="0"
                 max="10"
                 step="1"
                 onChange={(e) => handleFactorChange(index, parseInt(e.target.value))}
