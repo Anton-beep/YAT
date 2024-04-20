@@ -15,7 +15,7 @@ function EventForm({tags = [], icons = {}, initialFactors = {}, activities = {}}
     const [description, setDescription] = useState('');
     const [selectedTags, setSelectedTags] = useState([]);
     const [icon, setIcon] = useState({name: 'bib.svg', color: '#2a82a8'});
-    const [created, setCreated] = useState(Date.now().toString());
+    const [created, setCreated] = useState(Date.now().toString().slice(0, -3));
     const [finished, setFinished] = useState('');
     const [factors, setFactors] = useState([{id: 1, value: 10}]);
     const [activityId, setActivityId] = useState(1);

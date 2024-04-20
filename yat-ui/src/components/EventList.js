@@ -55,7 +55,6 @@ const EventsList = ({created, finished, onMain}) => {
                     [activity.id]: {"name": activity.name, "icon": {"name": activity.icon.name, "color": activity.icon.color}},
                 }), {});
                 setActivities(new_activities);
-                console.log(new_activities);
             })
             .catch(error => {
                 console.error(error);
@@ -69,6 +68,7 @@ const EventsList = ({created, finished, onMain}) => {
             "tags": [],}
         })
             .then(response => {
+                console.log(response.data);
                 setEvents(response.data.events);
             })
             .catch(error => {
@@ -98,7 +98,7 @@ const EventsList = ({created, finished, onMain}) => {
     }, [tags]);
 
     useEffect(() => {
-        Auth.axiosInstance.get('/api/v1/homepage/factors')
+        Auth.axiosInstance.get('/api/v1/homepage/factors/')
             .then(response => {
                     const new_factors = response.data.factors.reduce((acc, factor) => ({
                         ...acc,
@@ -135,7 +135,7 @@ const EventsList = ({created, finished, onMain}) => {
     }, [events]);
 
     const handleFinishEvent = (event) => {
-        Auth.axiosInstance.put(`/api/v1/homepage/events`, {
+        Auth.axiosInstance.put(`/api/v1/homepage/events/`, {
             data: {
                 id: event.id,
                 finished: Math.floor(Date.now() / 1000),

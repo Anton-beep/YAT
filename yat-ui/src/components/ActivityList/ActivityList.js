@@ -1,9 +1,9 @@
 import React, {useEffect, useState} from 'react';
-import {ReactComponent as Bib} from '../icons/bib.svg';
-import {ReactComponent as Bob} from '../icons/bob.svg';
+import {ReactComponent as Bib} from '../../icons/bib.svg';
+import {ReactComponent as Bob} from '../../icons/bob.svg';
 
-import Auth from '../pkg/auth';
-import '../App.css';
+import Auth from '../../pkg/auth';
+import '../../App.css';
 
 const iconComponents = {
     "bib.svg": Bib,
@@ -16,9 +16,10 @@ const ActivityList = () => {
 
 
     useEffect(() => {
-        Auth.axiosInstance.get('/api/v1/homepage/activities')
+        Auth.axiosInstance.get('/api/v1/homepage/activities/')
             .then(response => {
                 console.log(123);
+                console.log(response.data);
                 setActivities(response.data.activities);
             })
             .catch(error => {

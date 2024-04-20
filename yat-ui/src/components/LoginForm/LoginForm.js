@@ -21,12 +21,12 @@ const LoginForm = () => {
                             setMessage("Успешный вход");
                             setError(false);
                         }
-                        //window.location = '/dashboard';
+                        window.location = '/dashboard';
                     }
                 )
                 .catch(
                     error => {
-                        setMessage("Неверный логин или пароль");
+                        setMessage("Неверный логин или пароль или вы не подтвердили почту");
                         setError(true);
                         console.error(error);
                     }

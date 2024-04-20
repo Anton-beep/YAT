@@ -19,7 +19,7 @@ import 'bootstrap/dist/js/bootstrap.min.js';
 
 import './App.css'
 import TaskList from "./components/TaskList/TaskList";
-import ActivityList from "./ActivityList/ActivityList";
+import ActivityList from "./components/ActivityList/ActivityList";
 import EventsList from "./components/EventList";
 
 function App() {
@@ -28,6 +28,7 @@ function App() {
         <Routes>
             <Route path="/" element={<Homepage/>}/>
             <Route path="/login" element={<LoginForm/>}/>
+            <Route path="/logout" element={<Logout/>}/>
             <Route path="/forgotpassword" element={<ForgotPassword/>}/>
             <Route path="/confirm/:token" element={<Confirm/>}/>
             <Route path="/confirm/:token/:email" element={<Confirm/>}/>

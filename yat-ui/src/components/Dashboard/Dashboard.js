@@ -9,7 +9,7 @@ import {ReactComponent as Plus} from "../../icons/plus-lg.svg";
 import "react-datepicker/dist/react-datepicker.css";
 import Modal from "react-modal";
 import AddActivityForm from "../AddActivityForm/AddActivityForm";
-import ActivityList from "../../ActivityList/ActivityList";
+import ActivityList from "../ActivityList/ActivityList";
 
 const Dashboard = () => {
     const [startDate, setStartDate] = useState(localStorage.getItem('date') ? new Date(localStorage.getItem('date')) : new Date());

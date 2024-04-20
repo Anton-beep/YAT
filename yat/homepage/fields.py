@@ -11,4 +11,6 @@ class TimestampField(serializers.Field):
         return str(value.timestamp()).split(".")[0]
 
     def to_internal_value(self, data):
+        if data == "":
+            return None
         return timezone.make_aware(datetime.fromtimestamp(int(data)))
