@@ -55,6 +55,7 @@ const EventsList = ({created, finished, onMain}) => {
                     [activity.id]: {"name": activity.name, "icon": {"name": activity.icon.name, "color": activity.icon.color}},
                 }), {});
                 setActivities(new_activities);
+                console.log(new_activities);
             })
             .catch(error => {
                 console.error(error);
