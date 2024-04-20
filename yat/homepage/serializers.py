@@ -150,7 +150,7 @@ class TaskSerializer(SerializerWithTagsAndScores):
         return task
 
     def validate(self, data):
-        if data.get("status") != "done" and "scores" in data:
+        if data.get("status") != "done" and ("scores" in data and data["scores"]):
             raise serializers.ValidationError(
                 {"factors": 'Factors can only be sent if status is "done".'},
             )

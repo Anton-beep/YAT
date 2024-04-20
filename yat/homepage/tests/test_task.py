@@ -84,22 +84,22 @@ class TaskTestCase(APITestCase):
             HTTP_AUTHORIZATION=f"Bearer {self.token}",
         )
         self.assertEqual(response.status_code, HTTPStatus.OK)
-        self.assertEqual(task_count, len(response.data))
+        self.assertEqual(task_count, len(response.data["tasks"]))
 
-        self.assertEqual(response.data[0]["name"], self.task1.name)
+        self.assertEqual(response.data["tasks"][0]["name"], self.task1.name)
         self.assertEqual(
-            response.data[0]["description"],
+            response.data["tasks"][0]["description"],
             self.task1.description,
         )
-        self.assertEqual(response.data[0]["status"], self.task1.status)
+        self.assertEqual(response.data["tasks"][0]["status"], self.task1.status)
         self.assertEqual(
-            response.data[0]["deadline"],
+            response.data["tasks"][0]["deadline"],
             str(self.task1.deadline.timestamp()).split(".")[0],
         )
-        self.assertEqual(response.data[0]["tags"][0], self.tag1.id)
-        self.assertEqual(response.data[0]["factors"][0]["id"], self.factor1.id)
+        self.assertEqual(response.data["tasks"][0]["tags"][0], self.tag1.id)
+        self.assertEqual(response.data["tasks"][0]["factors"][0]["id"], self.factor1.id)
         self.assertEqual(
-            response.data[0]["factors"][0]["value"],
+            response.data["tasks"][0]["factors"][0]["value"],
             self.score1.value,
         )
 
@@ -218,7 +218,7 @@ class TaskTestCase(APITestCase):
         )
         self.assertEqual(response.status_code, HTTPStatus.OK)
         self.assertEqual(len(response.data), 1)
-        self.assertEqual(response.data[0]["id"], self.task1.id)
+        self.assertEqual(response.data["tasks"][0]["id"], self.task1.id)
 
     def test_task_tags_filter(self):
         new_tag = models.Tag.objects.create(
@@ -246,7 +246,7 @@ class TaskTestCase(APITestCase):
         )
         self.assertEqual(response.status_code, HTTPStatus.OK)
         self.assertEqual(len(response.data), 1)
-        self.assertEqual(response.data[0]["name"], task_with_tag.name)
+        self.assertEqual(response.data["tasks"][0]["name"], task_with_tag.name)
 
     def test_task_status_validator(self):
         response = self.client.post(
@@ -275,3 +275,21 @@ class TaskTestCase(APITestCase):
         )
 
         self.assertEqual(response.status_code, HTTPStatus.BAD_REQUEST)
+
+    def test_send_task_without_factors(self):
+        response = self.client.post(
+            reverse("homepage:tasks"),
+            data={
+                "name": "test_name_new",
+                "description": "test_description_new",
+                "status": "not done",
+                "tags": [self.tag1.id],
+                "deadline": str(datetime.datetime.now().timestamp()).split(
+                    ".",
+                )[0],
+            },
+            HTTP_AUTHORIZATION=f"Bearer {self.token}",
+            format="json",
+        )
+
+        self.assertEqual(response.status_code, HTTPStatus.CREATED)

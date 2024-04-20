@@ -57,7 +57,7 @@ class FactorTestCase(APITestCase):
             HTTP_AUTHORIZATION=f"Bearer {self.token}",
         )
         self.assertEqual(response.status_code, HTTPStatus.OK)
-        self.assertEqual(factor_count, len(response.data))
+        self.assertEqual(factor_count, len(response.data["factors"]))
 
     def test_factor_post(self):
         factor_count = models.Factor.objects.count()

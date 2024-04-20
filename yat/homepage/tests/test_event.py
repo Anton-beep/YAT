@@ -90,12 +90,12 @@ class EventTestCase(APITestCase):
         self.assertEqual(event_count, len(response.data))
 
         self.assertEqual(
-            response.data[0]["description"],
+            response.data["events"][0]["description"],
             self.event.description,
         )
-        self.assertEqual(response.data[0]["tags"][0], self.tag1.id)
-        self.assertEqual(response.data[0]["factors"][0]["id"], self.factor1.id)
-        self.assertEqual(response.data[0]["activity_id"], self.activity1.id)
+        self.assertEqual(response.data["events"][0]["tags"][0], self.tag1.id)
+        self.assertEqual(response.data["events"][0]["factors"][0]["id"], self.factor1.id)
+        self.assertEqual(response.data["events"][0]["activity_id"], self.activity1.id)
 
     def test_event_post(self):
         event_count = models.Event.objects.count()

@@ -59,7 +59,7 @@ class ActivityTestCase(APITestCase):
             HTTP_AUTHORIZATION=f"Bearer {self.token}",
         )
         self.assertEqual(response.status_code, HTTPStatus.OK)
-        self.assertEqual(activity_count, len(response.data))
+        self.assertEqual(activity_count, len(response.data["activities"]))
 
     def test_activity_post(self):
         activity_count = models.Activity.objects.count()

@@ -55,7 +55,7 @@ class TagTestCase(APITestCase):
             HTTP_AUTHORIZATION=f"Bearer {self.token}",
         )
         self.assertEqual(response.status_code, HTTPStatus.OK)
-        self.assertEqual(tag_count, len(response.data))
+        self.assertEqual(tag_count, len(response.data["tags"]))
 
     def test_tag_post(self):
         tag_count = models.Tag.objects.count()

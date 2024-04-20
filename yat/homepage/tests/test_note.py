@@ -59,7 +59,7 @@ class NoteTestCase(APITestCase):
             HTTP_AUTHORIZATION=f"Bearer {self.token}",
         )
         self.assertEqual(response.status_code, HTTPStatus.OK)
-        self.assertEqual(note_count, len(response.data))
+        self.assertEqual(note_count, len(response.data["notes"]))
 
     def test_note_post(self):
         note_count = models.Note.objects.count()
@@ -157,7 +157,7 @@ class NoteTestCase(APITestCase):
             content_type="application/json",
         )
         self.assertEqual(response.status_code, HTTPStatus.OK)
-        self.assertEqual(0, len(response.data))
+        self.assertEqual(0, len(response.data["notes"]))
 
         data = json.dumps(
             {
@@ -173,4 +173,4 @@ class NoteTestCase(APITestCase):
             content_type="application/json",
         )
         self.assertEqual(response.status_code, HTTPStatus.OK)
-        self.assertEqual(1, len(response.data))
+        self.assertEqual(1, len(response.data["notes"]))
