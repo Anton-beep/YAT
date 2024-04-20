@@ -9,6 +9,7 @@ import {ReactComponent as Plus} from "../../icons/plus-lg.svg";
 import "react-datepicker/dist/react-datepicker.css";
 import Modal from "react-modal";
 import AddActivityForm from "../AddActivityForm/AddActivityForm";
+import ActivityList from "../../ActivityList/ActivityList";
 
 const Dashboard = () => {
     const [startDate, setStartDate] = useState(localStorage.getItem('date') ? new Date(localStorage.getItem('date')) : new Date());
@@ -113,18 +114,21 @@ const Dashboard = () => {
 
 
         <div className="row">
-            <div className="col-6">
+            <div className="col-4">
                 <EventsList created={Math.floor(startDate.getTime() / 1000)}
                             finished={Math.floor(startDate.getTime() / 1000)}
                             onMain={true}
                 />
             </div>
-            <div className="col-6">
+            <div className="col-4">
                 <TasList created={Math.floor(startDate.getTime() / 1000)}
                          finished={Math.floor(startDate.getTime() / 1000)}
                          done="not done"
                          onMain={true}
                 />
+            </div>
+            <div className="col-4">
+                <ActivityList  />
             </div>
         </div>
     </Layout>);

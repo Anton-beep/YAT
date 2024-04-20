@@ -199,31 +199,35 @@ def count():
     ]
 
 
-@app.route("/api/v1/homepage/activities", methods=["GET"])
+@app.route("/api/v1/homepage/activities", methods=["GET", "POST"])
 @cross_origin()
 def activities():
-    return {
-        "activities": [
-            {
-                "id": 1,
-                "name": "name1",
-                "icon": {
-                    "name": "bib.svg",
-                    "color": "#2a82a8",
+    if request.method == "GET":
+        return {
+            "activities": [
+                {
+                    "id": 1,
+                    "name": "name1",
+                    "icon": {
+                        "name": "bib.svg",
+                        "color": "#2a82a8",
+                    },
+                    "visible": True,
                 },
-                "visible": True,
-            },
-            {
-                "id": 2,
-                "name": "name2",
-                "icon": {
-                    "name": "bob.svg",
-                    "color": "#82a2a8",
+                {
+                    "id": 2,
+                    "name": "name2",
+                    "icon": {
+                        "name": "bob.svg",
+                        "color": "#82a2a8",
+                    },
+                    "visible": True,
                 },
-                "visible": True,
-            },
-        ]
-    }
+            ]
+        }
+    elif request.method == "POST":
+        print(request.json)
+        return {"status": "OK"}
 
 
 if __name__ == "__main__":

@@ -19,6 +19,7 @@ import 'bootstrap/dist/js/bootstrap.min.js';
 
 import './App.css'
 import TaskList from "./components/TaskList/TaskList";
+import ActivityList from "./ActivityList/ActivityList";
 
 function App() {
     return (
@@ -34,6 +35,8 @@ function App() {
             <Route path="/secret" element={<SecretPage/>}/>
             <Route path="/dashboard" element={<Dashboard/>}/>
             <Route path="/statistics" element={<Statistics/>}/>
+
+            <Route path='/dev' element={<ActivityList/>}/>
         </Routes>
     </Router>
 );
