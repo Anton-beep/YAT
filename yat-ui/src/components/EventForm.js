@@ -37,7 +37,7 @@ function EventForm({tags = [], icons = {}, initialFactors = {}, activities = {}}
             activity_id: activityId
         };
 
-        Auth.axiosInstance.post('/api/v1/homepage/events', data)
+        Auth.axiosInstance.post('/api/v1/homepage/events/', data)
             .then(response => {
                 window.location.reload();
             })

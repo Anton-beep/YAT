@@ -22,7 +22,7 @@ const Confirm = () => {
             }
         ).catch(
             error => {
-                setMessage("Ошибка подтверждения почты");
+                setMessage("Ошибка подтверждения почты или почта уже подтверждена");
                 setError(true);
                 console.error(error);
             }

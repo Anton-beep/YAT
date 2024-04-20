@@ -2,6 +2,7 @@ import datetime
 
 from django.utils import timezone
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 
 from homepage import serializers
@@ -28,10 +29,20 @@ class ActivityViewSet(UserContextViewSet):
     serializer_class = serializers.ActivitySerializer
     permission_classes = [IsAuthenticated]
 
+    def list(self, request, *args, **kwargs):
+        queryset = self.filter_queryset(self.get_queryset())
+        serializer = self.get_serializer(queryset, many=True)
+        return Response({"activities": serializer.data})
+
 
 class TagViewSet(UserContextViewSet):
     serializer_class = serializers.TagSerializer
     permission_classes = [IsAuthenticated]
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.filter_queryset(self.get_queryset())
+        serializer = self.get_serializer(queryset, many=True)
+        return Response({"tags": serializer.data})
 
 
 def filter_by_field_timestamp(queryset, interval, name_field):
@@ -97,10 +108,20 @@ class NoteViewSet(WithCreatedViewSet):
     serializer_class = serializers.NoteSerializer
     permission_classes = [IsAuthenticated]
 
+    def list(self, request, *args, **kwargs):
+        queryset = self.filter_queryset(self.get_queryset())
+        serializer = self.get_serializer(queryset, many=True)
+        return Response({"notes": serializer.data})
+
 
 class FactorViewSet(UserContextViewSet):
     serializer_class = serializers.FactorSerializer
     permission_classes = [IsAuthenticated]
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.filter_queryset(self.get_queryset())
+        serializer = self.get_serializer(queryset, many=True)
+        return Response({"factors": serializer.data})
 
 
 class TaskViewSet(WithCreatedViewSet, WithTagsViewSet):
@@ -123,6 +144,11 @@ class TaskViewSet(WithCreatedViewSet, WithTagsViewSet):
 
         return super().get_queryset(*args, **kwargs)
 
+    def list(self, request, *args, **kwargs):
+        queryset = self.filter_queryset(self.get_queryset())
+        serializer = self.get_serializer(queryset, many=True)
+        return Response({"tasks": serializer.data})
+
 
 class EventViewSet(WithCreatedViewSet, WithTagsViewSet):
     serializer_class = serializers.EventSerializer
@@ -137,3 +163,8 @@ class EventViewSet(WithCreatedViewSet, WithTagsViewSet):
             )
 
         return super().get_queryset(*args, **kwargs)
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.filter_queryset(self.get_queryset())
+        serializer = self.get_serializer(queryset, many=True)
+        return Response({"events": serializer.data})

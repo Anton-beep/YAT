@@ -22,7 +22,7 @@ const Statistics = () => {
     const [endDate, setEndDate] = useState(localStorage.getItem('endDate') ? new Date(localStorage.getItem('endDate')) : new Date());
 
     useEffect(() => {
-        Auth.axiosInstance.get('/api/v1/homepage/factors', {
+        Auth.axiosInstance.get('/api/v1/homepage/factors/', {
             params: {
                 start_date: startDate.toISOString().substr(0, 10), end_date: endDate.toISOString().substr(0, 10),
             }
@@ -39,7 +39,7 @@ const Statistics = () => {
     }, [startDate, endDate]);
 
     useEffect(() => {
-        Auth.axiosInstance.get('/api/v1/statistics/wheel', {
+        Auth.axiosInstance.get('/api/v1/statistics/wheel/', {
             params: {
                 start_date: startDate.toISOString().substr(0, 10), end_date: endDate.toISOString().substr(0, 10),
             }
@@ -58,7 +58,7 @@ const Statistics = () => {
     }, [startDate, endDate]);
 
     useEffect(() => {
-        Auth.axiosInstance.get('/api/v1/statistics/activity_duration', {
+        Auth.axiosInstance.get('/api/v1/statistics/activity_duration/', {
             params: {
                 start_date: startDate.toISOString().substr(0, 10), end_date: endDate.toISOString().substr(0, 10),
             }
@@ -73,7 +73,7 @@ const Statistics = () => {
     }, [startDate, endDate]);
 
     useEffect(() => {
-        Auth.axiosInstance.get('/api/v1/statistics/event_count', {
+        Auth.axiosInstance.get('/api/v1/statistics/event_count/', {
             params: {
                 start_date: startDate.toISOString().substr(0, 10), end_date: endDate.toISOString().substr(0, 10),
             }

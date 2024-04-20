@@ -24,7 +24,7 @@ function TaskFinish({task = {}, initialFactors = {}}) {
             factors: factorsToSend,
         };
 
-        Auth.axiosInstance.put('/api/v1/homepage/tasks', data)
+        Auth.axiosInstance.put('/api/v1/homepage/tasks/', data)
             .then(response => {
                 window.location.reload();
             })

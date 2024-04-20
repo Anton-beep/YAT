@@ -70,8 +70,8 @@ class TestUserContext(TestCase):
         self.assertEqual(len(response1.data), 1)
         self.assertEqual(len(response2.data), 1)
 
-        self.assertEqual(response1.data[0]["name"], self.user1_note.name)
-        self.assertEqual(response2.data[0]["name"], self.user2_note.name)
+        self.assertEqual(response1.data[0]["notes"]["name"], self.user1_note.name)
+        self.assertEqual(response2.data[0]["notes"]["name"], self.user2_note.name)
 
     def test_user_post(self):
         response1 = self.client.post(
@@ -89,14 +89,14 @@ class TestUserContext(TestCase):
             HTTP_AUTHORIZATION=f"Bearer {self.token1}",
         )
         self.assertEqual(len(response1_get.data), 2)
-        self.assertEqual(response1_get.data[1]["name"], "test_title3")
+        self.assertEqual(response1_get.data[1]["notes"]["name"], "test_title3")
 
         response2_get = self.client.get(
             reverse("homepage:notes"),
             HTTP_AUTHORIZATION=f"Bearer {self.token2}",
         )
         self.assertEqual(len(response2_get.data), 1)
-        self.assertEqual(response2_get.data[0]["name"], self.user2_note.name)
+        self.assertEqual(response2_get.data[0]["notes"]["name"], self.user2_note.name)
 
     def test_user_put_not_owned(self):
         # user1 tries to update user2's note

@@ -48,7 +48,7 @@ const TaskList = ({created, finished, done, onMain}) => {
     };
 
     useEffect(() => {
-        Auth.axiosInstance.get('/api/v1/homepage/tasks', {params: {
+        Auth.axiosInstance.get('/api/v1/homepage/tasks/', {params: {
                 "created": created,
                 "finished": finished,
                 "tags": [],
@@ -64,7 +64,7 @@ const TaskList = ({created, finished, done, onMain}) => {
     }, [created, finished, done]);
 
     useEffect(() => {
-        Auth.axiosInstance.get('/api/v1/homepage/tags')
+        Auth.axiosInstance.get('/api/v1/homepage/tags/')
             .then(response => {
                     const newTags = response.data.tags.map(tag => ({
                         ...tag,
@@ -85,7 +85,7 @@ const TaskList = ({created, finished, done, onMain}) => {
     }, [tags]);
 
     useEffect(() => {
-        Auth.axiosInstance.get('/api/v1/homepage/factors')
+        Auth.axiosInstance.get('/api/v1/homepage/factors/')
             .then(response => {
                     const new_factors = response.data.factors.reduce((acc, factor) => ({
                         ...acc,

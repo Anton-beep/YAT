@@ -7,7 +7,7 @@ const AddTagForm = () => {
     const handleSubmit = (event) => {
         event.preventDefault();
 
-        Auth.axiosInstance.post('api/v1/homepage/tags', {
+        Auth.axiosInstance.post('api/v1/homepage/tags/', {
             name: name
         }).then(() => {
             setName('');

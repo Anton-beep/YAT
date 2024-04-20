@@ -48,10 +48,12 @@ const EventsList = ({created, finished, onMain}) => {
 
 
     useEffect(() => {
-        Auth.axiosInstance.get('/api/v1/homepage/events', {
-            params: {"created": created,
-            "finished": finished,
-            "tags": [],}
+        Auth.axiosInstance.get('/api/v1/homepage/events/', {
+            params: {
+                "created": created,
+                "finished": finished,
+                "tags": [],
+            }
         })
             .then(response => {
                 setEvents(response.data.events);
@@ -62,7 +64,7 @@ const EventsList = ({created, finished, onMain}) => {
     }, [created, finished]);
 
     useEffect(() => {
-        Auth.axiosInstance.get('/api/v1/homepage/activities')
+        Auth.axiosInstance.get('/api/v1/homepage/activities/')
             .then(response => {
                 const activities = response.data.activities.reduce((acc, activity) => ({
                     ...acc,
@@ -76,7 +78,7 @@ const EventsList = ({created, finished, onMain}) => {
     }, []);
 
     useEffect(() => {
-        Auth.axiosInstance.get('/api/v1/homepage/tags')
+        Auth.axiosInstance.get('/api/v1/homepage/tags/')
             .then(response => {
                     const newTags = response.data.tags.map(tag => ({
                         ...tag,
@@ -97,8 +99,9 @@ const EventsList = ({created, finished, onMain}) => {
     }, [tags]);
 
     useEffect(() => {
-        Auth.axiosInstance.get('/api/v1/homepage/factors')
+        Auth.axiosInstance.get('/api/v1/homepage/factors/')
             .then(response => {
+                    console.log(response.data);
                     const new_factors = response.data.factors.reduce((acc, factor) => ({
                         ...acc,
                         [factor.id]: factor.name,
@@ -127,7 +130,8 @@ const EventsList = ({created, finished, onMain}) => {
                 Фильтрация по тегам
                 {tags.map(tag => (
                     <div key={tag.id}>
-                        <input className="form-check-input" type="checkbox" checked={tag.checked} onChange={() => handleTagCheckChange(tag.id)}/>
+                        <input className="form-check-input" type="checkbox" checked={tag.checked}
+                               onChange={() => handleTagCheckChange(tag.id)}/>
                         <label className="form-check-label">{tag.name}</label>
                     </div>
                 ))}
@@ -158,13 +162,14 @@ const EventsList = ({created, finished, onMain}) => {
                                 <label>{factors[factor.id]}: </label>
 
                                 <div className="progress" role="progressbar" aria-label="Basic example">
-                                    <div className="progress-bar" style={{width: `${(factor.value * 5 + 50)}%`}}>{factor.value}</div>
+                                    <div className="progress-bar"
+                                         style={{width: `${(factor.value * 5 + 50)}%`}}>{factor.value}</div>
                                 </div>
                             </div>
                         ))}
                         {!Boolean(selectedEvent.finished) && <div>
                             <button type="button" className="btn btn-primary">Начать событие</button>
-                            </div>}
+                        </div>}
                     </>
                 )}
             </Modal>
@@ -191,8 +196,10 @@ const EventsList = ({created, finished, onMain}) => {
                 <h1>События</h1>
             </div>
             <div className="buttons">
-                {onMain && <button className="button-green button-gap" onClick={() => setIsFormOpen(true)}>Добавить новое событие
-                </button>}
+                {onMain &&
+                    <button className="button-green button-gap" onClick={() => setIsFormOpen(true)}>Добавить новое
+                        событие
+                    </button>}
                 <button className="button-orange button-gap" onClick={() => setIsFilterOpen(true)}>Фильтр по тегам
                 </button>
             </div>

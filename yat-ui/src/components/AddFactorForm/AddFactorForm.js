@@ -7,7 +7,7 @@ const AddFactorForm = () => {
     const handleSubmit = (event) => {
         event.preventDefault();
 
-        Auth.axiosInstance.post('api/v1/homepage/factors', {
+        Auth.axiosInstance.post('api/v1/homepage/factors/', {
             name: name
         }).then(() => {
             setName('');

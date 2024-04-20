@@ -16,7 +16,7 @@ const AddActivityForm = () => {
     const handleSubmit = (event) => {
         event.preventDefault();
 
-        Auth.axiosInstance.post('api/v1/homepage/activities', {
+        Auth.axiosInstance.post('api/v1/homepage/activities/', {
             name: name,
             icon_name: icon,
             icon_color  : color
