@@ -91,13 +91,17 @@ class TaskTestCase(APITestCase):
             response.data["tasks"][0]["description"],
             self.task1.description,
         )
-        self.assertEqual(response.data["tasks"][0]["status"], self.task1.status)
+        self.assertEqual(
+            response.data["tasks"][0]["status"], self.task1.status
+        )
         self.assertEqual(
             response.data["tasks"][0]["deadline"],
             str(self.task1.deadline.timestamp()).split(".")[0],
         )
         self.assertEqual(response.data["tasks"][0]["tags"][0], self.tag1.id)
-        self.assertEqual(response.data["tasks"][0]["factors"][0]["id"], self.factor1.id)
+        self.assertEqual(
+            response.data["tasks"][0]["factors"][0]["id"], self.factor1.id
+        )
         self.assertEqual(
             response.data["tasks"][0]["factors"][0]["value"],
             self.score1.value,
@@ -293,3 +297,43 @@ class TaskTestCase(APITestCase):
         )
 
         self.assertEqual(response.status_code, HTTPStatus.CREATED)
+
+    def test_created_bad_data(self):
+        response = self.client.post(
+            reverse("homepage:tasks"),
+            data={
+                "name": "test_name_new",
+                "description": "test_description_new",
+                "created": "-1",
+            },
+            HTTP_AUTHORIZATION=f"Bearer {self.token}",
+            format="json",
+        )
+
+        self.assertEqual(response.status_code, HTTPStatus.BAD_REQUEST)
+
+        response = self.client.post(
+            reverse("homepage:tasks"),
+            data={
+                "name": "test_name_new",
+                "description": "test_description_new",
+                "created": "10" + "0" * 100,
+            },
+            HTTP_AUTHORIZATION=f"Bearer {self.token}",
+            format="json",
+        )
+
+        self.assertEqual(response.status_code, HTTPStatus.BAD_REQUEST)
+
+    def test_empty_description(self):
+        response = self.client.post(
+            reverse("homepage:tasks"),
+            data={
+                "name": "test_name_new",
+            },
+            HTTP_AUTHORIZATION=f"Bearer {self.token}",
+            format="json",
+        )
+
+        self.assertEqual(response.status_code, HTTPStatus.CREATED)
+        self.assertEqual(response.data["description"], "")

@@ -92,7 +92,7 @@ class Task(models.Model):
         on_delete=models.CASCADE,
     )
     tags = models.ManyToManyField(Tag, related_name="tasks")
-    scores = models.ManyToManyField(Score, related_name="tasks")
+    scores = models.ManyToManyField(Score, related_name="tasks", blank=True)
 
     def __str__(self):
         return f"Задача: {self.name}"
@@ -113,7 +113,7 @@ class Event(models.Model):
         related_name="events",
         on_delete=models.CASCADE,
     )
-    scores = models.ManyToManyField(Score, related_name="events")
+    scores = models.ManyToManyField(Score, related_name="events", blank=True)
 
     def __str__(self):
         return f"Событие: {self.description}"

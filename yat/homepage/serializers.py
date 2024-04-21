@@ -1,3 +1,5 @@
+import datetime
+
 from rest_framework import serializers
 
 from homepage import models
@@ -61,17 +63,13 @@ class NoteSerializer(UserContextSerializer):
         model = models.Note
         fields = ["id", "name", "description"]
 
+    description = serializers.CharField(required=False, allow_blank=True)
+
 
 class FactorSerializer(UserContextSerializer):
     class Meta:
         model = models.Factor
         fields = ["id", "name", "visible"]
-
-
-class ScoreSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = models.Score
-        fields = ["factor", "value"]
 
 
 class SerializerWithTagsAndScores(UserContextSerializer):
@@ -83,7 +81,7 @@ class SerializerWithTagsAndScores(UserContextSerializer):
         many=True,
         required=False,
     )
-    scores = ScoreSerializer(many=True, required=False)
+    description = serializers.CharField(required=False, allow_blank=True)
 
     def __init__(self, *args, **kwargs):
         assert "tags" in self.Meta.fields, "tags field is required"
@@ -92,9 +90,13 @@ class SerializerWithTagsAndScores(UserContextSerializer):
 
     def to_internal_value(self, data):
         factors = data.pop("factors", [])
-        data["scores"] = factors
-        for el in data["scores"]:
-            el["factor"] = el.pop("id")
+        data["scores"] = []
+        for el in factors:
+            el_factor = models.Factor.objects.get(id=el["id"])
+            score, _ = models.Score.objects.get_or_create(
+                factor=el_factor, value=el["value"]
+            )
+            data["scores"].append(score.id)
 
         return super().to_internal_value(data)
 
@@ -124,33 +126,37 @@ class TaskSerializer(SerializerWithTagsAndScores):
 
     deadline = TimestampField(required=False)
     created = TimestampField(required=False)
+    description = serializers.CharField(required=False, allow_blank=True)
 
     def create(self, validated_data):
-        scores_data = validated_data.pop("scores")
+        scores = validated_data.pop("scores")
         task = super().create(validated_data)
         created = validated_data.get("created")
         if created:
             task.created = created
             task.save()
 
-        for score_data in scores_data:
-            score, created = models.Score.objects.get_or_create(**score_data)
-            score.tasks.add(task)
+        if scores:
+            for score in scores:
+                exist_score = models.Score.objects.get(id=score.id)
+                task.scores.add(exist_score)
 
         return task
 
     def update(self, instance, validated_data):
-        scores_data = validated_data.pop("scores")
+        scores = validated_data.pop("scores")
         task = super().update(instance, validated_data)
         task.scores.set([])
-        for score_data in scores_data:
-            score, created = models.Score.objects.get_or_create(**score_data)
-            score.tasks.add(task)
+        for score in scores:
+            exist_score = models.Score.objects.get(id=score.id)
+            exist_score.tasks.add(task)
 
         return task
 
     def validate(self, data):
-        if data.get("status") != "done" and ("scores" in data and data["scores"]):
+        if data.get("status") != "done" and (
+            "scores" in data and data["scores"]
+        ):
             raise serializers.ValidationError(
                 {"factors": 'Factors can only be sent if status is "done".'},
             )
@@ -173,6 +179,7 @@ class EventSerializer(SerializerWithTagsAndScores):
 
     created = TimestampField(required=False)
     finished = TimestampField(required=False)
+    description = serializers.CharField(required=False, allow_blank=True)
 
     def to_representation(self, instance):
         data = super().to_representation(instance)
@@ -187,34 +194,46 @@ class EventSerializer(SerializerWithTagsAndScores):
         return super().to_internal_value(data)
 
     def create(self, validated_data):
-        scores_data = validated_data.pop("scores")
+        scores = validated_data.pop("scores")
         event = super().create(validated_data)
         created = validated_data.get("created")
         if created:
             event.created = created
             event.save()
 
-        if scores_data:
-            for score_data in scores_data:
-                score, created = models.Score.objects.get_or_create(
-                    **score_data,
-                )
-                score.events.add(event)
+        if scores:
+            for score in scores:
+                exist_score = models.Score.objects.get(id=score.id)
+                exist_score.events.add(event)
 
         return event
 
     def update(self, instance, validated_data):
-        scores_data = validated_data.pop("scores")
+        scores = validated_data.pop("scores")
         event = super().update(instance, validated_data)
         event.scores.set([])
-        for score_data in scores_data:
-            score, created = models.Score.objects.get_or_create(**score_data)
-            score.events.add(event)
+        for score in scores:
+            exist_score = models.Score.objects.get(id=score.id)
+            exist_score.events.add(event)
 
         return event
 
     def validate(self, data):
-        if not data.get("finished") and ("scores" in data and data["scores"]):
+        created = data.get("created")
+        finished = data.get("finished")
+
+        if (
+            isinstance(created, datetime.datetime)
+            and isinstance(finished, datetime.datetime)
+            and created > finished
+        ):
+            raise serializers.ValidationError(
+                {
+                    "created": "Created timestamp cannot be greater than finished timestamp."
+                },
+            )
+
+        if not finished and ("scores" in data and data["scores"]):
             raise serializers.ValidationError(
                 {"factors": "Factors can only be sent if event is finished."},
             )

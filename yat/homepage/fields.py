@@ -13,4 +13,7 @@ class TimestampField(serializers.Field):
     def to_internal_value(self, data):
         if data == "":
             return None
-        return timezone.make_aware(datetime.fromtimestamp(int(data)))
+        try:
+            return timezone.make_aware(datetime.fromtimestamp(int(data)))
+        except (OSError, ValueError, OverflowError, TypeError):
+            raise serializers.ValidationError("Invalid timestamp")

@@ -192,3 +192,19 @@ class EventTestCase(APITestCase):
         new_event_id = response.data["id"]
         event = models.Event.objects.get(id=new_event_id)
         self.assertEqual(event.created, timezone.make_aware(created))
+
+    def test_created_bigger_than_finished(self):
+        response = self.client.post(
+            reverse("homepage:events"),
+            data={
+                "name": "test_name_new",
+                "description": "test_description_new",
+                "created": "10",
+                "finished": "5",
+                "activity_id": self.activity1.id,
+            },
+            HTTP_AUTHORIZATION=f"Bearer {self.token}",
+            format="json",
+        )
+
+        self.assertEqual(response.status_code, HTTPStatus.BAD_REQUEST)
