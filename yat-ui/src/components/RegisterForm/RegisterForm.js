@@ -11,8 +11,19 @@ const RegisterForm = () => {
     const [message, setMessage] = useState('');
     const [error, setError] = useState(false);
 
+    const validatePassword = (password) => {
+        // Password must be at least 8 characters long, contain at least one number and one letter
+        const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/;
+        return passwordRegex.test(password);
+    };
+
     const handleSubmit = async (event) => {
         event.preventDefault();
+        if (!validatePassword(password)) {
+            setMessage("Пароль должен быть не менее 8 символов и содержать хотя бы одну букву и одну цифру");
+            setError(true);
+            return;
+        }
         try {
             Auth.register({email: email, password: password, first_name: firstName, last_name: lastName})
                 .then(
@@ -25,7 +36,7 @@ const RegisterForm = () => {
                 )
                 .catch(
                     error => {
-                        setMessage("Ошибка регистрации");
+                        setMessage(Object.values(error.response.data).join(", "));
                         setError(true);
                         console.error(error);
                     }
