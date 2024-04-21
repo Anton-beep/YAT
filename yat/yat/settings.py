@@ -34,6 +34,7 @@ INSTALLED_APPS = [
     "corsheaders",
     "homepage.apps.HomepageConfig",
     "stats.apps.StatisticsConfig",
+    "drf_yasg"
 ]
 
 REST_FRAMEWORK = {
