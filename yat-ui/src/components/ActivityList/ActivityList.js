@@ -1,6 +1,8 @@
 import React, {useEffect, useState} from 'react';
 import {ReactComponent as Bib} from '../../icons/bib.svg';
 import {ReactComponent as Bob} from '../../icons/bob.svg';
+import AddActivityForm from '../AddActivityForm/AddActivityForm';
+import Modal from 'react-modal';
 
 import Auth from '../../pkg/auth';
 import '../../App.css';
@@ -10,44 +12,60 @@ const iconComponents = {
     "bob.svg": Bob,
 };
 
+Modal.setAppElement('#root'); // This line is needed for accessibility reasons
 
 const ActivityList = () => {
-    const [activities, setActivities] = useState([] );
-
+    const [activities, setActivities] = useState([]);
+    const [selectedActivity, setSelectedActivity] = useState(null);
+    const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
 
     useEffect(() => {
         Auth.axiosInstance.get('/api/v1/homepage/activities/')
             .then(response => {
-                console.log(123);
-                console.log(response.data);
-                setActivities(response.data.activities);
+                const visibleActivities = response.data.activities.filter(activity => activity.visible);
+                console.log(response.data.activities)
+                setActivities(visibleActivities);
             })
             .catch(error => {
                 console.error(error);
             })
     }, []);
 
+    const openEditDialog = (activity) => {
+        setSelectedActivity(activity);
+        setIsEditDialogOpen(true);
+    };
+
+    const closeEditDialog = () => {
+        setSelectedActivity(null);
+        setIsEditDialogOpen(false);
+    };
+
     return (
-        <div>
+        <div style={{ border: '1px solid lightgrey', borderRadius: '10px' }}>
             <div className="header">
                 <h1>Активности</h1>
             </div>
-            <div className="event-container">
-
-                {activities
-                    .map((activity, index) => {
-                        const IconComponent = iconComponents[activity.icon.name];
-                        return (
-                            <div key={activity.id} className="event-card">
-                                <div className="text-with-icon">
-                                    <IconComponent fill={activity.icon.color}/>
-                                    <h2>{activity.name}</h2>
-                                </div>
+            <div className="event-container" style={{ height: '500px', overflowY: 'scroll', boxSizing: 'border-box' }}>
+                {activities.map((activity, index) => {
+                    const IconComponent = iconComponents[activity.icon.name];
+                    return (
+                        <div key={activity.id} className="event-card" onClick={() => openEditDialog(activity)} style={{boxSizing: 'border-box' }}>
+                            <div className="text-with-icon">
+                                <IconComponent fill={activity.icon.color}/>
+                                <h2>{activity.name}</h2>
                             </div>
-                        )
-                    })}
+                        </div>
+                    )
+                })}
             </div>
-
+            <Modal isOpen={isEditDialogOpen} onRequestClose={closeEditDialog} style={{
+                content: {
+                    width: '35%', height: '75%', margin: 'auto',
+                }
+            }}>
+                <AddActivityForm activity={selectedActivity} closeDialog={closeEditDialog} />
+            </Modal>
         </div>
     )
 };

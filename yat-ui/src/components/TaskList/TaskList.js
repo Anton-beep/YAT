@@ -100,7 +100,7 @@ const TaskList = ({created, finished, done, onMain}) => {
     }, []);
 
     return (
-        <div>
+        <div style={{ border: '1px solid lightgrey', borderRadius: '10px' }}>
             <Modal
                 isOpen={isFilterOpen}
                 onRequestClose={() => setIsFilterOpen(false)}

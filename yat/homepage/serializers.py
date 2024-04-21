@@ -19,7 +19,18 @@ class ActivitySerializer(UserContextSerializer):
         model = models.Activity
         fields = ["id", "name", "icon", "icon_name", "icon_color"]
 
-    icon = serializers.SerializerMethodField()
+    icon = serializers.SerializerMethodField(required=False)
+    name = serializers.CharField(required=False)
+    icon_name = serializers.CharField(required=False)
+    icon_color = serializers.CharField(required=False)
+
+    def get_fields(self):
+        fields = super().get_fields()
+        request_method = self.context['request'].method
+        if request_method == 'POST':
+            fields['name'].required = True
+            fields['icon'].required = True
+        return fields
 
     @staticmethod
     def get_icon(obj):
@@ -41,11 +52,15 @@ class ActivitySerializer(UserContextSerializer):
         instance: models.Activity,
         validated_data: dict[str, str],
     ):
-        instance.icon_name = validated_data.get(
+        instance.name = validated_data.pop(
+            "name",
+            instance.name,
+        )
+        instance.icon_name = validated_data.pop(
             "icon_name",
             instance.icon_name,
         )
-        instance.icon_color = validated_data.get(
+        instance.icon_color = validated_data.pop(
             "icon_color",
             instance.icon_color,
         )

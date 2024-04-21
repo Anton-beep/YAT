@@ -6,6 +6,7 @@ import {ReactComponent as Star} from '../icons/star.svg';
 import {ReactComponent as Clock} from '../icons/clock.svg';
 import {ReactComponent as X} from '../icons/x-lg.svg';
 import EventForm from "./EventForm";
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 import Auth from '../pkg/auth';
 import '../App.css';
@@ -52,7 +53,10 @@ const EventsList = ({created, finished, onMain}) => {
             .then(response => {
                 const new_activities = response.data.activities.reduce((acc, activity) => ({
                     ...acc,
-                    [activity.id]: {"name": activity.name, "icon": {"name": activity.icon.name, "color": activity.icon.color}},
+                    [activity.id]: {
+                        "name": activity.name,
+                        "icon": {"name": activity.icon.name, "color": activity.icon.color}
+                    },
                 }), {});
                 setActivities(new_activities);
             })
@@ -63,9 +67,11 @@ const EventsList = ({created, finished, onMain}) => {
 
     useEffect(() => {
         Auth.axiosInstance.get('/api/v1/homepage/events/', {
-            params: {"created": created,
-            "finished": finished,
-            "tags": [],}
+            params: {
+                "created": created,
+                "finished": finished,
+                "tags": [],
+            }
         })
             .then(response => {
                 console.log(response.data);
@@ -161,25 +167,34 @@ const EventsList = ({created, finished, onMain}) => {
     };
 
     return (
-        <div>
+        <div style={{ border: '1px solid lightgrey', borderRadius: '10px' }}>
             <Modal
                 isOpen={isFilterOpen}
                 onRequestClose={() => setIsFilterOpen(false)}
                 style={{
                     content: {
-                        width: '200px',
-                        height: '400px',
+                        width: '350px',
+                        height: '500px',
                         margin: 'auto',
                     }
                 }}
             >
-                Фильтрация по тегам
-                {tags.map(tag => (
-                    <div key={tag.id}>
-                        <input className="form-check-input" type="checkbox" checked={tag.checked} onChange={() => handleTagCheckChange(tag.id)}/>
-                        <label className="form-check-label">{tag.name}</label>
+                {tags.length > 0 ? (
+                    <>
+                        Фильтрация по тегам
+                        {tags.map(tag => (
+                            <div key={tag.id}>
+                                <input className="form-check-input" type="checkbox" checked={tag.checked}
+                                       onChange={() => handleTagCheckChange(tag.id)}/>
+                                <label className="form-check-label">{tag.name}</label>
+                            </div>
+                        ))}
+                    </>
+                ) : (
+                    <div className="alert alert-danger">
+                        Доступных тегов нет. Сначала добавьте теги.
                     </div>
-                ))}
+                )}
             </Modal>
 
             <Modal
@@ -207,7 +222,8 @@ const EventsList = ({created, finished, onMain}) => {
                                 <label>{factors[factor.id]}: </label>
 
                                 <div className="progress" role="progressbar" aria-label="Basic example">
-                                    <div className="progress-bar" style={{width: `${(factor.value * 5 + 50)}%`}}>{factor.value}</div>
+                                    <div className="progress-bar"
+                                         style={{width: `${(factor.value * 5 + 50)}%`}}>{factor.value}</div>
                                 </div>
                             </div>
                         ))}
@@ -233,19 +249,27 @@ const EventsList = ({created, finished, onMain}) => {
                     }
                 }}
             >
-                <EventForm
-                    tags={tags}
-                    initialFactors={factors}
-                    activities={activities}
-                />
+                {Object.keys(activities).length > 0 ? (
+                    <EventForm
+                        tags={tags}
+                        initialFactors={factors}
+                        activities={activities}
+                    />
+                ) : (
+                    <div className="alert alert-danger">
+                        Доступных активностей нет. Сначала добавьте активность, чтобы создать событие.
+                    </div>
+                )}
             </Modal>
 
             <div className="header">
                 <h1>События</h1>
             </div>
             <div className="buttons">
-                {onMain && <button className="button-green button-gap" onClick={() => setIsFormOpen(true)}>Добавить новое событие
-                </button>}
+                {onMain &&
+                    <button className="button-green button-gap" onClick={() => setIsFormOpen(true)}>Добавить новое
+                        событие
+                    </button>}
                 <button className="button-orange button-gap" onClick={() => setIsFilterOpen(true)}>Фильтр по тегам
                 </button>
             </div>
