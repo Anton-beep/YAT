@@ -2,9 +2,9 @@ import React, {useState, useEffect} from 'react';
 import styles from './ClockIcon.module.css';
 
 const ClockIcon = ({initialSeconds}) => {
-    const secondsDegrees = ((initialSeconds % 60 / 60) * 360) + 90;
-    const minutesDegrees = (((initialSeconds / 60) % 60 / 60) * 360) + ((initialSeconds % 60 / 60) * 6) + 90;
-    const hoursDegrees = (((initialSeconds / 3600) % 24 / 12) * 360) + (((initialSeconds / 60) % 60 / 60) * 30) + 90;
+    const secondsDegrees = initialSeconds * 6;
+    const minutesDegrees = initialSeconds;
+    const hoursDegrees = initialSeconds / 60;
 
     return (
         <div className={styles.clock}>

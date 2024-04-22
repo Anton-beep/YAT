@@ -46,14 +46,14 @@ const AddFactorForm = ({ factor = null, onClose }) => {
 
     return (
         <div>
-            <h2 className="mt-3">{editMode ? 'Edit Factor' : 'Add Factor'}</h2>
+            <h2 className="mt-3">{editMode ? 'Редактировать фактор' : 'Добавить фактор'}</h2>
             <form onSubmit={handleSubmit} className="mt-3">
                 <div className="mb-3">
-                    <label htmlFor="name" className="form-label">Name:</label>
+                    <label htmlFor="name" className="form-label">Название:</label>
                     <input type="text" className="form-control" id="name" value={name} onChange={(e) => setName(e.target.value)} />
                 </div>
-                <button type="submit" className="btn btn-primary">{editMode ? 'Update' : 'Submit'}</button>
-                {editMode && <button type="button" className="btn btn-danger" onClick={handleDelete}>Delete</button>}
+                <button type="submit" className="button-green">Сохранить</button>
+                {editMode && <button type="button" className="btn btn-danger" onClick={handleDelete}>Удалить</button>}
             </form>
         </div>
     );

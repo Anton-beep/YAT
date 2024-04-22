@@ -10,7 +10,6 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 
 import Auth from '../pkg/auth';
 import '../App.css';
-import {fireInputEvent} from "@testing-library/user-event/dist/keyboard/shared";
 import ClockIcon from "./ClockIcon/ClockIcon";
 
 const iconComponents = {
@@ -25,7 +24,7 @@ const EventsList = ({created, finished, onMain}) => {
     const [tags, setTags] = useState([]);
     const [factors, setFactors] = useState({});
     const [selectedTags, setSelectedTags] = useState([]);
-    const [elapsedTimes, setElapsedTimes] = useState({});
+    const [elapsedTimes, setElapsedTimes] = useState(0);
 
     const [isFilterOpen, setIsFilterOpen] = useState(false);
     const handleTagCheckChange = (tagId) => {
@@ -63,7 +62,7 @@ const EventsList = ({created, finished, onMain}) => {
             .catch(error => {
                 console.error(error);
             })
-    }, [elapsedTimes]);
+    }, []);
 
     useEffect(() => {
         Auth.axiosInstance.get('/api/v1/homepage/events/', {
@@ -79,7 +78,7 @@ const EventsList = ({created, finished, onMain}) => {
             .catch(error => {
                 console.error(error);
             })
-    }, [created, finished, elapsedTimes]);
+    }, [created, finished]);
 
     useEffect(() => {
         Auth.axiosInstance.get('/api/v1/homepage/tags/')
@@ -96,7 +95,7 @@ const EventsList = ({created, finished, onMain}) => {
             .catch(error => {
                 console.error(error);
             })
-    }, [elapsedTimes]);
+    }, []);
 
     useEffect(() => {
         setSelectedTags(tags.filter(tag => tag.checked).map(tag => tag.id));
@@ -115,7 +114,7 @@ const EventsList = ({created, finished, onMain}) => {
             .catch(error => {
                 console.error(error);
             })
-    }, [elapsedTimes]);
+    }, []);
 
     useEffect(() => {
         const intervalIds = {};
@@ -151,7 +150,7 @@ const EventsList = ({created, finished, onMain}) => {
         return () => {
             Object.values(intervalIds).forEach(clearInterval);
         };
-    }, [events, elapsedTimes]);
+    }, [events]);
 
     const handleFinishEvent = (event) => {
         Auth.axiosInstance.put(`/api/v1/homepage/events/`, {
@@ -182,78 +181,11 @@ const EventsList = ({created, finished, onMain}) => {
     return (
         <div style={{border: '1px solid lightgrey', borderRadius: '10px'}}>
             <Modal
-                isOpen={isFilterOpen}
-                onRequestClose={() => setIsFilterOpen(false)}
-                style={{
-                    content: {
-                        width: '350px',
-                        height: '500px',
-                        margin: 'auto',
-                    }
-                }}
-            >
-                {tags.length > 0 ? (
-                    <>
-                        Фильтрация по тегам
-                        {tags.map(tag => (
-                            <div key={tag.id}>
-                                <input className="form-check-input" type="checkbox" checked={tag.checked}
-                                       onChange={() => handleTagCheckChange(tag.id)}/>
-                                <label className="form-check-label">{tag.name}</label>
-                            </div>
-                        ))}
-                    </>
-                ) : (
-                    <div className="alert alert-danger">
-                        Доступных тегов нет. Сначала добавьте теги.
-                    </div>
-                )}
-            </Modal>
-
-            <Modal
-                isOpen={isCardOpen}
-                onRequestClose={() => setIsCardOpen(false)}
-                style={{
-                    content: {
-                        width: '35%',
-                        height: '45%',
-                        margin: 'auto',
-                    }
-                }}
-            >
-                {selectedEvent && (
-                    <>
-                        <h2>{activities[selectedEvent.activity_id].name}</h2>
-                        <p>{selectedEvent.description}</p>
-                        {Boolean(selectedEvent.finished) && <div>
-                            <p>Start Time: {formatTime(selectedEvent.created)}</p>
-                            <p>End Time: {formatTime(selectedEvent.finished)}</p>
-                        </div>}
-                        <p>Tags: {selectedEvent.tags.map(tagId => tags.find(tag => tag.id === tagId).name).join(', ')}</p>
-                        {selectedEvent.factors.map((factor, index) => (
-                            <div key={index}>
-                                <label>{factors[factor.id]}: </label>
-
-                                <div className="progress" role="progressbar" aria-label="Basic example">
-                                    <div className="progress-bar"
-                                         style={{width: `${(factor.value * 5 + 50)}%`}}>{factor.value}</div>
-                                </div>
-                            </div>
-                        ))}
-                        {!Boolean(selectedEvent.finished) && <div>
-                            <div className="text-with-icon">
-                                <Clock/>
-                                <span>{!Boolean(selectedEvent.finished) ? formatElapsedTime(elapsedTimes[selectedEvent.id] || 0) : formatTime(selectedEvent.created)}</span>
-                            </div>
-                            <button type="button" className="btn btn-primary">Завершить событие</button>
-                        </div>}
-                    </>
-                )}
-            </Modal>
-
-            <Modal
                 isOpen={isFormOpen}
-                onRequestClose={() => setIsFormOpen(false)}
+                onRequestClose={() => {
+                    setIsFormOpen(false);
+                    setSelectedEvent(null);
+                }}
                 style={{
                     content: {
                         width: '40%',
@@ -267,6 +199,7 @@ const EventsList = ({created, finished, onMain}) => {
                         tags={tags}
                         initialFactors={factors}
                         activities={activities}
+                        event={selectedEvent}
                     />
                 ) : (
                     <div className="alert alert-danger">
@@ -304,12 +237,17 @@ const EventsList = ({created, finished, onMain}) => {
                         .every(tagId => event.tags.includes(tagId)))
                     .map((event, index) => {
                         const IconComponent = activities[event.activity_id] && iconComponents[activities[event.activity_id].icon.name];
-                        const factorMean = event.factors.reduce((sum, factor) => sum + factor.value, 0) / event.factors.length;
+                        let factorMean;
+                        if (event.factors.length === 0) {
+                            factorMean = "Нет оценок";
+                        } else {
+                            factorMean = event.factors.reduce((sum, factor) => sum + factor.value, 0) / event.factors.length;
+                        }
                         const factorColor = factorMean > 5 ? 'green' : factorMean < -5 ? 'red' : 'black';
                         return (
                             <div key={event.id} className="event-card" onClick={() => {
                                 setSelectedEvent(event);
-                                setIsCardOpen(true);
+                                setIsFormOpen(true);
                             }}>
                                 <div className="text-with-icon">
                                     <IconComponent className="icon-fixed-size" fill={activities[event.activity_id].icon.color}/>

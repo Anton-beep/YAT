@@ -1,21 +1,41 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import Auth from '../pkg/auth';
 
 
-function EventForm({tags = [], icons = {}, initialFactors = {}, activities = {}}) {
-    const [selectedActivity, setSelectedActivity] = useState("");
-    const [description, setDescription] = useState('');
-    const [selectedTags, setSelectedTags] = useState([]);
+function EventForm({tags = [], icons = {}, initialFactors = {}, activities = {}, event = null}) {
+    const [selectedActivity, setSelectedActivity] = useState(event ? activities[event.activity_id].name : '');
+    const [description, setDescription] = useState(event ? event.description : '');
+    const [selectedTags, setSelectedTags] = useState(event ? event.tags : []);
     const [icon, setIcon] = useState({name: 'bib.svg', color: '#2a82a8'});
-    const [created, setCreated] = useState(Date.now().toString().slice(0, -3));
-    const [finished, setFinished] = useState('');
-    const [factors, setFactors] = useState([{id: 1, value: 10}]);
+    const [created, setCreated] = useState(event ? event.created : '');
+    const [finished, setFinished] = useState(event ? event.finished : '');
+    const [factors, setFactors] = useState(event ? event.factors : []);
+    const [elapsedTime, setElapsedTime] = useState(0);
 
     const activitiesArray = Object.keys(activities).map((id) => ({id, name: activities[id].name}));
     const [activityId, setActivityId] = useState(activitiesArray[0].id);
     const [factorValues, setFactorValues] = useState([]);
 
-    if (Object.keys(activities).length===0) {
+    const handleCreatedChange = (event) => {
+        const datetime = new Date(event.target.value);
+        const timestamp = Math.floor(datetime.getTime() / 1000); // convert to seconds
+        setCreated(timestamp.toString());
+    };
+
+    const handleFinishedChange = (event) => {
+        const datetime = new Date(event.target.value);
+        const timestamp = Math.floor(datetime.getTime() / 1000); // convert to seconds
+        setFinished(timestamp.toString());
+    };
+
+    const formatElapsedTime = (seconds) => {
+        const hours = Math.floor(seconds / 3600);
+        const minutes = Math.floor((seconds % 3600) / 60);
+        const secs = seconds % 60;
+        return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+    };
+
+    if (Object.keys(activities).length === 0) {
         return (
             <h2>
                 Добавте сначала хотя бы одну активность
@@ -30,8 +50,27 @@ function EventForm({tags = [], icons = {}, initialFactors = {}, activities = {}}
 
     };
 
-    const handleSubmit = (event) => {
-        event.preventDefault();
+    const handleFinishEvent = () => {
+        if (event) {
+            Auth.axiosInstance.put(`/api/v1/homepage/events/`, {
+                id: event.id,
+                finished: Math.floor(Date.now() / 1000),
+                description: event.description,
+                tags: event.tags,
+                factors: event.factors,
+                activity_id: event.activity_id,
+            })
+                .then(response => {
+                    window.location.reload();
+                })
+                .catch(error => {
+                    console.error(error);
+                })
+        }
+    }
+
+    const handleSubmit = (eventForm) => {
+        eventForm.preventDefault();
 
         const factorsToSend = factorsArray.map((factor, index) => ({
             id: factor.id, value: factorValues[index]
@@ -40,13 +79,28 @@ function EventForm({tags = [], icons = {}, initialFactors = {}, activities = {}}
         const data = {
             description,
             tags: selectedTags,
-            created,
+            created: Math.floor(Date.now() / 1000),
             finished,
             factors: finished !== '' ? factorsToSend : [],
             activity_id: activityId
         };
 
-        Auth.axiosInstance.post('/api/v1/homepage/events/', data)
+        const request = event ?
+            Auth.axiosInstance.put(`/api/v1/homepage/events/`, {...data, id: event.id}) :
+            Auth.axiosInstance.post('/api/v1/homepage/events/', data);
+
+        request
+            .then(response => {
+                window.location.reload();
+            })
+            .catch(error => {
+                console.log(error);
+            });
+    };
+
+    const handleDelete = () => {
+        // Make a DELETE request to delete the event
+        Auth.axiosInstance.delete(`/api/v1/homepage/events/`, {data: {id: event.id}})
             .then(response => {
                 window.location.reload();
             })
@@ -60,27 +114,27 @@ function EventForm({tags = [], icons = {}, initialFactors = {}, activities = {}}
         const timestamp = Math.floor(date.getTime() / 1000); // convert to seconds
         setFinished(timestamp.toString());
     };
-const handleCreatedOnChange = (event) => {
+    const handleCreatedOnChange = (event) => {
         const date = new Date(event.target.value);
         const timestamp = Math.floor(date.getTime() / 1000); // convert to seconds
         setCreated(timestamp.toString());
     };
 
-const handleDescriptionOnChange = (event) => {
+    const handleDescriptionOnChange = (event) => {
         setDescription(event.target.value);
-}
+    }
 
     const handleActivityChange = (event) => {
         setActivityId(event.target.value);
     }
 
     const handleTagChange = (event) => {
-    if (event.target.checked) {
-        setSelectedTags([...selectedTags, parseInt(event.target.value)]);
-    } else {
-        setSelectedTags(selectedTags.filter(tagId => tagId !== parseInt(event.target.value)));
-    }
-};
+        if (event.target.checked) {
+            setSelectedTags([...selectedTags, parseInt(event.target.value)]);
+        } else {
+            setSelectedTags(selectedTags.filter(tagId => tagId !== parseInt(event.target.value)));
+        }
+    };
 
     return (<div>
         <form onSubmit={handleSubmit}>
@@ -88,30 +142,34 @@ const handleDescriptionOnChange = (event) => {
             <div className="mb-3">
                 <label htmlFor='activity'>Активность</label>
                 <select id="activity" className="form-select" aria-label="Default select example"
-                        onChange={handleActivityChange}>
-                    {activitiesArray.map((activity) => (<option key={activity.id} value={activity.id}>{activity.name}</option>))}
+                        onChange={handleActivityChange} value={activityId}>
+                    {activitiesArray.map((activity) => (
+                        <option key={activity.id} value={activity.id}>{activity.name}</option>))}
                 </select>
             </div>
 
             <div className="mb-3">
-                <label htmlFor="date" className="form-label">Конец</label>
-                <input type="date" id="date" className="form-control" onChange={handleFinishedonChange}/>
+                <label htmlFor="finished" className="form-label">Конец:</label>
+                <input type="datetime-local" id="finished" className="form-control" onChange={handleFinishedChange}
+                       value={new Date(finished * 1000).toISOString().slice(0, 16)}/>
             </div>
 
             {Boolean(finished) && <div className="mb-3">
-                <label htmlFor="date" className="form-label">Начало</label>
-                <input type="date" id="date" className="form-control" onChange={handleCreatedOnChange}/>
+                <label htmlFor="created" className="form-label">Начало:</label>
+                <input type="datetime-local" id="created" className="form-control" onChange={handleCreatedChange}
+                       value={new Date(created * 1000).toISOString().slice(0, 16)}/>
             </div>}
 
             <div className="mb-3">
                 <label htmlFor="textarea" className="form-label">Описание</label>
                 <textarea className="form-control" id="textarea" rows="2"
-                          onChange={handleDescriptionOnChange}></textarea>
+                          onChange={handleDescriptionOnChange} value={description}></textarea>
             </div>
 
             <div className="mb-3">
                 {tags.map(tag => (<div key={tag.id}>
-                    <input value={tag.id} className="form-check-input" type="checkbox" onChange={handleTagChange}/>
+                    <input value={tag.id} className="form-check-input" type="checkbox"
+                           onChange={handleTagChange} checked={selectedTags.includes(tag.id)}/>
                     <label className="form-check-label">{tag.name}</label>
                 </div>))}
             </div>
@@ -119,7 +177,11 @@ const handleDescriptionOnChange = (event) => {
             {Boolean(finished) && <FactorsComponent factors={factorsArray} factorValues={factorValues}
                                                     setFactorValues={setFactorValues}/>}
 
-            <button type="submit" className="btn btn-primary">Добавить</button>
+            <button type="submit" className="button-green button-gap">Сохранить</button>
+            {event && <button type="button" className="button-red button-gap" onClick={handleDelete}>Удалить</button>}
+            {event && !event.finished && (
+                <button type="button" className="button-orange" onClick={handleFinishEvent}>Закончить</button>
+            )}
         </form>
     </div>);
 }
@@ -132,20 +194,20 @@ const FactorsComponent = ({factors, factorValues, setFactorValues}) => {
     };
 
     return (<div className="mb-3">
-            {factors.map((factor, index) => (<div key={index} className="input-group mb-3">
+        {factors.map((factor, index) => (<div key={index} className="input-group mb-3">
                     <span className="input-group-text"
                           id="inputGroup-sizing-default">{factor.name} {factorValues[index]}</span>
-                    <input
-                        type="range"
-                        className="form-control"
-                        value={factorValues[index]}
-                        min="0"
-                        max="10"
-                        step="1"
-                        onChange={(e) => handleFactorChange(index, parseInt(e.target.value))}
-                    />
-                </div>))}
-        </div>);
+            <input
+                type="range"
+                className="form-control"
+                value={factorValues[index]}
+                min="0"
+                max="10"
+                step="1"
+                onChange={(e) => handleFactorChange(index, parseInt(e.target.value))}
+            />
+        </div>))}
+    </div>);
 };
 
 

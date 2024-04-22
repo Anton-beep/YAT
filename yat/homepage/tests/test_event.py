@@ -214,3 +214,15 @@ class EventTestCase(APITestCase):
         )
 
         self.assertEqual(response.status_code, HTTPStatus.BAD_REQUEST)
+
+    def test_event_put_change_only_finished(self):
+        response = self.client.put(
+            reverse("homepage:events"),
+            {
+                "id": self.event.id,
+                "finished": "1712605504",
+            },
+            HTTP_AUTHORIZATION=f"Bearer {self.token}",
+            format="json",
+        )
+        self.assertEqual(response.status_code, HTTPStatus.OK)

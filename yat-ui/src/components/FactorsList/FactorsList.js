@@ -47,8 +47,8 @@ const FactorsList = () => {
     return (
         <div>
             <div className="header">
-                <h1 className="list-title">Factors</h1>
-                <button className="button-light-blue button-gap" style={{marginLeft: "10px"}} onClick={openAddDialog}>Add Factor</button>
+                <h1 className="list-title">Факторы</h1>
+                <button className="button-light-blue button-gap" style={{marginLeft: "10px"}} onClick={openAddDialog}>Добавить фактор</button>
             </div>
             <div className="event-container" style={{height: '100%', overflowY: 'auto', boxSizing: 'border-box'}}>
                 {factors.filter(factor => factor.visible).map((factor, index) => {
