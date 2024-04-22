@@ -21,6 +21,9 @@ import './App.css'
 import TaskList from "./components/TaskList/TaskList";
 import ActivityList from "./components/ActivityList/ActivityList";
 import EventsList from "./components/EventList";
+import Modal from 'react-modal';
+
+Modal.setAppElement('#root');
 
 function App() {
     return (

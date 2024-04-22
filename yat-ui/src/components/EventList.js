@@ -30,7 +30,6 @@ const EventsList = ({created, finished, onMain}) => {
     const handleTagCheckChange = (tagId) => {
         setTags(tags.map(tag => tag.id === tagId ? {...tag, checked: !tag.checked} : tag));
         setSelectedTags(tags.filter(tag => tag.checked).map(tag => tag.id));
-        console.log(selectedTags[0]);
     };
 
     const [isCardOpen, setIsCardOpen] = useState(false);
@@ -74,7 +73,6 @@ const EventsList = ({created, finished, onMain}) => {
             }
         })
             .then(response => {
-                console.log(response.data);
                 setEvents(response.data.events);
             })
             .catch(error => {
@@ -126,15 +124,26 @@ const EventsList = ({created, finished, onMain}) => {
                 return;
             }
 
-            const startTime = event.created;
-            intervalIds[event.id] = setInterval(() => {
-                const currentTime = Math.floor(Date.now() / 1000); // текущее время в секундах
+            const eventCreatedTimestamp = event.created;
+            const eventCreatedDate = new Date(eventCreatedTimestamp * 1000);
+
+            const intervalId = setInterval(() => {
+                const currentDate = new Date();
+                const utcTimestamp = Math.floor(currentDate.getTime() / 1000);
+                const differenceInMilliseconds = utcTimestamp - eventCreatedDate.getTime() / 1000 -
+                    eventCreatedDate.getTimezoneOffset() * 60;
+                const differenceInSeconds = Math.floor(differenceInMilliseconds);
+
                 setElapsedTimes(prevTimes => ({
                     ...prevTimes,
-                    [event.id]: currentTime - startTime,
+                    [event.id]: differenceInSeconds,
                 }));
             }, 1000);
+
+            intervalIds[event.id] = intervalId;
         });
+
+
         return () => {
             Object.values(intervalIds).forEach(clearInterval);
         };
@@ -300,7 +309,7 @@ const EventsList = ({created, finished, onMain}) => {
                                 setIsCardOpen(true);
                             }}>
                                 <div className="text-with-icon">
-                                    <IconComponent fill={event.icon.color}/>
+                                    <IconComponent fill={activities[event.activity_id].icon.color}/>
                                     <h2>{activities[event.activity_id].name}</h2>
                                 </div>
 

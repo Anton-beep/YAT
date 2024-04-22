@@ -3,15 +3,7 @@ import Auth from '../pkg/auth';
 
 
 function EventForm({tags = [], icons = {}, initialFactors = {}, activities = {}}) {
-    const activitiesArray = Object.keys(activities).map((id) => ({id, name: activities[id].name}));
-    const factorsArray = Object.keys(initialFactors).map((id) => ({id, name: initialFactors[id], value: 5}));
-
-    const [selectedActivity, setSelectedActivity] = useState(activitiesArray[0].name);
-    const updateSelection = (activityName) => {
-        setSelectedActivity(activityName);
-
-    };
-
+    const [selectedActivity, setSelectedActivity] = useState("");
     const [description, setDescription] = useState('');
     const [selectedTags, setSelectedTags] = useState([]);
     const [icon, setIcon] = useState({name: 'bib.svg', color: '#2a82a8'});
@@ -19,7 +11,23 @@ function EventForm({tags = [], icons = {}, initialFactors = {}, activities = {}}
     const [finished, setFinished] = useState('');
     const [factors, setFactors] = useState([{id: 1, value: 10}]);
     const [activityId, setActivityId] = useState(1);
-    const [factorValues, setFactorValues] = useState(factorsArray.map(() => 0));
+    const [factorValues, setFactorValues] = useState([]);
+
+    if (Object.keys(activities).length===0) {
+        return (
+            <h2>
+                Добавте сначала хотя бы одну активность
+            </h2>
+        );
+    }
+
+    const activitiesArray = Object.keys(activities).map((id) => ({id, name: activities[id].name}));
+    const factorsArray = Object.keys(initialFactors).map((id) => ({id, name: initialFactors[id], value: 5}));
+
+    const updateSelection = (activityName) => {
+        setSelectedActivity(activityName);
+
+    };
 
     const handleSubmit = (event) => {
         event.preventDefault();
@@ -80,7 +88,7 @@ const handleDescriptionOnChange = (event) => {
                 <label htmlFor='activity'>Активность</label>
                 <select id="activity" className="form-select" aria-label="Default select example"
                         onChange={handleActivityChange}>
-                    {activitiesArray.map((activity) => (<option value={activity.id}>{activity.name}</option>))}
+                    {activitiesArray.map((activity) => (<option key={activity.id} value={activity.id}>{activity.name}</option>))}
                 </select>
             </div>
 
@@ -110,7 +118,7 @@ const handleDescriptionOnChange = (event) => {
             {Boolean(finished) && <FactorsComponent factors={factorsArray} factorValues={factorValues}
                                                     setFactorValues={setFactorValues}/>}
 
-            <button type="submit"   className="btn btn-primary">Добавить</button>
+            <button type="submit" className="btn btn-primary">Добавить</button>
         </form>
     </div>);
 }

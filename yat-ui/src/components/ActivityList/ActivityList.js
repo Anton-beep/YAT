@@ -12,7 +12,6 @@ const iconComponents = {
     "bob.svg": Bob,
 };
 
-Modal.setAppElement('#root'); // This line is needed for accessibility reasons
 
 const ActivityList = () => {
     const [activities, setActivities] = useState([]);

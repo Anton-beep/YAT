@@ -23,7 +23,7 @@ const Statistics = () => {
 
     useEffect(() => {
         Auth.axiosInstance.get('/api/v1/homepage/factors/', {
-            params: {
+            data: {
                 start_date: startDate.toISOString().substr(0, 10), end_date: endDate.toISOString().substr(0, 10),
             }
         })
@@ -40,7 +40,7 @@ const Statistics = () => {
 
     useEffect(() => {
         Auth.axiosInstance.get('/api/v1/statistics/wheel/', {
-            params: {
+            data: {
                 start_date: startDate.toISOString().substr(0, 10), end_date: endDate.toISOString().substr(0, 10),
             }
 
@@ -59,7 +59,7 @@ const Statistics = () => {
 
     useEffect(() => {
         Auth.axiosInstance.get('/api/v1/statistics/activity_duration/', {
-            params: {
+            data: {
                 start_date: startDate.toISOString().substr(0, 10), end_date: endDate.toISOString().substr(0, 10),
             }
 
@@ -74,7 +74,7 @@ const Statistics = () => {
 
     useEffect(() => {
         Auth.axiosInstance.get('/api/v1/statistics/event_count/', {
-            params: {
+            data: {
                 start_date: startDate.toISOString().substr(0, 10), end_date: endDate.toISOString().substr(0, 10),
             }
 
@@ -126,15 +126,15 @@ const Statistics = () => {
             />
         </div>
 
-        <div style={{height: `${width}px`, width: "auto"}}>
+        {radarData && <div style={{height: `${width}px`, width: "auto"}}>
             <MyRadarChart data={radarData} keys={["value"]} indexBy="name"/>
-        </div>
-        <div style={{height: `${width}px`, width: "auto"}}>
+        </div>}
+        {pieData && <div style={{height: `${width}px`, width: "auto"}}>
             <MyPieChart data={pieData}/>
-        </div>
-        <div style={{height: `${width}px`, width: "auto"}}>
+        </div>}
+        {timeRangeData && <div style={{height: `${width}px`, width: "auto"}}>
             <MyResponsiveTimeRange data={timeRangeData} startDate={startDate} endDate={endDate}/>
-        </div>
+        </div>}
 
         <div className="row">
             <div className="col-6">
