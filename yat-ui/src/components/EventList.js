@@ -276,7 +276,7 @@ const EventsList = ({created, finished, onMain}) => {
             </Modal>
 
             <div className="header">
-                <h1 className="list-title">События</h1>
+                <h2>События</h2>
             </div>
             <div className="buttons">
                 {onMain &&
@@ -312,18 +312,18 @@ const EventsList = ({created, finished, onMain}) => {
                                 setIsCardOpen(true);
                             }}>
                                 <div className="text-with-icon">
-                                    <IconComponent fill={activities[event.activity_id].icon.color}/>
-                                    <h2>{activities[event.activity_id].name}</h2>
+                                    <IconComponent className="icon-fixed-size" fill={activities[event.activity_id].icon.color}/>
+                                    <h4>{activities[event.activity_id].name}</h4>
                                 </div>
 
                                 {Boolean(event.finished) && <div>
                                     <div className="text-with-icon">
-                                        <Clock/>
+                                        <Clock className="icon-fixed-size"/>
                                         <span>{formatTime(event.created)} - {formatTime(event.finished)}</span>
                                     </div>
 
                                     <div className="text-with-icon factor-right">
-                                        <Star fill={factorColor}/>
+                                        <Star fill={factorColor} className="icon-fixed-size"/>
                                         <span style={{color: factorColor}}>{factorMean}</span>
                                     </div>
                                 </div>}

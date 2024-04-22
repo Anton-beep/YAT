@@ -422,3 +422,9 @@ header h3 {
   flex-shrink: 0;
 }
 
+.icon-fixed-size {
+  width: 25px;  /* Adjust as needed */
+  height: 25px; /* Adjust as needed */
+}
+
+

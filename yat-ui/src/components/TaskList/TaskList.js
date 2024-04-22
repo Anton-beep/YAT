@@ -38,17 +38,18 @@ const TaskList = ({created, finished, done, onMain}) => {
     const [isFormOpen, setIsFormOpen] = useState(false);
 
     const formatTime = (timestamp) => {
-    const date = new Date(timestamp * 1000);
-    const day = date.getDate().toString().padStart(2, '0');
-    const month = (date.getMonth() + 1).toString().padStart(2, '0'); // +1 because getMonth() returns month index starting from 0
-    const year = date.getFullYear();
-    const hours = date.getHours().toString().padStart(2, '0');
-    const minutes = date.getMinutes().toString().padStart(2, '0');
-    return `${day}-${month}-${year} ${hours}:${minutes}`;
+        const date = new Date(timestamp * 1000);
+        const day = date.getDate().toString().padStart(2, '0');
+        const month = (date.getMonth() + 1).toString().padStart(2, '0'); // +1 because getMonth() returns month index starting from 0
+        const year = date.getFullYear();
+        const hours = date.getHours().toString().padStart(2, '0');
+        const minutes = date.getMinutes().toString().padStart(2, '0');
+        return `${day}-${month}-${year} ${hours}:${minutes}`;
     };
 
     useEffect(() => {
-        Auth.axiosInstance.get('/api/v1/homepage/tasks/', {params: {
+        Auth.axiosInstance.get('/api/v1/homepage/tasks/', {
+            params: {
                 "created": created,
                 "finished": finished,
                 "tags": [],
@@ -100,7 +101,7 @@ const TaskList = ({created, finished, done, onMain}) => {
     }, []);
 
     return (
-        <div style={{ border: '1px solid lightgrey', borderRadius: '10px' }}>
+        <div style={{border: '1px solid lightgrey', borderRadius: '10px'}}>
             <Modal
                 isOpen={isFilterOpen}
                 onRequestClose={() => setIsFilterOpen(false)}
@@ -115,7 +116,8 @@ const TaskList = ({created, finished, done, onMain}) => {
                 Фильтрация по тегам
                 {tags.map(tag => (
                     <div key={tag.id}>
-                        <input className="form-check-input" type="checkbox" checked={tag.checked} onChange={() => handleTagCheckChange(tag.id)}/>
+                        <input className="form-check-input" type="checkbox" checked={tag.checked}
+                               onChange={() => handleTagCheckChange(tag.id)}/>
                         <label className="form-check-label">{tag.name}</label>
                     </div>
                 ))}
@@ -148,13 +150,18 @@ const TaskList = ({created, finished, done, onMain}) => {
                                 <label>{factors[factor.id]}: </label>
 
                                 <div className="progress" role="progressbar" aria-label="Basic example">
-                                    <div className="progress-bar" style={{width: `${(factor.value * 5 + 50)}%`}}>{factor.value}</div>
+                                    <div className="progress-bar"
+                                         style={{width: `${(factor.value * 5 + 50)}%`}}>{factor.value}</div>
                                 </div>
                             </div>
                         ))}
                         <p>Создано {formatTime(selectedTask.created)}</p>
                         {!Boolean(selectedTask.finished) && <div>
-                            <button type="button" className="btn btn-primary" onClick={() => {setIsCardOpen(false); setFinished(true)}}>Завершить задачу</button>
+                            <button type="button" className="btn btn-primary" onClick={() => {
+                                setIsCardOpen(false);
+                                setFinished(true)
+                            }}>Завершить задачу
+                            </button>
                         </div>}
                     </>
                 )}
@@ -173,7 +180,7 @@ const TaskList = ({created, finished, done, onMain}) => {
                     }
                 }}
             >
-                <TaskForm tags={tags} />
+                <TaskForm tags={tags}/>
             </Modal>
 
             <Modal
@@ -186,16 +193,17 @@ const TaskList = ({created, finished, done, onMain}) => {
                         margin: 'auto',
                     }
                 }}
-                >
-                <TaskFinish task={selectedTask} initialFactors={factors} />
+            >
+                <TaskFinish task={selectedTask} initialFactors={factors}/>
             </Modal>
 
             <div className="header">
-                <h1 className="list-title">Задачи</h1>
+                <h2>Задачи</h2>
             </div>
             <div className="buttons">
-                {onMain && <button className="button-green button-gap" onClick={() => setIsFormOpen(true)}>Добавить задачу
-                </button>}
+                {onMain &&
+                    <button className="button-green button-gap" onClick={() => setIsFormOpen(true)}>Добавить задачу
+                    </button>}
                 <button className="button-orange button-gap" onClick={() => setIsFilterOpen(true)}>Фильтр по тегам
                 </button>
             </div>
@@ -206,7 +214,7 @@ const TaskList = ({created, finished, done, onMain}) => {
                     setTags(tags.map(tag => ({...tag, checked: false})));
                 }}>
                     {tags.filter(tag => tag.checked).map(tag => tag.name).join(', ')}
-                    {"  "} <X fill="red"/>
+                    {"  "} <X fill="red" className="icon-fixed-size"/>
                 </button>}
 
             </div>
@@ -217,9 +225,9 @@ const TaskList = ({created, finished, done, onMain}) => {
                         .every(tagId => task.tags.includes(tagId)))
                     .map((task, index) => {
                         const currentDate = new Date();
-const deadlineDate = new Date(task.deadline * 1000); // Convert to milliseconds as JavaScript Date object takes time in milliseconds
+                        const deadlineDate = new Date(task.deadline * 1000); // Convert to milliseconds as JavaScript Date object takes time in milliseconds
 
-const    IconComponent = iconComponents[task.status] || Star;
+                        const IconComponent = iconComponents[task.status] || Star;
                         const factorMean = task.factors.reduce((sum, factor) => sum + factor.value, 0) / task.factors.length;
                         const factorColor = factorMean > 5 ? 'green' : factorMean < -5 ? 'red' : 'black';
 
@@ -235,25 +243,25 @@ const    IconComponent = iconComponents[task.status] || Star;
                                 setIsCardOpen(true);
                             }}>
                                 <div className="text-with-icon">
-                                    <IconComponent />
-                                    <h2>{task.name}</h2>
+                                    <IconComponent className="icon-fixed-size"/>
+                                    <h4>{task.name}</h4>
                                 </div>
 
                                 {Boolean(task.finished) && <div>
                                     <div className="text-with-icon">
-                                        <Clock />
+                                        <Clock className="icon-fixed-size"/>
                                         <span>{formatTime(task.deadline)}</span>
                                     </div>
 
                                     <div className="text-with-icon factor-right">
-                                        <Star fill={factorColor}/>
+                                        <Star fill={factorColor} className="icon-fixed-size"/>
                                         <span style={{color: factorColor}}>{factorMean}</span>
                                     </div>
                                 </div>}
 
                                 {!Boolean(task.finished) && <div>
                                     <div className="text-with-icon">
-                                        <Clock fill={deadlineColor}/>
+                                        <Clock fill={deadlineColor} className="icon-fixed-size"/>
                                         <span style={{color: deadlineColor}}>{formatTime(task.deadline)}</span>
                                     </div>
                                 </div>}
