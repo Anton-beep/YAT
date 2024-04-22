@@ -106,11 +106,7 @@ const EventsList = ({created, finished, onMain}) => {
     useEffect(() => {
         Auth.axiosInstance.get('/api/v1/homepage/factors/')
             .then(response => {
-                    const new_factors = response.data.factors.reduce((acc, factor) => ({
-                        ...acc,
-                        [factor.id]: {name: factor.name, visible: factor.visible},
-                    }), {});
-                    setFactors(new_factors);
+                    setFactors(response.data.factors);
                 }
             )
             .catch(error => {
@@ -180,13 +176,6 @@ const EventsList = ({created, finished, onMain}) => {
         return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
     };
 
-    const visibleFactors = Object.keys(factors)
-        .filter(key => factors[key].visible)
-        .reduce((obj, key) => {
-            obj[key] = factors[key];
-            return obj;
-        }, {});
-
     const visibleActivities = Object.keys(activities)
         .filter(key => activities[key].visible)
         .reduce((obj, key) => {
@@ -213,8 +202,8 @@ const EventsList = ({created, finished, onMain}) => {
                 {Object.keys(activities).length > 0 ? (
                     <EventForm
                         tags={tags}
-                        initialFactors={factors}
-                        activities={activities}
+                        initialFactors={visibleFactors}
+                        activities={visibleActivities}
                         event={selectedEvent}
                     />
                 ) : (

@@ -2,14 +2,13 @@ import React, {useEffect, useState} from 'react';
 import Auth from '../pkg/auth';
 
 
-function EventForm({tags = [], icons = {}, initialFactors = {}, activities = {}, event = null}) {
+function EventForm({tags = [], icons = {}, visibleFactors = {}, activities = {}, event = null}) {
     const [selectedActivity, setSelectedActivity] = useState(event ? activities[event.activity_id].name : '');
     const [description, setDescription] = useState(event ? event.description : '');
     const [selectedTags, setSelectedTags] = useState(event ? event.tags : []);
     const [icon, setIcon] = useState({name: 'bib.svg', color: '#2a82a8'});
     const [created, setCreated] = useState(event ? event.created : '');
     const [finished, setFinished] = useState(event ? event.finished : '');
-    const [factors, setFactors] = useState(event ? event.factors : []);
     const [elapsedTime, setElapsedTime] = useState(0);
 
     const activitiesArray = Object.keys(activities).map((id) => ({id, name: activities[id].name}));
@@ -43,8 +42,6 @@ function EventForm({tags = [], icons = {}, initialFactors = {}, activities = {},
         );
     }
 
-    const factorsArray = Object.keys(initialFactors).map((id) => ({id, name: initialFactors[id], value: 5}));
-
     const updateSelection = (activityName) => {
         setSelectedActivity(activityName);
 
@@ -72,7 +69,7 @@ function EventForm({tags = [], icons = {}, initialFactors = {}, activities = {},
     const handleSubmit = (eventForm) => {
         eventForm.preventDefault();
 
-        const factorsToSend = factorsArray.map((factor, index) => ({
+        const factorsToSend = visibleFactors.map((factor, index) => ({
             id: factor.id, value: factorValues[index]
         }));
 
@@ -148,17 +145,17 @@ function EventForm({tags = [], icons = {}, initialFactors = {}, activities = {},
                 </select>
             </div>
 
-            <div className="mb-3">
-                <label htmlFor="finished" className="form-label">Конец:</label>
-                <input type="datetime-local" id="finished" className="form-control" onChange={handleFinishedChange}
-                       value={new Date(finished * 1000).toISOString().slice(0, 16)}/>
-            </div>
-
             {Boolean(finished) && <div className="mb-3">
                 <label htmlFor="created" className="form-label">Начало:</label>
                 <input type="datetime-local" id="created" className="form-control" onChange={handleCreatedChange}
                        value={new Date(created * 1000).toISOString().slice(0, 16)}/>
             </div>}
+
+            <div className="mb-3">
+                <label htmlFor="finished" className="form-label">Конец:</label>
+                <input type="datetime-local" id="finished" className="form-control" onChange={handleFinishedChange}
+                       value={new Date(finished * 1000).toISOString().slice(0, 16)}/>
+            </div>
 
             <div className="mb-3">
                 <label htmlFor="textarea" className="form-label">Описание</label>
@@ -174,8 +171,7 @@ function EventForm({tags = [], icons = {}, initialFactors = {}, activities = {},
                 </div>))}
             </div>
 
-            {Boolean(finished) && <FactorsComponent factors={factorsArray} factorValues={factorValues}
-                                                    setFactorValues={setFactorValues}/>}
+            {Boolean(finished) && <FactorsComponent availableFactors={visibleFactors} eventFactors={event.factors}/>}
 
             <button type="submit" className="button-green button-gap">Сохранить</button>
             {event && <button type="button" className="button-red button-gap" onClick={handleDelete}>Удалить</button>}
@@ -186,21 +182,44 @@ function EventForm({tags = [], icons = {}, initialFactors = {}, activities = {},
     </div>);
 }
 
-const FactorsComponent = ({factors, factorValues, setFactorValues}) => {
+const FactorsComponent = ({availableFactors, eventFactors}) => {
+    const [factors, setFactorValues] = useState(availableFactors);
+
+    useEffect(() => {
+        console.log("availableFactors", availableFactors);
+        if (eventFactors) {
+            Auth.axiosInstance.get('/api/v1/homepage/factors/')
+                .then(response => {
+                    for (let usedFactor of eventFactors) {
+                        const factor = response.data.factors.find(factor => factor.id === usedFactor.id);
+                        if (factor) {
+                            setFactorValues([...factors, {"name": factor.name, "value": usedFactor.value}]);
+                        }
+                    }
+                })
+                .catch(error => {
+                    console.error(error);
+                });
+        }
+    }, []);
+
+
     const handleFactorChange = (index, newValue) => {
-        const newFactorValues = [...factorValues];
-        newFactorValues[index] = newValue;
-        setFactorValues(newFactorValues);
+        // const newFactorValues = [...factorValues];
+        // newFactorValues[index] = newValue;
+        // setFactorValues(newFactorValues);
     };
 
+    console.log(factors[0])
+
     return (<div className="mb-3">
-        {factors.map((factor, index) => (<div key={index} className="input-group mb-3">
+        {factors.map((index, factor) => (<div key={index} className="input-group mb-3">
                     <span className="input-group-text"
-                          id="inputGroup-sizing-default">{factor.name} {factorValues[index]}</span>
+                          id="inputGroup-sizing-default">{factor.name}</span>
             <input
                 type="range"
                 className="form-control"
-                value={factorValues[index]}
+                value={factor.value || 5}
                 min="0"
                 max="10"
                 step="1"
@@ -210,10 +229,7 @@ const FactorsComponent = ({factors, factorValues, setFactorValues}) => {
     </div>);
 };
 
-
 export default EventForm;
-
-
 
 
 

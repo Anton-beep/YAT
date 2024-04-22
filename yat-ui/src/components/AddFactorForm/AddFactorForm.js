@@ -52,8 +52,8 @@ const AddFactorForm = ({ factor = null, onClose }) => {
                     <label htmlFor="name" className="form-label">Название:</label>
                     <input type="text" className="form-control" id="name" value={name} onChange={(e) => setName(e.target.value)} />
                 </div>
-                <button type="submit" className="button-green">Сохранить</button>
-                {editMode && <button type="button" className="btn btn-danger" onClick={handleDelete}>Удалить</button>}
+                <button type="submit" className="button-green button-gap">Сохранить</button>
+                {editMode && <button type="button" className="button-red" onClick={handleDelete}>Удалить</button>}
             </form>
         </div>
     );
