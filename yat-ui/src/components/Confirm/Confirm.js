@@ -7,7 +7,7 @@ import {useParams} from "react-router-dom";
 const Confirm = () => {
     const {token, email} = useParams();
     const [message, setMessage] = useState('');
-    const [error, setError] = useState(false);
+    const [error, setError] = useState(undefined);
 
     useEffect(() => {
         Auth.confirm(
@@ -22,9 +22,11 @@ const Confirm = () => {
             }
         ).catch(
             error => {
-                setMessage("Ошибка подтверждения почты или почта уже подтверждена");
-                setError(true);
-                console.error(error);
+                if (error === undefined) {
+                    setMessage("Ошибка подтверждения почты или почта уже подтверждена");
+                    setError(true);
+                    console.error(error);
+                }
             }
         )
     }, []);

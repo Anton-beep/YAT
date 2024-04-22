@@ -10,7 +10,9 @@ function EventForm({tags = [], icons = {}, initialFactors = {}, activities = {}}
     const [created, setCreated] = useState(Date.now().toString().slice(0, -3));
     const [finished, setFinished] = useState('');
     const [factors, setFactors] = useState([{id: 1, value: 10}]);
-    const [activityId, setActivityId] = useState(1);
+
+    const activitiesArray = Object.keys(activities).map((id) => ({id, name: activities[id].name}));
+    const [activityId, setActivityId] = useState(activitiesArray[0].id);
     const [factorValues, setFactorValues] = useState([]);
 
     if (Object.keys(activities).length===0) {
@@ -21,7 +23,6 @@ function EventForm({tags = [], icons = {}, initialFactors = {}, activities = {}}
         );
     }
 
-    const activitiesArray = Object.keys(activities).map((id) => ({id, name: activities[id].name}));
     const factorsArray = Object.keys(initialFactors).map((id) => ({id, name: initialFactors[id], value: 5}));
 
     const updateSelection = (activityName) => {

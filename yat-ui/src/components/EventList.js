@@ -11,6 +11,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import Auth from '../pkg/auth';
 import '../App.css';
 import {fireInputEvent} from "@testing-library/user-event/dist/keyboard/shared";
+import ClockIcon from "./ClockIcon/ClockIcon";
 
 const iconComponents = {
     "bib.svg": Bib,
@@ -62,7 +63,7 @@ const EventsList = ({created, finished, onMain}) => {
             .catch(error => {
                 console.error(error);
             })
-    }, []);
+    }, [elapsedTimes]);
 
     useEffect(() => {
         Auth.axiosInstance.get('/api/v1/homepage/events/', {
@@ -78,7 +79,7 @@ const EventsList = ({created, finished, onMain}) => {
             .catch(error => {
                 console.error(error);
             })
-    }, [created, finished]);
+    }, [created, finished, elapsedTimes]);
 
     useEffect(() => {
         Auth.axiosInstance.get('/api/v1/homepage/tags/')
@@ -95,7 +96,7 @@ const EventsList = ({created, finished, onMain}) => {
             .catch(error => {
                 console.error(error);
             })
-    }, []);
+    }, [elapsedTimes]);
 
     useEffect(() => {
         setSelectedTags(tags.filter(tag => tag.checked).map(tag => tag.id));
@@ -114,7 +115,7 @@ const EventsList = ({created, finished, onMain}) => {
             .catch(error => {
                 console.error(error);
             })
-    }, []);
+    }, [elapsedTimes]);
 
     useEffect(() => {
         const intervalIds = {};
@@ -134,20 +135,23 @@ const EventsList = ({created, finished, onMain}) => {
                     eventCreatedDate.getTimezoneOffset() * 60;
                 const differenceInSeconds = Math.floor(differenceInMilliseconds);
 
-                setElapsedTimes(prevTimes => ({
-                    ...prevTimes,
-                    [event.id]: differenceInSeconds,
-                }));
+                setElapsedTimes(prevTimes => {
+                    // Create a new object with the same properties as prevTimes
+                    const newTimes = {...prevTimes};
+                    // Update the property for the current event
+                    newTimes[event.id] = differenceInSeconds;
+                    // Return the new object
+                    return newTimes;
+                });
             }, 1000);
 
             intervalIds[event.id] = intervalId;
         });
 
-
         return () => {
             Object.values(intervalIds).forEach(clearInterval);
         };
-    }, [events]);
+    }, [events, elapsedTimes]);
 
     const handleFinishEvent = (event) => {
         Auth.axiosInstance.put(`/api/v1/homepage/events/`, {
@@ -176,7 +180,7 @@ const EventsList = ({created, finished, onMain}) => {
     };
 
     return (
-        <div style={{ border: '1px solid lightgrey', borderRadius: '10px' }}>
+        <div style={{border: '1px solid lightgrey', borderRadius: '10px'}}>
             <Modal
                 isOpen={isFilterOpen}
                 onRequestClose={() => setIsFilterOpen(false)}
@@ -325,7 +329,7 @@ const EventsList = ({created, finished, onMain}) => {
                                 </div>}
                                 {!Boolean(event.finished) && <div>
                                     <div className="text-with-icon">
-                                        <Clock/>
+                                        <ClockIcon initialSeconds={elapsedTimes[event.id]} key={elapsedTimes[event.id] || 0}/>
                                         <span>{!Boolean(event.finished) ? formatElapsedTime(elapsedTimes[event.id] || 0) : formatTime(event.created)}</span>
                                     </div>
                                 </div>}
