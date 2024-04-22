@@ -8,10 +8,11 @@ const iconComponents = {
     "bob.svg": Bob,
 };
 
-const AddActivityForm = ({activity, closeDialog}) => {
+const AddActivityForm = ({activity = null, onClose}) => {
     const [name, setName] = useState('');
     const [icon, setIcon] = useState(Object.keys(iconComponents)[0]);
     const [color, setColor] = useState('#000000');
+    const [editMode, setEditMode] = useState(!!activity);
 
     useEffect(() => {
         if (activity) {
@@ -41,7 +42,7 @@ const AddActivityForm = ({activity, closeDialog}) => {
             setName('');
             setIcon(Object.keys(iconComponents)[0]);
             setColor('#000000');
-            window.location.reload();
+            onClose();
         }).catch((error) => {
             console.error(error);
         });
@@ -54,8 +55,7 @@ const AddActivityForm = ({activity, closeDialog}) => {
             }
         )
             .then(() => {
-                closeDialog();
-                window.location.reload();
+                onClose();
             })
             .catch((error) => {
                 console.log(error.request)
@@ -90,8 +90,8 @@ const AddActivityForm = ({activity, closeDialog}) => {
                     <input type="color" className="form-control" id="color" value={color}
                            onChange={(e) => setColor(e.target.value)}/>
                 </div>
-                <button type="submit" className="btn btn-primary">Отправить</button>
-                <button type="button" onClick={handleDelete} className="btn btn-danger">Удалить</button>
+                <button type="submit" className="btn btn-primary">{editMode ? 'Update' : 'Submit'}</button>
+                {editMode && <button type="button" className="btn btn-danger" onClick={handleDelete}>Delete</button>}
             </form>
         </div>
     );

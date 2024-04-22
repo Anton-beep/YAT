@@ -54,7 +54,8 @@ const EventsList = ({created, finished, onMain}) => {
                     ...acc,
                     [activity.id]: {
                         "name": activity.name,
-                        "icon": {"name": activity.icon.name, "color": activity.icon.color}
+                        "icon": {"name": activity.icon.name, "color": activity.icon.color},
+                        "visible": activity.visible,
                     },
                 }), {});
                 setActivities(new_activities);
@@ -87,6 +88,7 @@ const EventsList = ({created, finished, onMain}) => {
                         ...tag,
                         id: tag.id,
                         name: tag.name,
+                        visible: tag.visible,
                         checked: false,
                     }));
                     setTags(newTags);
@@ -106,7 +108,7 @@ const EventsList = ({created, finished, onMain}) => {
             .then(response => {
                     const new_factors = response.data.factors.reduce((acc, factor) => ({
                         ...acc,
-                        [factor.id]: factor.name,
+                        [factor.id]: {name: factor.name, visible: factor.visible},
                     }), {});
                     setFactors(new_factors);
                 }
@@ -177,6 +179,20 @@ const EventsList = ({created, finished, onMain}) => {
         const secs = seconds % 60;
         return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
     };
+
+    const visibleFactors = Object.keys(factors)
+        .filter(key => factors[key].visible)
+        .reduce((obj, key) => {
+            obj[key] = factors[key];
+            return obj;
+        }, {});
+
+    const visibleActivities = Object.keys(activities)
+        .filter(key => activities[key].visible)
+        .reduce((obj, key) => {
+            obj[key] = activities[key];
+            return obj;
+        }, {});
 
     return (
         <div style={{border: '1px solid lightgrey', borderRadius: '10px'}}>

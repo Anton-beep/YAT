@@ -19,7 +19,7 @@ const Dashboard = () => {
     const [startDate, setStartDate] = useState(localStorage.getItem('date') ? new Date(localStorage.getItem('date')) : new Date());
     const [addTagFormOpen, setAddTagFormOpen] = useState(false);
     const [addFactorFormOpen, setAddFactorFormOpen] = useState(false);
-    const [addActivityFormOpen, setAddActivityFormOpen] = useState(false);
+    const [IsActivityModalOpen, setIsActivityModalOpen] = useState(false);
     const [isTagsModalOpen, setIsTagsModalOpen] = useState(false);
     const [isFactorsModalOpen, setIsFactorsModalOpen] = useState(false);
 
@@ -86,15 +86,15 @@ const Dashboard = () => {
         </Modal>
 
         <Modal
-            isOpen={addActivityFormOpen}
-            onRequestClose={() => setAddActivityFormOpen(false)}
+            isOpen={IsActivityModalOpen}
+            onRequestClose={() => setIsActivityModalOpen(false)}
             style={{
                 content: {
                     width: '35%', height: '75%', margin: 'auto',
                 }
             }}
         >
-            <AddActivityForm/>
+            <ActivityList/>
         </Modal>
 
         <div className="row" style={{marginBottom: "25px"}}>
@@ -130,9 +130,9 @@ const Dashboard = () => {
                 </button>
                 <button className="button-light-blue button-gap" style={{marginLeft: "10px"}}
                         onClick={() => {
-                            setAddActivityFormOpen(true)
+                            setIsActivityModalOpen(true)
                         }}>
-                    <Plus/> Добавить активность
+                    <List/> Активности
                 </button>
                 <button onClick={openTagsModal} className="button-light-blue">
                     <List/>Теги
