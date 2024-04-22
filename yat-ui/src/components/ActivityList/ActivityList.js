@@ -43,7 +43,7 @@ const ActivityList = () => {
     return (
         <div style={{border: '1px solid lightgrey', borderRadius: '10px'}}>
             <div className="header">
-                <h1>Активности</h1>
+                <h1 className="list-title">Активности</h1>
             </div>
             <div className="event-container" style={{height: '300px', overflowY: 'auto', boxSizing: 'border-box'}}>
                 {activities.map((activity, index) => {

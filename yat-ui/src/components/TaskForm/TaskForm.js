@@ -53,7 +53,7 @@ function TaskForm({tags = []}) {
 
     return (<div>
         <form onSubmit={handleSubmit}>
-            <h4>Добавить новую задачу</h4>
+            <h4>Добавить задачу</h4>
 
             <div className="mb-3">
                 <label htmlFor="text" className="form-label">Название</label>

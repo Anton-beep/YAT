@@ -272,12 +272,11 @@ const EventsList = ({created, finished, onMain}) => {
             </Modal>
 
             <div className="header">
-                <h1>События</h1>
+                <h1 className="list-title">События</h1>
             </div>
             <div className="buttons">
                 {onMain &&
-                    <button className="button-green button-gap" onClick={() => setIsFormOpen(true)}>Добавить новое
-                        событие
+                    <button className="button-green button-gap" onClick={() => setIsFormOpen(true)}>Добавить событие
                     </button>}
                 <button className="button-orange button-gap" onClick={() => setIsFilterOpen(true)}>Фильтр по тегам
                 </button>

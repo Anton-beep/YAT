@@ -41,17 +41,17 @@ body {
   }
 }
 
-.event-card {
-  padding: 20px;
-  margin: 10px;
-  width: 90%; /* Adjust as needed */
-  height: auto; /* Adjust as needed */
-  border-radius: 5px;
-  box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
-  transition: 0.3s;
-  position: relative;
-  cursor: pointer;
-}
+/*.event-card {*/
+/*  padding: 20px;*/
+/*  margin: 10px;*/
+/*  width: 90%; !* Adjust as needed *!*/
+/*  height: auto; !* Adjust as needed *!*/
+/*  border-radius: 5px;*/
+/*  box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);*/
+/*  transition: 0.3s;*/
+/*  position: relative;*/
+/*  cursor: pointer;*/
+/*}*/
 
 .factor-right {
   position: absolute;
@@ -59,11 +59,11 @@ body {
   bottom: 20px;
 }
 
-.event-card:hover {
-  transform: scale(1.05);
-  transition: transform 0.3s ease-in-out;
-  box-shadow: 0 8px 16px 0 rgba(0,0,0,0.5);
-}
+/*.event-card:hover {*/
+/*  transform: scale(1.05);*/
+/*  transition: transform 0.3s ease-in-out;*/
+/*  box-shadow: 0 8px 16px 0 rgba(0,0,0,0.5);*/
+/*}*/
 
 .text-with-icon, .text-with-icon h2 {
   margin: 0;
@@ -83,30 +83,6 @@ body {
 .button-gap {
   margin-right: 10px;
   margin-top: 10px;
-}
-
-.button-green {
-  background-color: #c2fbd7;
-  border-radius: 100px;
-  box-shadow: rgba(44, 187, 99, .2) 0 -25px 18px -14px inset,rgba(44, 187, 99, .15) 0 1px 2px,rgba(44, 187, 99, .15) 0 2px 4px,rgba(44, 187, 99, .15) 0 4px 8px,rgba(44, 187, 99, .15) 0 8px 16px,rgba(44, 187, 99, .15) 0 16px 32px;
-  color: green;
-  cursor: pointer;
-  display: inline-block;
-  font-family: CerebriSans-Regular,-apple-system,system-ui,Roboto,sans-serif;
-  padding: 7px 20px;
-  text-align: center;
-  text-decoration: none;
-  transition: all 250ms;
-  border: 0;
-  font-size: 16px;
-  user-select: none;
-  -webkit-user-select: none;
-  touch-action: manipulation;
-}
-
-.button-green:hover {
-  box-shadow: rgba(44,187,99,.35) 0 -25px 18px -14px inset,rgba(44,187,99,.25) 0 1px 2px,rgba(44,187,99,.25) 0 2px 4px,rgba(44,187,99,.25) 0 4px 8px,rgba(44,187,99,.25) 0 8px 16px,rgba(44,187,99,.25) 0 16px 32px;
-  transform: scale(1.05) rotate(-1deg);
 }
 
 .button-orange {
@@ -241,7 +217,7 @@ header h3 {
 }
 
 .event-card {
-  padding: 20px;
+  padding: 10px;
   margin: 10px;
   width: 90%; /* Adjust as needed */
   height: auto; /* Adjust as needed */
@@ -285,7 +261,7 @@ header h3 {
 }
 
 .button-gap {
-  margin-right: 20px; /* Adjust as needed */
+  margin-right: 5px; /* Adjust as needed */
 }
 
 .button-green {
@@ -296,12 +272,12 @@ header h3 {
   cursor: pointer;
   display: inline-block;
   font-family: CerebriSans-Regular,-apple-system,system-ui,Roboto,sans-serif;
-  padding: 7px 20px;
+  padding: 1px 7px;
   text-align: center;
   text-decoration: none;
   transition: all 250ms;
   border: 0;
-  font-size: 16px;
+  font-size: 0.9rem;
   user-select: none;
   -webkit-user-select: none;
   touch-action: manipulation;
@@ -320,12 +296,12 @@ header h3 {
   cursor: pointer;
   display: inline-block;
   font-family: CerebriSans-Regular,-apple-system,system-ui,Roboto,sans-serif;
-  padding: 7px 20px;
+  padding: 3px 7px;
   text-align: center;
   text-decoration: none;
   transition: all 250ms;
   border: 0;
-  font-size: 16px;
+  font-size: 0.9rem;
   user-select: none;
   -webkit-user-select: none;
   touch-action: manipulation;
@@ -402,12 +378,18 @@ header h3 {
 }
 
 .card-event-name {
+  font-size: 1.2rem;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.list-title {
+  font-size: 1.8rem;
 }
 
 .card-event-icon-container {
   min-width: 10px;
   flex-shrink: 0;
 }
+

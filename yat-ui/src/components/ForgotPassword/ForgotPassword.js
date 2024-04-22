@@ -6,11 +6,19 @@ import Auth from "../../pkg/auth";
 const ForgotPasswordForm = () => {
     const [email, setEmail] = useState('');
     const [message, setMessage] = useState('');
-    const [error, setError] = useState('');
+    const [error, setError] = useState(false);
 
     const handleSubmit = async (event) => {
         event.preventDefault();
         Auth.forgotPassword(email)
+            .then(() => {
+                setError(false);
+                setMessage("Ссылка для восстановления пароля отправлена на вашу почту.")
+            })
+            .catch(error => {
+                setError(true);
+                setMessage("Что-то пошло не так. Попробуйте еще раз.");
+            })
     };
 
     return (
