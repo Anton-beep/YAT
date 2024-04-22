@@ -1,52 +1,65 @@
 import React, {useEffect, useState} from 'react';
+import Modal from 'react-modal';
+import Auth from '../../pkg/auth';
 import {ReactComponent as Bib} from '../../icons/bib.svg';
 import {ReactComponent as Bob} from '../../icons/bob.svg';
-import AddActivityForm from '../AddActivityForm/AddActivityForm';
-import Modal from 'react-modal';
-
-import Auth from '../../pkg/auth';
+import AddFactorForm from '../AddFactorForm/AddFactorForm';
 import '../../App.css';
+import AddActivityForm from "../AddActivityForm/AddActivityForm";
 
 const iconComponents = {
     "bib.svg": Bib,
     "bob.svg": Bob,
 };
 
-
 const ActivityList = () => {
     const [activities, setActivities] = useState([]);
-    const [selectedActivity, setSelectedActivity] = useState(null);
+    const [selectedActivities, setSelectedActivities] = useState(null);
     const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+    const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
 
-    useEffect(() => {
+    const fetchActivity = () => {
         Auth.axiosInstance.get('/api/v1/homepage/activities/')
             .then(response => {
-                const visibleActivities = response.data.activities.filter(activity => activity.visible);
-                console.log(response.data.activities)
-                setActivities(visibleActivities);
+                setActivities(response.data.activities);
             })
             .catch(error => {
                 console.error(error);
             })
+    };
+
+    useEffect(() => {
+        fetchActivity();
     }, []);
 
     const openEditDialog = (activity) => {
-        setSelectedActivity(activity);
+        setSelectedActivities(activity);
         setIsEditDialogOpen(true);
     };
 
     const closeEditDialog = () => {
-        setSelectedActivity(null);
+        setSelectedActivities(null);
         setIsEditDialogOpen(false);
+        fetchActivity();
+    };
+
+    const openAddDialog = () => {
+        setIsAddDialogOpen(true);
+    };
+
+    const closeAddDialog = () => {
+        setIsAddDialogOpen(false);
+        fetchActivity();
     };
 
     return (
-        <div style={{border: '1px solid lightgrey', borderRadius: '10px'}}>
+        <div>
             <div className="header">
                 <h1 className="list-title">Активности</h1>
+                <button className="button-light-blue button-gap" style={{marginLeft: "10px"}} onClick={openAddDialog}>Добавить активность</button>
             </div>
-            <div className="event-container" style={{height: '300px', overflowY: 'auto', boxSizing: 'border-box'}}>
-                {activities.map((activity, index) => {
+            <div className="event-container" style={{height: '100%', overflowY: 'auto', boxSizing: 'border-box'}}>
+                {activities.filter(activity => activity.visible).map((activity, index) => {
                     const IconComponent = iconComponents[activity.icon.name];
                     return (
                         <div key={activity.id} className="event-card" onClick={() => openEditDialog(activity)}
@@ -66,7 +79,14 @@ const ActivityList = () => {
                     width: '35%', height: '75%', margin: 'auto',
                 }
             }}>
-                <AddActivityForm activity={selectedActivity} closeDialog={closeEditDialog}/>
+                <AddActivityForm activity={selectedActivities} onClose={closeEditDialog} onDelete={fetchActivity} />
+            </Modal>
+            <Modal isOpen={isAddDialogOpen} onRequestClose={closeAddDialog} style={{
+                content: {
+                    width: '35%', height: '75%', margin: 'auto',
+                }
+            }}>
+                <AddActivityForm onClose={closeAddDialog}/>
             </Modal>
         </div>
     )

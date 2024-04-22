@@ -22,11 +22,10 @@ function EventForm({tags = [], icons = {}, initialFactors = {}, activities = {}}
     }
 
     const activitiesArray = Object.keys(activities).map((id) => ({id, name: activities[id].name}));
-    const factorsArray = Object.keys(initialFactors).map((id) => ({id, name: initialFactors[id], value: 5}));
+    const factorsArray = Object.keys(initialFactors).map((id) => ({id, name: initialFactors[id].name, value: 5}));
 
     const updateSelection = (activityName) => {
         setSelectedActivity(activityName);
-
     };
 
     const handleSubmit = (event) => {
