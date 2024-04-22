@@ -191,7 +191,7 @@ const TaskList = ({created, finished, done, onMain}) => {
             </Modal>
 
             <div className="header">
-                <h1 className="list-title">Текущие задачи</h1>
+                <h1 className="list-title">Задачи</h1>
             </div>
             <div className="buttons">
                 {onMain && <button className="button-green button-gap" onClick={() => setIsFormOpen(true)}>Добавить задачу
