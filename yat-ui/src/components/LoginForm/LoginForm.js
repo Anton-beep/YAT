@@ -32,6 +32,11 @@ const LoginForm = () => {
                     }
                 )
         } catch (error) {
+            if (error.response.status !== 401) {
+                setMessage("Что-то пошло не так");
+                setError(true);
+                return;
+            }
             setMessage("Неверный логин или пароль");
             setError(true);
             console.error(error);
