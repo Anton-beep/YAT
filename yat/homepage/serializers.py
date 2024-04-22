@@ -24,20 +24,21 @@ class ActivitySerializer(UserContextSerializer):
     icon_name = serializers.CharField(required=False)
     icon_color = serializers.CharField(required=False)
 
-    def get_fields(self):
-        fields = super().get_fields()
-        request_method = self.context['request'].method
-        if request_method == 'POST':
-            fields['name'].required = True
-            fields['icon'].required = True
-        return fields
-
     @staticmethod
     def get_icon(obj):
         return {
             "name": obj.icon_name,
             "color": obj.icon_color,
         }
+
+    def get_fields(self):
+        fields = super().get_fields()
+        request_method = self.context["request"].method
+        if request_method == "POST":
+            fields["name"].required = True
+            fields["icon"].required = True
+
+        return fields
 
     def to_internal_value(self, data):
         icon = data.pop("icon", None)
@@ -109,7 +110,8 @@ class SerializerWithTagsAndScores(UserContextSerializer):
         for el in factors:
             el_factor = models.Factor.objects.get(id=el["id"])
             score, _ = models.Score.objects.get_or_create(
-                factor=el_factor, value=el["value"]
+                factor=el_factor,
+                value=el["value"],
             )
             data["scores"].append(score.id)
 
@@ -244,7 +246,8 @@ class EventSerializer(SerializerWithTagsAndScores):
         ):
             raise serializers.ValidationError(
                 {
-                    "created": "Created timestamp cannot be greater than finished timestamp."
+                    "created": "Created timestamp cannot be greater than"
+                    " finished timestamp.",
                 },
             )
 

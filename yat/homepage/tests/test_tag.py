@@ -80,7 +80,7 @@ class TagTestCase(APITestCase):
         self.assertEqual(self.tag1.name, "test_name_new")
 
     def test_tag_delete(self):
-        tag_count = models.Tag.objects.count()
+        self.assertTrue(self.tag1.visible)
         response = self.client.delete(
             reverse("homepage:tags"),
             data={"id": self.tag1.id},
@@ -88,7 +88,8 @@ class TagTestCase(APITestCase):
             format="json",
         )
         self.assertEqual(response.status_code, HTTPStatus.NO_CONTENT)
-        self.assertEqual(models.Tag.objects.count(), tag_count - 1)
+        self.tag1.refresh_from_db()
+        self.assertFalse(self.tag1.visible)
 
     def test_tag_put_not_found(self):
         response = self.client.put(

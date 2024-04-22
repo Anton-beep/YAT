@@ -1,5 +1,8 @@
 from django.contrib import admin
+
 from homepage import models
+
+__all__ = []
 
 
 class BaseAdmin(admin.ModelAdmin):
@@ -41,6 +44,3 @@ class EventAdmin(admin.ModelAdmin):
     search_fields = ["description"]
     list_filter = ["user"]
     ordering = ["created"]
-
-
-

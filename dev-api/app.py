@@ -172,7 +172,7 @@ def wheel():
     }
 
 
-@app.route("/api/v1/statistics/event_count", methods=['GET'])
+@app.route("/api/v1/statistics/event_count", methods=["GET"])
 @cross_origin()
 def count():
     return [
@@ -195,7 +195,7 @@ def count():
         {
             "day": "2024-05-21",
             "value": 5,
-        }
+        },
     ]
 
 

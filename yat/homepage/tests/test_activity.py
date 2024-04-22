@@ -98,7 +98,8 @@ class ActivityTestCase(APITestCase):
             format="json",
         )
         self.assertEqual(response.status_code, HTTPStatus.NO_CONTENT)
-        self.assertEqual(models.Activity.objects.count(), 1)
+        self.activity1.refresh_from_db()
+        self.assertFalse(self.activity1.visible)
 
     def test_activity_put_not_found(self):
         response = self.client.put(

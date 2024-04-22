@@ -92,7 +92,8 @@ class TaskTestCase(APITestCase):
             self.task1.description,
         )
         self.assertEqual(
-            response.data["tasks"][0]["status"], self.task1.status
+            response.data["tasks"][0]["status"],
+            self.task1.status,
         )
         self.assertEqual(
             response.data["tasks"][0]["deadline"],
@@ -100,7 +101,8 @@ class TaskTestCase(APITestCase):
         )
         self.assertEqual(response.data["tasks"][0]["tags"][0], self.tag1.id)
         self.assertEqual(
-            response.data["tasks"][0]["factors"][0]["id"], self.factor1.id
+            response.data["tasks"][0]["factors"][0]["id"],
+            self.factor1.id,
         )
         self.assertEqual(
             response.data["tasks"][0]["factors"][0]["value"],

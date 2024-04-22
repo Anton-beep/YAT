@@ -87,7 +87,6 @@ class FactorTestCase(APITestCase):
         self.assertEqual(self.factor1.name, "test_name_new")
 
     def test_factor_delete(self):
-        factor_count = models.Factor.objects.count()
         response = self.client.delete(
             reverse("homepage:factors"),
             data={"id": self.factor1.id},
@@ -95,7 +94,8 @@ class FactorTestCase(APITestCase):
             format="json",
         )
         self.assertEqual(response.status_code, HTTPStatus.NO_CONTENT)
-        self.assertEqual(models.Factor.objects.count(), factor_count - 1)
+        self.factor1.refresh_from_db()
+        self.assertFalse(self.factor1.visible)
 
     def test_factor_put_not_found(self):
         response = self.client.put(

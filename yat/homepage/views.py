@@ -1,6 +1,7 @@
 import datetime
 
 from django.utils import timezone
+from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
@@ -25,21 +26,29 @@ class UserContextViewSet(ModelViewSet):
         return super().get_serializer(*args, **kwargs)
 
 
-class ActivityViewSet(UserContextViewSet):
+class VisibleDelete(ModelViewSet):
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        instance.visible = False
+        instance.save()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class ActivityViewSet(UserContextViewSet, VisibleDelete):
     serializer_class = serializers.ActivitySerializer
     permission_classes = [IsAuthenticated]
 
-    def list(self, request, *args, **kwargs):
+    def list(self, request, *args, **kwargs):  # noqa
         queryset = self.filter_queryset(self.get_queryset())
         serializer = self.get_serializer(queryset, many=True)
         return Response({"activities": serializer.data})
 
 
-class TagViewSet(UserContextViewSet):
+class TagViewSet(UserContextViewSet, VisibleDelete):
     serializer_class = serializers.TagSerializer
     permission_classes = [IsAuthenticated]
 
-    def list(self, request, *args, **kwargs):
+    def list(self, request, *args, **kwargs):  # noqa
         queryset = self.filter_queryset(self.get_queryset())
         serializer = self.get_serializer(queryset, many=True)
         return Response({"tags": serializer.data})
@@ -108,17 +117,17 @@ class NoteViewSet(WithCreatedViewSet):
     serializer_class = serializers.NoteSerializer
     permission_classes = [IsAuthenticated]
 
-    def list(self, request, *args, **kwargs):
+    def list(self, request, *args, **kwargs):  # noqa
         queryset = self.filter_queryset(self.get_queryset())
         serializer = self.get_serializer(queryset, many=True)
         return Response({"notes": serializer.data})
 
 
-class FactorViewSet(UserContextViewSet):
+class FactorViewSet(UserContextViewSet, VisibleDelete):
     serializer_class = serializers.FactorSerializer
     permission_classes = [IsAuthenticated]
 
-    def list(self, request, *args, **kwargs):
+    def list(self, request, *args, **kwargs):  # noqa
         queryset = self.filter_queryset(self.get_queryset())
         serializer = self.get_serializer(queryset, many=True)
         return Response({"factors": serializer.data})
@@ -136,6 +145,7 @@ class TaskViewSet(WithCreatedViewSet, WithTagsViewSet):
                 self.request.data.get("deadline"),
                 "deadline",
             )
+
             queryset = filter_by_status(
                 queryset,
                 self.request.data.get("status"),
@@ -144,7 +154,7 @@ class TaskViewSet(WithCreatedViewSet, WithTagsViewSet):
 
         return super().get_queryset(*args, **kwargs)
 
-    def list(self, request, *args, **kwargs):
+    def list(self, request, *args, **kwargs):  # noqa
         queryset = self.filter_queryset(self.get_queryset())
         serializer = self.get_serializer(queryset, many=True)
         return Response({"tasks": serializer.data})
@@ -164,7 +174,7 @@ class EventViewSet(WithCreatedViewSet, WithTagsViewSet):
 
         return super().get_queryset(*args, **kwargs)
 
-    def list(self, request, *args, **kwargs):
+    def list(self, request, *args, **kwargs):  # noqa
         queryset = self.filter_queryset(self.get_queryset())
         serializer = self.get_serializer(queryset, many=True)
         return Response({"events": serializer.data})
