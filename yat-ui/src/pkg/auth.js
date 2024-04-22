@@ -49,6 +49,9 @@ class Auth {
             const response = await this.axiosInstance.post('api/v1/users/refresh/', {refresh: refresh_token}).catch(error => {
                 return null;
             });
+            if (response.status !== 200) {
+                window.location.href = '/login';
+            }
             return response.data.access;
         } catch (error) {
             return null;
@@ -106,4 +109,3 @@ class Auth {
 }
 
 export default new Auth();
-

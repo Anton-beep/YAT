@@ -400,3 +400,14 @@ header h3 {
   padding: .75rem 1.25rem;
   font-weight: 700;
 }
+
+.card-event-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.card-event-icon-container {
+  min-width: 10px;
+  flex-shrink: 0;
+}

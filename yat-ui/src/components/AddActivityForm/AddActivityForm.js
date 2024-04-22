@@ -24,14 +24,20 @@ const AddActivityForm = ({activity, closeDialog}) => {
     const handleSubmit = (event) => {
         event.preventDefault();
 
-        const url = activity ? `api/v1/homepage/activities/${activity.id}/` : 'api/v1/homepage/activities/';
+        const url = 'api/v1/homepage/activities/';
         const method = activity ? 'put' : 'post';
-
-        Auth.axiosInstance[method](url, {
+        const data = {
             name: name,
             icon_name: icon,
             icon_color: color
-        }).then(() => {
+        };
+
+        if (activity) {
+            data.id = activity.id;
+        }
+
+        Auth.axiosInstance[method](url, data).then((response) => {
+            console.log(response.data);
             setName('');
             setIcon(Object.keys(iconComponents)[0]);
             setColor('#000000');
@@ -85,7 +91,7 @@ const AddActivityForm = ({activity, closeDialog}) => {
                            onChange={(e) => setColor(e.target.value)}/>
                 </div>
                 <button type="submit" className="btn btn-primary">Отправить</button>
-                <button type="button" onClick={handleDelete}>Delete</button>
+                <button type="button" onClick={handleDelete} className="btn btn-danger">Удалить</button>
             </form>
         </div>
     );

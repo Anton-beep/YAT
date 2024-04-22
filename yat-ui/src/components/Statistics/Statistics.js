@@ -98,6 +98,13 @@ const Statistics = () => {
         localStorage.setItem('endDate', endDate.toISOString());
     }, [startDate, endDate]);
 
+    useEffect(() => {
+        Auth.axiosInstance.get('/api/v1/users/user/')
+            .catch(() => {
+                window.location.href = '/login';
+            });
+    }, []);
+
     const width = window.innerWidth * 0.5;
 
     return (<Layout>

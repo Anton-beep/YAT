@@ -2,7 +2,6 @@ import React, {useEffect} from 'react';
 import {BrowserRouter as Router, Route, Routes} from 'react-router-dom';
 import LoginForm from './components/LoginForm/LoginForm';
 import RegisterForm from './components/RegisterForm/RegisterForm';
-import SecretPage from './components/SecretPage';
 import Logout from './components/Logout';
 import EventList from "./components/EventList";
 import Homepage from './components/Homepage';
@@ -37,7 +36,6 @@ function App() {
             <Route path="/confirm/:token/:email" element={<Confirm/>}/>
             <Route path="/restoration/:token" element={<Restoration/>}/>
             <Route path="/register" element={<RegisterForm/>}/>
-            <Route path="/secret" element={<SecretPage/>}/>
             <Route path="/dashboard" element={<Dashboard/>}/>
             <Route path="/statistics" element={<Statistics/>}/>
         </Routes>

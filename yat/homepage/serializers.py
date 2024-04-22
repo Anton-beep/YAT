@@ -17,7 +17,7 @@ class UserContextSerializer(serializers.ModelSerializer):
 class ActivitySerializer(UserContextSerializer):
     class Meta:
         model = models.Activity
-        fields = ["id", "name", "icon", "icon_name", "icon_color"]
+        fields = ["id", "name", "icon", "icon_name", "icon_color", "visible"]
 
     icon = serializers.SerializerMethodField(required=False)
     name = serializers.CharField(required=False)

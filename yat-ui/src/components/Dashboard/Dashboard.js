@@ -10,6 +10,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import Modal from "react-modal";
 import AddActivityForm from "../AddActivityForm/AddActivityForm";
 import ActivityList from "../ActivityList/ActivityList";
+import Auth from "../../pkg/auth";
 
 const Dashboard = () => {
     const [startDate, setStartDate] = useState(localStorage.getItem('date') ? new Date(localStorage.getItem('date')) : new Date());
@@ -20,6 +21,13 @@ const Dashboard = () => {
     useEffect(() => {
         localStorage.setItem('date', startDate.toISOString());
     }, [startDate]);
+
+    useEffect(() => {
+        Auth.axiosInstance.get('/api/v1/users/user/')
+            .catch(() => {
+                window.location.href = '/login';
+            });
+    }, []);
 
     const resetDate = () => {
         setStartDate(new Date());
@@ -128,7 +136,7 @@ const Dashboard = () => {
                 />
             </div>
             <div className="col-4">
-                <ActivityList  />
+                <ActivityList/>
             </div>
         </div>
     </Layout>);

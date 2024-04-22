@@ -41,18 +41,21 @@ const ActivityList = () => {
     };
 
     return (
-        <div style={{ border: '1px solid lightgrey', borderRadius: '10px' }}>
+        <div style={{border: '1px solid lightgrey', borderRadius: '10px'}}>
             <div className="header">
                 <h1>Активности</h1>
             </div>
-            <div className="event-container" style={{ height: '500px', overflowY: 'scroll', boxSizing: 'border-box' }}>
+            <div className="event-container" style={{height: '300px', overflowY: 'auto', boxSizing: 'border-box'}}>
                 {activities.map((activity, index) => {
                     const IconComponent = iconComponents[activity.icon.name];
                     return (
-                        <div key={activity.id} className="event-card" onClick={() => openEditDialog(activity)} style={{boxSizing: 'border-box' }}>
+                        <div key={activity.id} className="event-card" onClick={() => openEditDialog(activity)}
+                             style={{boxSizing: 'border-box'}}>
                             <div className="text-with-icon">
-                                <IconComponent fill={activity.icon.color}/>
-                                <h2>{activity.name}</h2>
+                                <div className="icon-container">
+                                    <IconComponent fill={activity.icon.color}/>
+                                </div>
+                                <h2 className="card-event-name">{activity.name}</h2>
                             </div>
                         </div>
                     )
@@ -63,7 +66,7 @@ const ActivityList = () => {
                     width: '35%', height: '75%', margin: 'auto',
                 }
             }}>
-                <AddActivityForm activity={selectedActivity} closeDialog={closeEditDialog} />
+                <AddActivityForm activity={selectedActivity} closeDialog={closeEditDialog}/>
             </Modal>
         </div>
     )

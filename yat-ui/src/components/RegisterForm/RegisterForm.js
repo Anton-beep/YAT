@@ -36,6 +36,12 @@ const RegisterForm = () => {
                 )
                 .catch(
                     error => {
+                        if (error.response === undefined) {
+                            setMessage("Ошибка сервера, попробуйте позже");
+                            setError(true);
+                            console.error(error);
+                            return;
+                        }
                         setMessage(Object.values(error.response.data).join(", "));
                         setError(true);
                         console.error(error);
