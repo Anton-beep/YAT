@@ -18,8 +18,6 @@ const ActivityList = () => {
     useEffect(() => {
         Auth.axiosInstance.get('/api/v1/homepage/activities/')
             .then(response => {
-                console.log(123);
-                console.log(response.data);
                 setActivities(response.data.activities);
             })
             .catch(error => {

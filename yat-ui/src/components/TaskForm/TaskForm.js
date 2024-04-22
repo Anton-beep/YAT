@@ -20,7 +20,7 @@ function TaskForm({tags = []}) {
             status: "not done",
         };
 
-        Auth.axiosInstance.post('/api/v1/homepage/events/', data)
+        Auth.axiosInstance.post('/api/v1/homepage/tasks/', data)
             .then(response => {
                 window.location.reload();
             })
