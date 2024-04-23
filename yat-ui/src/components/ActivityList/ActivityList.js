@@ -40,7 +40,8 @@ const ActivityList = () => {
     const closeEditDialog = () => {
         setSelectedActivities(null);
         setIsEditDialogOpen(false);
-        fetchActivity();
+        window.location.reload();
+        //fetchActivity();
     };
 
     const openAddDialog = () => {
@@ -49,7 +50,8 @@ const ActivityList = () => {
 
     const closeAddDialog = () => {
         setIsAddDialogOpen(false);
-        fetchActivity();
+        //fetchActivity();
+        window.location.reload()
     };
 
     return (

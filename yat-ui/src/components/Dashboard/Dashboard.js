@@ -16,7 +16,9 @@ import TagsList from "../TagsList/TagsList";
 import FactorsList from "../FactorsList/FactorsList";
 
 const Dashboard = () => {
-    const [startDate, setStartDate] = useState(localStorage.getItem('date') ? new Date(localStorage.getItem('date')) : new Date());
+    let now = new Date();
+    now.setUTCHours(0, 0, 0, 0);
+    const [startDate, setStartDate] = useState(localStorage.getItem('date') ? new Date(Number(localStorage.getItem('date'))) : now);
     const [addTagFormOpen, setAddTagFormOpen] = useState(false);
     const [addFactorFormOpen, setAddFactorFormOpen] = useState(false);
     const [IsActivityModalOpen, setIsActivityModalOpen] = useState(false);
@@ -24,7 +26,7 @@ const Dashboard = () => {
     const [isFactorsModalOpen, setIsFactorsModalOpen] = useState(false);
 
     useEffect(() => {
-        localStorage.setItem('date', startDate.toISOString());
+        localStorage.setItem('date', startDate.getTime().toString());
     }, [startDate]);
 
     useEffect(() => {
@@ -35,7 +37,7 @@ const Dashboard = () => {
     }, []);
 
     const resetDate = () => {
-        setStartDate(new Date());
+        localStorage.removeItem('date');
         window.location.reload();
     };
 
@@ -117,7 +119,6 @@ const Dashboard = () => {
                                 onClick={resetDate}>Сбросить дату
                         </button>
                     </div>
-
                     }
                 </div>
             </div>
@@ -144,14 +145,14 @@ const Dashboard = () => {
 
         <div className="row">
             <div className="col">
-                <EventsList created={Math.floor(startDate.getTime() / 1000)}
-                            finished={Math.floor(startDate.getTime() / 1000)}
+                <EventsList created={[Math.floor(startDate.getTime() / 1000), Math.floor(startDate.getTime() / 1000 + 60 * 60 * 24)]}
+                            finished={[Math.floor(startDate.getTime() / 1000), Math.floor(startDate.getTime() / 1000 + 60 * 60 * 24)]}
                             onMain={true}
                 />
             </div>
             <div className="col">
-                <TasList created={Math.floor(startDate.getTime() / 1000)}
-                         finished={Math.floor(startDate.getTime() / 1000)}
+                <TasList created={[Math.floor(startDate.getTime() / 1000), Math.floor(startDate.getTime() / 1000 + 60 * 60 * 24)]}
+                         finished={[Math.floor(startDate.getTime() / 1000), Math.floor(startDate.getTime() / 1000 + 60 * 60 * 24)]}
                          done="not done"
                          onMain={true}
                 />

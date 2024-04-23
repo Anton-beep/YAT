@@ -33,7 +33,8 @@ const TagsList = () => {
     const closeEditDialog = () => {
         setSelectedTag(null);
         setIsEditDialogOpen(false);
-        fetchTags();
+        //fetchTags();
+        window.location.reload();
     };
 
     const openAddDialog = () => {
@@ -42,7 +43,8 @@ const TagsList = () => {
 
     const closeAddDialog = () => {
         setIsAddDialogOpen(false);
-        fetchTags();
+        //fetchTags();
+        window.location.reload();
     };
 
     return (

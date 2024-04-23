@@ -22,7 +22,7 @@ const EventsList = ({created, finished, onMain}) => {
     const [events, setEvents] = useState([]);
     const [activities, setActivities] = useState({});
     const [tags, setTags] = useState([]);
-    const [factors, setFactors] = useState({});
+    const [factors, setFactors] = useState([]);
     const [selectedTags, setSelectedTags] = useState([]);
     const [elapsedTimes, setElapsedTimes] = useState(0);
 
@@ -34,17 +34,12 @@ const EventsList = ({created, finished, onMain}) => {
 
     const [isCardOpen, setIsCardOpen] = useState(false);
     const [selectedEvent, setSelectedEvent] = useState(null);
-
     const [isFormOpen, setIsFormOpen] = useState(false);
 
-    const formatTime = (timestamp) => {
-        const date = new Date(timestamp * 1000);
-        const day = date.getDate().toString().padStart(2, '0');
-        const month = (date.getMonth() + 1).toString().padStart(2, '0'); // +1 because getMonth() returns month index starting from 0
-        const year = date.getFullYear();
-        const hours = date.getHours().toString().padStart(2, '0');
-        const minutes = date.getMinutes().toString().padStart(2, '0');
-        return `${day}-${month}-${year} ${hours}:${minutes}`;
+    const formatTime = (utcTimestamp) => {
+        const date = new Date(utcTimestamp * 1000);
+        const userTimezoneDate = date.toLocaleString().slice(10)
+        return userTimezoneDate;
     };
 
     useEffect(() => {
@@ -69,7 +64,6 @@ const EventsList = ({created, finished, onMain}) => {
         Auth.axiosInstance.get('/api/v1/homepage/events/', {
             params: {
                 "created": created,
-                "finished": finished,
                 "tags": [],
             }
         })
@@ -202,7 +196,7 @@ const EventsList = ({created, finished, onMain}) => {
                 {Object.keys(activities).length > 0 ? (
                     <EventForm
                         tags={tags}
-                        initialFactors={visibleFactors}
+                        factors={factors}
                         activities={visibleActivities}
                         event={selectedEvent}
                     />
@@ -262,7 +256,7 @@ const EventsList = ({created, finished, onMain}) => {
                                 {Boolean(event.finished) && <div>
                                     <div className="text-with-icon">
                                         <Clock className="icon-fixed-size"/>
-                                        <span>{formatTime(event.created)} - {formatTime(event.finished)}</span>
+                                        <span className="span-ellipsis">{formatTime(event.created)} - {formatTime(event.finished)}</span>
                                     </div>
 
                                     <div className="text-with-icon factor-right">

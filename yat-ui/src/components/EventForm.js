@@ -1,8 +1,9 @@
 import React, {useEffect, useState} from 'react';
 import Auth from '../pkg/auth';
+import getCurrentUTCTimestamp from '../pkg/dt';
 
 
-function EventForm({tags = [], icons = {}, visibleFactors = {}, activities = {}, event = null}) {
+function EventForm({tags = [], icons = {}, factors = [], activities = {}, event = null}) {
     const [selectedActivity, setSelectedActivity] = useState(event ? activities[event.activity_id].name : '');
     const [description, setDescription] = useState(event ? event.description : '');
     const [selectedTags, setSelectedTags] = useState(event ? event.tags : []);
@@ -13,7 +14,17 @@ function EventForm({tags = [], icons = {}, visibleFactors = {}, activities = {},
 
     const activitiesArray = Object.keys(activities).map((id) => ({id, name: activities[id].name}));
     const [activityId, setActivityId] = useState(activitiesArray[0].id);
-    const [factorValues, setFactorValues] = useState([]);
+    const [factorsFromChild, setFactorsFromChild] = useState([]);
+    const [factorsToSendFromChild, setFactorsToSendFromChild] = useState([]);
+    const [errorMessage, setErrorMessage] = useState('');
+
+    const updateFactorsToSendFromChild = (factors) => {
+        setFactorsToSendFromChild(factors);
+    };
+
+    const updateFactorsFromChild = (factors) => {
+        setFactorsFromChild(factors);
+    };
 
     const handleCreatedChange = (event) => {
         const datetime = new Date(event.target.value);
@@ -69,14 +80,19 @@ function EventForm({tags = [], icons = {}, visibleFactors = {}, activities = {},
     const handleSubmit = (eventForm) => {
         eventForm.preventDefault();
 
-        const factorsToSend = visibleFactors.map((factor, index) => ({
-            id: factor.id, value: factorValues[index]
-        }));
+        if (created > finished) {
+            setErrorMessage('Дата начала не может быть позже даты окончания');
+            return;
+        }
+
+        const factorsToSend = factorsFromChild
+            .filter((factor, index) => factorsToSendFromChild[index])
+            .map(factor => ({id: factor.id, value: factor.value}));
 
         const data = {
             description,
             tags: selectedTags,
-            created: Math.floor(Date.now() / 1000),
+            created,
             finished,
             factors: finished !== '' ? factorsToSend : [],
             activity_id: activityId
@@ -106,17 +122,6 @@ function EventForm({tags = [], icons = {}, visibleFactors = {}, activities = {},
             });
     };
 
-    const handleFinishedonChange = (event) => {
-        const date = new Date(event.target.value);
-        const timestamp = Math.floor(date.getTime() / 1000); // convert to seconds
-        setFinished(timestamp.toString());
-    };
-    const handleCreatedOnChange = (event) => {
-        const date = new Date(event.target.value);
-        const timestamp = Math.floor(date.getTime() / 1000); // convert to seconds
-        setCreated(timestamp.toString());
-    };
-
     const handleDescriptionOnChange = (event) => {
         setDescription(event.target.value);
     }
@@ -133,6 +138,19 @@ function EventForm({tags = [], icons = {}, visibleFactors = {}, activities = {},
         }
     };
 
+    function convertUTCToLocalTime(utcTimestamp) {
+        // Convert the UTC timestamp from seconds to milliseconds
+        const date = new Date(utcTimestamp * 1000);
+        // Format the date to a string in the 'YYYY-MM-DDTHH:mm' format
+        const year = date.getFullYear();
+        const month = (date.getMonth() + 1).toString().padStart(2, '0'); // Months are 0-indexed
+        const day = date.getDate().toString().padStart(2, '0');
+        const hours = date.getHours().toString().padStart(2, '0');
+        const minutes = date.getMinutes().toString().padStart(2, '0');
+        const localTime = `${year}-${month}-${day}T${hours}:${minutes}`;
+        return localTime;
+    }
+
     return (<div>
         <form onSubmit={handleSubmit}>
             <h4>Добавить новое событие</h4>
@@ -148,22 +166,23 @@ function EventForm({tags = [], icons = {}, visibleFactors = {}, activities = {},
             {Boolean(finished) && <div className="mb-3">
                 <label htmlFor="created" className="form-label">Начало:</label>
                 <input type="datetime-local" id="created" className="form-control" onChange={handleCreatedChange}
-                       value={new Date(created * 1000).toISOString().slice(0, 16)}/>
+                       value={event && event.created ? convertUTCToLocalTime(created) : ''}/>
             </div>}
 
             <div className="mb-3">
                 <label htmlFor="finished" className="form-label">Конец:</label>
                 <input type="datetime-local" id="finished" className="form-control" onChange={handleFinishedChange}
-                       value={new Date(finished * 1000).toISOString().slice(0, 16)}/>
+                       value={event && event.finished ? convertUTCToLocalTime(finished) : ''}/>
             </div>
 
             <div className="mb-3">
-                <label htmlFor="textarea" className="form-label">Описание</label>
+                <label htmlFor="textarea" className="form-label">Описание:</label>
                 <textarea className="form-control" id="textarea" rows="2"
                           onChange={handleDescriptionOnChange} value={description}></textarea>
             </div>
 
             <div className="mb-3">
+                <label htmlFor="tags" className="form-label">Теги:</label>
                 {tags.map(tag => (<div key={tag.id}>
                     <input value={tag.id} className="form-check-input" type="checkbox"
                            onChange={handleTagChange} checked={selectedTags.includes(tag.id)}/>
@@ -171,8 +190,9 @@ function EventForm({tags = [], icons = {}, visibleFactors = {}, activities = {},
                 </div>))}
             </div>
 
-            {Boolean(finished) && <FactorsComponent availableFactors={visibleFactors} eventFactors={event.factors}/>}
+            {Boolean(finished) && <FactorsComponent factors={factors} eventFactors={event ? event.factors : []} updateFactorsFromChild={updateFactorsFromChild} updateFactorsToSendFromChild={updateFactorsToSendFromChild}/>}
 
+            {errorMessage && <div className="alert alert-danger" role="alert">{errorMessage}</div>}
             <button type="submit" className="button-green button-gap">Сохранить</button>
             {event && <button type="button" className="button-red button-gap" onClick={handleDelete}>Удалить</button>}
             {event && !event.finished && (
@@ -182,49 +202,65 @@ function EventForm({tags = [], icons = {}, visibleFactors = {}, activities = {},
     </div>);
 }
 
-const FactorsComponent = ({availableFactors, eventFactors}) => {
-    const [factors, setFactorValues] = useState(availableFactors);
+const FactorsComponent = ({factors, eventFactors, updateFactorsFromChild, updateFactorsToSendFromChild}) => {
+    eventFactors = eventFactors
+        .map(eventFactor => ({...eventFactor, name: factors.find(factor => factor.id === eventFactor.id).name}));
+    const visibleFactors = factors
+        .filter(factor => factor.visible)
+        .map(factor => ({
+            ...factor,
+            value: eventFactors.find(eventFactor => eventFactor.id === factor.id)?.value || 5
+        }));
+    const [factorsShow, setFactorShow] = useState([...visibleFactors, ...eventFactors.filter(eventFactor => !visibleFactors.find(factor => factor.id === eventFactor.id))]);
+    const [factorsToSend, setFactorsToSend] = useState(factorsShow.map(factor => eventFactors.some(eventFactor => eventFactor.id === factor.id)));
 
     useEffect(() => {
-        console.log("availableFactors", availableFactors);
-        if (eventFactors) {
-            Auth.axiosInstance.get('/api/v1/homepage/factors/')
-                .then(response => {
-                    for (let usedFactor of eventFactors) {
-                        const factor = response.data.factors.find(factor => factor.id === usedFactor.id);
-                        if (factor) {
-                            setFactorValues([...factors, {"name": factor.name, "value": usedFactor.value}]);
-                        }
-                    }
-                })
-                .catch(error => {
-                    console.error(error);
-                });
-        }
-    }, []);
+        updateFactorsToSendFromChild(factorsToSend);
+    }, [factorsToSend]);
 
+    useEffect(() => {
+        updateFactorsFromChild(factorsShow);
+    }, [factorsShow]);
 
     const handleFactorChange = (index, newValue) => {
-        // const newFactorValues = [...factorValues];
-        // newFactorValues[index] = newValue;
-        // setFactorValues(newFactorValues);
+        const newFactors = [...factorsShow];
+        newFactors[index].value = newValue;
+        setFactorShow(newFactors);
     };
 
-    console.log(factors[0])
+    const handleCheckboxChange = (index, isChecked) => {
+        const newFactorsToSend = [...factorsToSend];
+        newFactorsToSend[index] = isChecked;
+        setFactorsToSend(newFactorsToSend);
+    };
 
-    return (<div className="mb-3">
-        {factors.map((index, factor) => (<div key={index} className="input-group mb-3">
+    return (<div className="mb-3" style={{overflowY: "auto"}}>
+        <label htmlFor="factors" className="form-label">Факторы:</label>
+        {factorsShow.map((factor, index) => (<div key={index} className="input-group mb-3">
                     <span className="input-group-text"
                           id="inputGroup-sizing-default">{factor.name}</span>
             <input
+                style={{marginRight: '10px'}}
                 type="range"
                 className="form-control"
-                value={factor.value || 5}
+                value={factor.value !== undefined && factor.value !== null ? factor.value : 5}
                 min="0"
                 max="10"
                 step="1"
                 onChange={(e) => handleFactorChange(index, parseInt(e.target.value))}
+                disabled={!factorsToSend[index]}
             />
+            <span style={{marginRight: '10px'}}>{factor.value !== undefined && factor.value !== null ? factor.value : 5}</span>
+            <div className="form-check">
+                <input
+                    className="form-check-input"
+                    type="checkbox"
+                    name={`sendFactor${index}`}
+                    id={`sendFactor${index}`}
+                    checked={factorsToSend[index]}
+                    onChange={(e) => handleCheckboxChange(index, e.target.checked)}
+                />
+            </div>
         </div>))}
     </div>);
 };

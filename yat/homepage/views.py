@@ -93,9 +93,13 @@ def filter_by_tags(queryset, tags):
 class WithCreatedViewSet(UserContextViewSet):
     def get_queryset(self, *args, **kwargs):
         if self.request.method == "GET":
+            created = self.request.data.get("created")
+            if created is None:
+                created = dict(self.request.query_params).get("created[]")
+
             return filter_by_field_timestamp(
                 super().get_queryset(*args, **kwargs),
-                self.request.data.get("created"),
+                created,
                 "created",
             )
 
@@ -105,9 +109,13 @@ class WithCreatedViewSet(UserContextViewSet):
 class WithTagsViewSet(UserContextViewSet):
     def get_queryset(self, *args, **kwargs):
         if self.request.method == "GET":
+            tags = self.request.data.get("tags")
+            if tags is None:
+                tags = dict(self.request.query_params).get("tags[]")
+
             return filter_by_tags(
                 super().get_queryset(*args, **kwargs),
-                self.request.data.get("tags"),
+                tags,
             )
 
         return super().get_queryset(*args, **kwargs)
@@ -139,16 +147,24 @@ class TaskViewSet(WithCreatedViewSet, WithTagsViewSet):
 
     def get_queryset(self, *args, **kwargs):
         if self.request.method == "GET":
+            deadline = self.request.data.get("deadline")
+            if deadline is None:
+                deadline = dict(self.request.query_params).get("deadline[]")
+
             queryset = super().get_queryset(*args, **kwargs)
             queryset = filter_by_field_timestamp(
                 queryset,
-                self.request.data.get("deadline"),
+                deadline,
                 "deadline",
             )
 
+            statusVal = self.request.data.get("status")
+            if statusVal is None:
+                statusVal = dict(self.request.query_params).get("status[]")
+
             queryset = filter_by_status(
                 queryset,
-                self.request.data.get("status"),
+                statusVal,
             )
             return queryset
 
