@@ -1,13 +1,33 @@
 import React, {useState} from 'react';
-import Auth from '../../pkg/auth';
+import Auth from "../../pkg/auth";
 
+function TaskForm({task, tags = []}) {
+    const [name, setName] = useState(task ? task.name : '');
+    const [description, setDescription] = useState(task ? task.description : '');
+    const [selectedTags, setSelectedTags] = useState(task ? task.tags : []);
+    const [deadline, setDeadline] = useState(task ? task.deadline : '');
+    const [errorMessage, setErrorMessage] = useState('');
 
-function TaskForm({tags = []}) {
+    const handleNameChange = (event) => {
+        setName(event.target.value);
+    };
 
-    const [name, setName] = useState('');
-    const [description, setDescription] = useState('');
-    const [selectedTags, setSelectedTags] = useState([]);
-    const [deadline, setDeadline] = useState('');
+    const handleDescriptionChange = (event) => {
+        setDescription(event.target.value);
+    };
+
+    const handleTagChange = (event) => {
+        const tagId = parseInt(event.target.value);
+        if (event.target.checked) {
+            setSelectedTags([...selectedTags, tagId]);
+        } else {
+            setSelectedTags(selectedTags.filter(id => id !== tagId));
+        }
+    };
+
+    const handleDeadlineChange = (event) => {
+        setDeadline(event.target.value);
+    };
 
     const handleSubmit = (event) => {
         event.preventDefault();
@@ -16,85 +36,88 @@ function TaskForm({tags = []}) {
             name,
             description,
             tags: selectedTags,
-            deadline: deadline,
-            status: "not done",
         };
 
-        Auth.axiosInstance.post('/api/v1/homepage/tasks/', data)
-            .then(response => {
+        if (deadline !== null) {
+            data.deadline = Date.parse(deadline) / 1000;
+        }
+
+        const request = task ?
+            Auth.axiosInstance.put(`/api/v1/homepage/tasks/`, {...data, id: task.id}) :
+            Auth.axiosInstance.post(`/api/v1/homepage/tasks/`, data);
+
+        console.log(data);
+        request
+            .then((response) => {
                 window.location.reload();
             })
-            .catch(error => {
+            .catch((error) => {
                 console.log(error);
             });
     };
 
-    const handleNameOnChange = (event) => {
-        setName(event.target.value);
-    }
-
-    const handleDeadlineOnChange = (event) => {
-        const date = new Date(event.target.value);
-        const timestamp = Math.floor(date.getTime() / 1000); // convert to seconds
-        setDeadline(timestamp.toString());
-    };
-
-    const handleDescriptionOnChange = (event) => {
-        setDescription(event.target.value);
-    }
-
-    const handleTagChange = (event) => {
-        if (event.target.checked) {
-            setSelectedTags([...selectedTags, parseInt(event.target.value)]);
-        } else {
-            setSelectedTags(selectedTags.filter(tagId => tagId !== parseInt(event.target.value)));
+    const handleDelete = () => {
+        if (task) {
+            Auth.axiosInstance.delete(`/api/v1/homepage/tasks/`, {data: {id: task.id}})
+                .then((response) => {
+                    window.location.reload();
+                })
+                .catch((error) => {
+                    console.log(error);
+                });
         }
     };
 
-    return (<div>
-        <form onSubmit={handleSubmit}>
-            <h4>Добавить задачу</h4>
+    function convertUTCToLocalTime(utcTimestamp) {
+        // Convert the UTC timestamp from seconds to milliseconds
+        const date = new Date(utcTimestamp * 1000);
+        // Format the date to a string in the 'YYYY-MM-DDTHH:mm' format
+        const year = date.getFullYear();
+        const month = (date.getMonth() + 1).toString().padStart(2, '0'); // Months are 0-indexed
+        const day = date.getDate().toString().padStart(2, '0');
+        const hours = date.getHours().toString().padStart(2, '0');
+        const minutes = date.getMinutes().toString().padStart(2, '0');
+        const localTime = `${year}-${month}-${day}T${hours}:${minutes}`;
+        return localTime;
+    }
 
-            <div className="mb-3">
-                <label htmlFor="text" className="form-label">Название</label>
-                <input className="form-control" id="text"
-                          onChange={handleNameOnChange}></input>
-            </div>
-
-            <div className="mb-3">
-                <label htmlFor="date" className="form-label">Дедлайн</label>
-                <input type="date" id="date" className="form-control" onChange={handleDeadlineOnChange}/>
-            </div>
-
-            <div className="mb-3">
-                <label htmlFor="textarea" className="form-label">Описание</label>
-                <textarea className="form-control" id="textarea" rows="2"
-                          onChange={handleDescriptionOnChange}></textarea>
-            </div>
-
-            <div className="mb-3">
-                {tags.map(tag => (<div key={tag.id}>
-                    <input value={tag.id} className="form-check-input" type="checkbox" onChange={handleTagChange}/>
-                    <label className="form-check-label">{tag.name}</label>
-                </div>))}
-            </div>
-
-            <button type="submit" className="btn btn-primary">Добавить</button>
-        </form>
-    </div>);
+    return (
+        <div>
+            <form onSubmit={handleSubmit}>
+                <h4>{task ? 'Редактировать задачу' : 'Создать задачу'}</h4>
+                <div className="mb-3">
+                    <label className="form-label">Название</label>
+                    <input type="text" value={name} onChange={handleNameChange} className="form-control"/>
+                </div>
+                <div className="mb-3">
+                    <label className="form-label">Описание</label>
+                    <textarea value={description} onChange={handleDescriptionChange} className="form-control"/>
+                </div>
+                <div className="mb-3">
+                    <label className="form-label">Теги</label>
+                    {tags.map((tag) => (
+                        <div key={tag.id} className="form-check">
+                            <input
+                                type="checkbox"
+                                value={tag.id}
+                                checked={selectedTags.includes(tag.id)}
+                                onChange={handleTagChange}
+                                className="form-check-input"
+                            />
+                            <label className="form-check-label">{tag.name}</label>
+                        </div>
+                    ))}
+                </div>
+                <div className="mb-3">
+                    <label className="form-label">Дедлайн</label>
+                    <input type="datetime-local" value={task && task.deadline ? convertUTCToLocalTime(task.deadline) : deadline} onChange={handleDeadlineChange} className="form-control"/>
+                </div>
+                {errorMessage && <p>{errorMessage}</p>}
+                <button type="submit" className="button-green button-gap">Сохранить</button>
+                {task && <button type="button" onClick={handleDelete} className="button-red">Удалить</button>}
+            </form>
+        </div>
+    );
 }
 
 export default TaskForm;
-
-
-
-
-
-
-
-
-
-
-
-
-

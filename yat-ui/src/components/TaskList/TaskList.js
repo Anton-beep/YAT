@@ -10,7 +10,7 @@ import {ReactComponent as Star} from "../../icons/star.svg";
 import Auth from '../../pkg/auth';
 import '../../App.css';
 import TaskForm from "../TaskForm/TaskForm";
-import TaskFinish from "../TaskFinish/TaskFinish";
+// import TaskFinish from "../TaskFinish/TaskFinish";
 
 const iconComponents = {
     "done": SquareCheck,
@@ -46,6 +46,17 @@ const TaskList = ({created, finished, done, onMain}) => {
         const minutes = date.getMinutes().toString().padStart(2, '0');
         return `${day}-${month}-${year} ${hours}:${minutes}`;
     };
+
+    const handleTaskSubmit = task => {
+        Auth.axiosInstance.post('/api/v1/homepage/tasks/', task)
+            .then(response => {
+                setTasks([...tasks, response.data.task]);
+                setIsFormOpen(false);
+            })
+            .catch(error => {
+                console.error(error);
+            });
+    }
 
     useEffect(() => {
         Auth.axiosInstance.get('/api/v1/homepage/tasks/', {
@@ -103,70 +114,52 @@ const TaskList = ({created, finished, done, onMain}) => {
     return (
         <div style={{border: '1px solid lightgrey', borderRadius: '10px'}}>
             <Modal
-                isOpen={isFilterOpen}
-                onRequestClose={() => setIsFilterOpen(false)}
+                isOpen={isFormOpen}
+                onRequestClose={() => setIsFormOpen(false)}
                 style={{
                     content: {
-                        width: '200px',
-                        height: '400px',
+                        width: '40%',
+                        height: '80%',
                         margin: 'auto',
                     }
                 }}
             >
-                Фильтрация по тегам
-                {tags.map(tag => (
-                    <div key={tag.id}>
-                        <input className="form-check-input" type="checkbox" checked={tag.checked}
-                               onChange={() => handleTagCheckChange(tag.id)}/>
-                        <label className="form-check-label">{tag.name}</label>
-                    </div>
-                ))}
+                <TaskForm task={selectedTask} tags={tags}/>
             </Modal>
+
+            {/*<Modal*/}
+            {/*    isOpen={isFilterOpen}*/}
+            {/*    onRequestClose={() => setIsFilterOpen(false)}*/}
+            {/*    style={{*/}
+            {/*        content: {*/}
+            {/*            width: '200px',*/}
+            {/*            height: '400px',*/}
+            {/*            margin: 'auto',*/}
+            {/*        }*/}
+            {/*    }}*/}
+            {/*>*/}
+            {/*    Фильтрация по тегам*/}
+            {/*    {tags.map(tag => (*/}
+            {/*        <div key={tag.id}>*/}
+            {/*            <input className="form-check-input" type="checkbox" checked={tag.checked}*/}
+            {/*                   onChange={() => handleTagCheckChange(tag.id)}/>*/}
+            {/*            <label className="form-check-label">{tag.name}</label>*/}
+            {/*        </div>*/}
+            {/*    ))}*/}
+            {/*</Modal>*/}
 
             <Modal
                 isOpen={isCardOpen}
                 onRequestClose={() => setIsCardOpen(false)}
                 style={{
                     content: {
-                        width: '35%',
-                        height: '45%',
+                        width: '55%',
+                        height: '75%',
                         margin: 'auto',
                     }
                 }}
             >
-                {selectedTask && (
-                    <>
-                        <h2>{selectedTask.name}</h2>
-                        <p>Дедлайн: {formatTime(selectedTask.deadline)}</p>
-                        <p>Статус: {selectedTask.status}</p>
-                        <p>{selectedTask.description}</p>
-                        {Boolean(selectedTask.finished) && <div>
-                            <p>Вермя начала: {formatTime(selectedTask.created)}</p>
-                            <p>Время конца: {formatTime(selectedTask.finished)}</p>
-                        </div>}
-                        <p>Теги: {selectedTask.tags.map(tagId => tags.find(tag => tag.id === tagId).name).join(', ')}</p>
-                        {selectedTask.factors.map((factor, index) => (
-                            <div key={index}>
-                                <label>{factors[factor.id]}: </label>
-
-                                <div className="progress" role="progressbar" aria-label="Basic example">
-                                    <div className="progress-bar"
-                                         style={{width: `${(factor.value * 5 + 50)}%`}}>{factor.value}</div>
-                                </div>
-                            </div>
-                        ))}
-                        <p>Создано {formatTime(selectedTask.created)}</p>
-                        {!Boolean(selectedTask.finished) && <div>
-                            <button type="button" className="btn btn-primary" onClick={() => {
-                                setIsCardOpen(false);
-                                setFinished(true)
-                            }}>Завершить задачу
-                            </button>
-                        </div>}
-                    </>
-                )}
-
-
+                <TaskForm task={selectedTask} tags={tags}/>
             </Modal>
 
             <Modal
@@ -194,7 +187,7 @@ const TaskList = ({created, finished, done, onMain}) => {
                     }
                 }}
             >
-                <TaskFinish task={selectedTask} initialFactors={factors}/>
+                <TaskForm task={selectedTask} tags={tags}/>
             </Modal>
 
             <div className="header">
@@ -216,7 +209,6 @@ const TaskList = ({created, finished, done, onMain}) => {
                     {tags.filter(tag => tag.checked).map(tag => tag.name).join(', ')}
                     {"  "} <X fill="red" className="icon-fixed-size"/>
                 </button>}
-
             </div>
 
             <div className="event-container">
@@ -259,7 +251,7 @@ const TaskList = ({created, finished, done, onMain}) => {
                                     </div>
                                 </div>}
 
-                                {!Boolean(task.finished) && <div>
+                                {task.deadline && <div>
                                     <div className="text-with-icon">
                                         <Clock fill={deadlineColor} className="icon-fixed-size"/>
                                         <span style={{color: deadlineColor}}>{formatTime(task.deadline)}</span>

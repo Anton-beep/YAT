@@ -1,6 +1,5 @@
 import React, {useEffect, useState} from 'react';
 import Auth from '../pkg/auth';
-import getCurrentUTCTimestamp from '../pkg/dt';
 
 
 function EventForm({tags = [], icons = {}, factors = [], activities = {}, event = null}) {
@@ -95,8 +94,6 @@ function EventForm({tags = [], icons = {}, factors = [], activities = {}, event 
             factors: finished !== '' ? factorsToSend : [],
             activity_id: activityId
         };
-
-        console.log(finished)
 
         if (finished !== null) {
             data.finished = finished;
@@ -197,7 +194,9 @@ function EventForm({tags = [], icons = {}, factors = [], activities = {}, event 
                 </div>))}
             </div>
 
-            {Boolean(finished) && <FactorsComponent factors={factors} eventFactors={event ? event.factors : []} updateFactorsFromChild={updateFactorsFromChild} updateFactorsToSendFromChild={updateFactorsToSendFromChild}/>}
+            {Boolean(finished) && <FactorsComponent factors={factors} eventFactors={event ? event.factors : []}
+                                                    updateFactorsFromChild={updateFactorsFromChild}
+                                                    updateFactorsToSendFromChild={updateFactorsToSendFromChild}/>}
 
             {errorMessage && <div className="alert alert-danger" role="alert">{errorMessage}</div>}
             <button type="submit" className="button-green button-gap">Сохранить</button>
@@ -257,7 +256,8 @@ const FactorsComponent = ({factors, eventFactors, updateFactorsFromChild, update
                 onChange={(e) => handleFactorChange(index, parseInt(e.target.value))}
                 disabled={!factorsToSend[index]}
             />
-            <span style={{marginRight: '10px'}}>{factor.value !== undefined && factor.value !== null ? factor.value : 5}</span>
+            <span
+                style={{marginRight: '10px'}}>{factor.value !== undefined && factor.value !== null ? factor.value : 5}</span>
             <div className="form-check">
                 <input
                     className="form-check-input"
