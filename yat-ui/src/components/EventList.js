@@ -11,6 +11,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import Auth from '../pkg/auth';
 import '../App.css';
 import ClockIcon from "./ClockIcon/ClockIcon";
+import TagsFilter from "./TagsFilter/TagsFilter";
 
 const iconComponents = {
     "bib.svg": Bib,
@@ -116,15 +117,10 @@ const EventsList = ({created, finished, onMain}) => {
                 return;
             }
 
-            const eventCreatedTimestamp = event.created;
-            const eventCreatedDate = new Date(eventCreatedTimestamp * 1000);
+            const eventCreatedTimestamp = Math.floor(event.created);
 
             const intervalId = setInterval(() => {
-                const currentDate = new Date();
-                const utcTimestamp = Math.floor(currentDate.getTime() / 1000);
-                const differenceInMilliseconds = utcTimestamp - eventCreatedDate.getTime() / 1000 -
-                    eventCreatedDate.getTimezoneOffset() * 60;
-                const differenceInSeconds = Math.floor(differenceInMilliseconds);
+                const differenceInSeconds = Math.floor((Date.now() / 1000)) - eventCreatedTimestamp;
 
                 setElapsedTimes(prevTimes => {
                     // Create a new object with the same properties as prevTimes
@@ -180,6 +176,20 @@ const EventsList = ({created, finished, onMain}) => {
     return (
         <div style={{border: '1px solid lightgrey', borderRadius: '10px'}}>
             <Modal
+                isOpen={isFilterOpen}
+                onRequestClose={() => setIsFilterOpen(false)}
+                style={{
+                    content: {
+                        width: '40%',
+                        height: '80%',
+                        margin: 'auto',
+                    }
+                }}
+            >
+                <TagsFilter tags={tags} onTagSelection={setSelectedTags}/>
+            </Modal>
+
+            <Modal
                 isOpen={isFormOpen}
                 onRequestClose={() => {
                     setIsFormOpen(false);
@@ -216,17 +226,13 @@ const EventsList = ({created, finished, onMain}) => {
                     </button>}
                 <button className="button-orange button-gap" onClick={() => setIsFilterOpen(true)}>Фильтр по тегам
                 </button>
-            </div>
-
-            <div className="buttons" style={{marginTop: "10px"}}>
                 {Boolean(selectedTags.length !== 0) && <button className="button-orange button-gap" onClick={() => {
                     setSelectedTags([]);
                     setTags(tags.map(tag => ({...tag, checked: false})));
                 }}>
                     {tags.filter(tag => tag.checked).map(tag => tag.name).join(', ')}
-                    {"  "} <X fill="red"/>
+                    <X fill="red"/>
                 </button>}
-
             </div>
 
             <div className="event-container">
@@ -249,14 +255,16 @@ const EventsList = ({created, finished, onMain}) => {
                                 setIsFormOpen(true);
                             }}>
                                 <div className="text-with-icon">
-                                    <IconComponent className="icon-fixed-size" fill={activities[event.activity_id].icon.color}/>
+                                    <IconComponent className="icon-fixed-size"
+                                                   fill={activities[event.activity_id].icon.color}/>
                                     <h4>{activities[event.activity_id].name}</h4>
                                 </div>
 
                                 {Boolean(event.finished) && <div>
                                     <div className="text-with-icon">
                                         <Clock className="icon-fixed-size"/>
-                                        <span className="span-ellipsis">{formatTime(event.created)} - {formatTime(event.finished)}</span>
+                                        <span
+                                            className="span-ellipsis">{formatTime(event.created)} - {formatTime(event.finished)}</span>
                                     </div>
 
                                     <div className="text-with-icon factor-right">
@@ -266,7 +274,8 @@ const EventsList = ({created, finished, onMain}) => {
                                 </div>}
                                 {!Boolean(event.finished) && <div>
                                     <div className="text-with-icon">
-                                        <ClockIcon initialSeconds={elapsedTimes[event.id]} key={elapsedTimes[event.id] || 0}/>
+                                        <ClockIcon initialSeconds={elapsedTimes[event.id]}
+                                                   key={elapsedTimes[event.id] || 0}/>
                                         <span>{!Boolean(event.finished) ? formatElapsedTime(elapsedTimes[event.id] || 0) : formatTime(event.created)}</span>
                                     </div>
                                 </div>}

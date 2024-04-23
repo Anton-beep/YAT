@@ -80,7 +80,7 @@ function EventForm({tags = [], icons = {}, factors = [], activities = {}, event 
     const handleSubmit = (eventForm) => {
         eventForm.preventDefault();
 
-        if (created > finished) {
+        if (finished !== '' && created !== '' && parseInt(finished) < parseInt(created)) {
             setErrorMessage('Дата начала не может быть позже даты окончания');
             return;
         }
@@ -92,11 +92,18 @@ function EventForm({tags = [], icons = {}, factors = [], activities = {}, event 
         const data = {
             description,
             tags: selectedTags,
-            created,
-            finished,
             factors: finished !== '' ? factorsToSend : [],
             activity_id: activityId
         };
+
+        console.log(finished)
+
+        if (finished !== null) {
+            data.finished = finished;
+        }
+        if (created !== null) {
+            data.created = created;
+        }
 
         const request = event ?
             Auth.axiosInstance.put(`/api/v1/homepage/events/`, {...data, id: event.id}) :

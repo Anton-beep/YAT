@@ -3,8 +3,8 @@ import styles from './ClockIcon.module.css';
 
 const ClockIcon = ({initialSeconds}) => {
     const secondsDegrees = initialSeconds * 6;
-    const minutesDegrees = initialSeconds;
-    const hoursDegrees = initialSeconds / 60;
+    const minutesDegrees = initialSeconds / 10;
+    const hoursDegrees = initialSeconds / 600;
 
     return (
         <div className={styles.clock}>

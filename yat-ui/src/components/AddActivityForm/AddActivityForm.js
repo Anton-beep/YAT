@@ -90,8 +90,8 @@ const AddActivityForm = ({activity = null, onClose}) => {
                     <input type="color" className="form-control" id="color" value={color}
                            onChange={(e) => setColor(e.target.value)}/>
                 </div>
-                <button type="submit" className="btn btn-primary">{editMode ? 'Update' : 'Submit'}</button>
-                {editMode && <button type="button" className="btn btn-danger" onClick={handleDelete}>Delete</button>}
+                <button type="submit" className="button-green button-gap">Сохранить</button>
+                {editMode && <button type="button" className="button-red" onClick={handleDelete}>Удалить</button>}
             </form>
         </div>
     );
