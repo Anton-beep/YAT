@@ -24,18 +24,8 @@ const TaskList = ({created, finished, done, onMain}) => {
     const [tags, setTags] = useState([]);
     const [selectedTags, setSelectedTags] = useState([]);
     const [isFilterOpen, setIsFilterOpen] = useState(false);
-    const [isFinished, setFinished] = useState(false);
     const [factors, setFactors] = useState({});
-
-    const handleTagCheckChange = (tagId) => {
-        setTags(tags.map(tag => tag.id === tagId ? {...tag, checked: !tag.checked} : tag));
-        setSelectedTags(tags.filter(tag => tag.checked).map(tag => tag.id));
-        console.log(selectedTags[0]);
-    };
-
-    const [isCardOpen, setIsCardOpen] = useState(false);
     const [selectedTask, setSelectedTask] = useState(null);
-
     const [isFormOpen, setIsFormOpen] = useState(false);
 
     const formatTime = (timestamp) => {
@@ -47,17 +37,6 @@ const TaskList = ({created, finished, done, onMain}) => {
         const minutes = date.getMinutes().toString().padStart(2, '0');
         return `${day}-${month}-${year} ${hours}:${minutes}`;
     };
-
-    const handleTaskSubmit = task => {
-        Auth.axiosInstance.post('/api/v1/homepage/tasks/', task)
-            .then(response => {
-                setTasks([...tasks, response.data.task]);
-                setIsFormOpen(false);
-            })
-            .catch(error => {
-                console.error(error);
-            });
-    }
 
     useEffect(() => {
         Auth.axiosInstance.get('/api/v1/homepage/tasks/', {
@@ -74,7 +53,7 @@ const TaskList = ({created, finished, done, onMain}) => {
             .catch(error => {
                 console.error(error);
             })
-    }, [created, finished, done]);
+    }, [created, finished, done, isFormOpen]);
 
     useEffect(() => {
         Auth.axiosInstance.get('/api/v1/homepage/tags/')
@@ -128,58 +107,40 @@ const TaskList = ({created, finished, done, onMain}) => {
                 <TagsFilter tags={tags} onTagSelection={setSelectedTags} />
             </Modal>
 
-            <Modal
-                isOpen={isFormOpen}
-                onRequestClose={() => setIsFormOpen(false)}
-                style={{
-                    content: {
-                        width: '40%',
-                        height: '80%',
-                        margin: 'auto',
-                    }
-                }}
-            >
-                <TaskForm task={selectedTask} tags={tags}/>
-            </Modal>
-
             {/*<Modal*/}
-            {/*    isOpen={isFilterOpen}*/}
-            {/*    onRequestClose={() => setIsFilterOpen(false)}*/}
+            {/*    isOpen={isFormOpen}*/}
+            {/*    onRequestClose={() => setIsFormOpen(false)}*/}
             {/*    style={{*/}
             {/*        content: {*/}
-            {/*            width: '200px',*/}
-            {/*            height: '400px',*/}
+            {/*            width: '40%',*/}
+            {/*            height: '80%',*/}
             {/*            margin: 'auto',*/}
             {/*        }*/}
             {/*    }}*/}
             {/*>*/}
-            {/*    Фильтрация по тегам*/}
-            {/*    {tags.map(tag => (*/}
-            {/*        <div key={tag.id}>*/}
-            {/*            <input className="form-check-input" type="checkbox" checked={tag.checked}*/}
-            {/*                   onChange={() => handleTagCheckChange(tag.id)}/>*/}
-            {/*            <label className="form-check-label">{tag.name}</label>*/}
-            {/*        </div>*/}
-            {/*    ))}*/}
+            {/*    <TaskForm task={selectedTask} tags={tags} closeModal={() => setIsFormOpen(false)}/>*/}
+            {/*</Modal>*/}
+
+            {/*<Modal*/}
+            {/*    isOpen={isCardOpen}*/}
+            {/*    onRequestClose={() => setIsCardOpen(false)}*/}
+            {/*    style={{*/}
+            {/*        content: {*/}
+            {/*            width: '55%',*/}
+            {/*            height: '75%',*/}
+            {/*            margin: 'auto',*/}
+            {/*        }*/}
+            {/*    }}*/}
+            {/*>*/}
+            {/*    <TaskForm task={selectedTask} tags={tags} closeModal={() => setIsFormOpen(false)}/>*/}
             {/*</Modal>*/}
 
             <Modal
-                isOpen={isCardOpen}
-                onRequestClose={() => setIsCardOpen(false)}
-                style={{
-                    content: {
-                        width: '55%',
-                        height: '75%',
-                        margin: 'auto',
-                    }
-                }}
-            >
-                <TaskForm task={selectedTask} tags={tags}/>
-            </Modal>
-
-            <Modal
                 isOpen={isFormOpen}
-                onRequestClose={() => setIsFormOpen(false)}
+                onRequestClose={() => {
+                    setIsFormOpen(false)
+                    setSelectedTask(null)
+                }}
                 style={{
                     content: {
                         width: '40%',
@@ -188,22 +149,24 @@ const TaskList = ({created, finished, done, onMain}) => {
                     }
                 }}
             >
-                <TaskForm tags={tags}/>
+                <TaskForm task={selectedTask} tags={tags} closeModal={() => {
+                    setIsFormOpen(false)
+                    setSelectedTask(null)}}/>
             </Modal>
 
-            <Modal
-                isOpen={isFinished}
-                onRequestClose={() => setFinished(false)}
-                style={{
-                    content: {
-                        width: '40%',
-                        height: '80%',
-                        margin: 'auto',
-                    }
-                }}
-            >
-                <TaskForm task={selectedTask} tags={tags}/>
-            </Modal>
+            {/*<Modal*/}
+            {/*    isOpen={isFinished}*/}
+            {/*    onRequestClose={() => setFinished(false)}*/}
+            {/*    style={{*/}
+            {/*        content: {*/}
+            {/*            width: '40%',*/}
+            {/*            height: '80%',*/}
+            {/*            margin: 'auto',*/}
+            {/*        }*/}
+            {/*    }}*/}
+            {/*>*/}
+            {/*    <TaskForm task={selectedTask} tags={tags} closeModal={() => setIsFormOpen(false)}/>*/}
+            {/*</Modal>*/}
 
             <div className="header">
                 <h2>Задачи</h2>
@@ -244,7 +207,7 @@ const TaskList = ({created, finished, done, onMain}) => {
                         return (
                             <div key={task.id} className="event-card" onClick={() => {
                                 setSelectedTask(task);
-                                setIsCardOpen(true);
+                                setIsFormOpen(true);
                             }}>
                                 <div className="text-with-icon">
                                     <IconComponent className="icon-fixed-size"/>

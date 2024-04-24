@@ -23,7 +23,7 @@ const TagsList = () => {
 
     useEffect(() => {
         fetchTags();
-    }, []);
+    }, [isAddDialogOpen, isEditDialogOpen]);
 
     const openEditDialog = (tag) => {
         setSelectedTag(tag);
@@ -33,8 +33,6 @@ const TagsList = () => {
     const closeEditDialog = () => {
         setSelectedTag(null);
         setIsEditDialogOpen(false);
-        //fetchTags();
-        window.location.reload();
     };
 
     const openAddDialog = () => {
@@ -43,8 +41,6 @@ const TagsList = () => {
 
     const closeAddDialog = () => {
         setIsAddDialogOpen(false);
-        //fetchTags();
-        window.location.reload();
     };
 
     return (

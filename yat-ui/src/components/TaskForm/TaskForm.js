@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import Auth from "../../pkg/auth";
 
-function TaskForm({task, tags = []}) {
+function TaskForm({task, tags = [], closeModal}) {
     const [name, setName] = useState(task ? task.name : '');
     const [description, setDescription] = useState(task ? task.description : '');
     const [selectedTags, setSelectedTags] = useState(task ? task.tags : []);
@@ -52,7 +52,7 @@ function TaskForm({task, tags = []}) {
             Auth.axiosInstance.post(`/api/v1/homepage/tasks/`, data);
         request
             .then((response) => {
-                window.location.reload();
+                closeModal();
             })
             .catch((error) => {
                 console.log(error);
@@ -63,7 +63,7 @@ function TaskForm({task, tags = []}) {
         if (task) {
             Auth.axiosInstance.delete(`/api/v1/homepage/tasks/`, {data: {id: task.id}})
                 .then((response) => {
-                    window.location.reload();
+                    closeModal();
                 })
                 .catch((error) => {
                     console.log(error);
@@ -113,11 +113,14 @@ function TaskForm({task, tags = []}) {
                 </div>
                 <div className="mb-3">
                     <label className="form-label">Дедлайн</label>
-                    <input type="datetime-local" value={task && task.deadline ? convertUTCToLocalTime(task.deadline) : deadline} onChange={handleDeadlineChange} className="form-control"/>
+                    <input type="datetime-local"
+                           value={task && task.deadline ? convertUTCToLocalTime(task.deadline) : deadline}
+                           onChange={handleDeadlineChange} className="form-control"/>
                 </div>
                 {errorMessage && <div className="alert alert-danger" role="alert">{errorMessage}</div>}
                 <button type="submit" className="button-green button-gap">Сохранить</button>
-                {task && <button type="button" onClick={handleDelete} className="button-red">Удалить</button>}
+                {task && <button type="button" onClick={handleDelete} className="button-red button-gap">Удалить</button>}
+                <button type="button" className="button-orange" onClick={closeModal}>Назад</button>
             </form>
         </div>
     );

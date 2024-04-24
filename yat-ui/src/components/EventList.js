@@ -20,6 +20,8 @@ const iconComponents = {
 
 
 const EventsList = ({created, finished, onMain}) => {
+    const [refreshKey, setRefreshKey] = useState(0);
+
     const [events, setEvents] = useState([]);
     const [activities, setActivities] = useState({});
     const [tags, setTags] = useState([]);
@@ -74,7 +76,7 @@ const EventsList = ({created, finished, onMain}) => {
             .catch(error => {
                 console.error(error);
             })
-    }, [created, finished]);
+    }, [created, finished, isFormOpen]);
 
     useEffect(() => {
         Auth.axiosInstance.get('/api/v1/homepage/tags/')
@@ -138,26 +140,7 @@ const EventsList = ({created, finished, onMain}) => {
         return () => {
             Object.values(intervalIds).forEach(clearInterval);
         };
-    }, [events]);
-
-    const handleFinishEvent = (event) => {
-        Auth.axiosInstance.put(`/api/v1/homepage/events/`, {
-            data: {
-                id: event.id,
-                finished: Math.floor(Date.now() / 1000),
-                description: event.description,
-                tags: event.tags,
-                factors: event.factors,
-                activity_id: event.activity_id,
-            }
-        })
-            .then(response => {
-                window.location.reload();
-            })
-            .catch(error => {
-                console.error(error);
-            })
-    }
+    }, [events, isFormOpen]);
 
     const formatElapsedTime = (seconds) => {
         const hours = Math.floor(seconds / 3600);
@@ -186,7 +169,7 @@ const EventsList = ({created, finished, onMain}) => {
                     }
                 }}
             >
-                <TagsFilter tags={tags} onTagSelection={setSelectedTags}/>
+                <TagsFilter tags={tags} onTagSelection={setSelectedTags} closeModal={() => setIsFilterOpen(false)} oldSelectedTags={selectedTags}/>
             </Modal>
 
             <Modal
@@ -209,6 +192,7 @@ const EventsList = ({created, finished, onMain}) => {
                         factors={factors}
                         activities={visibleActivities}
                         event={selectedEvent}
+                        closeModal={() => setIsFormOpen(false)}
                     />
                 ) : (
                     <div className="alert alert-danger">

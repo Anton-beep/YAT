@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react';
 import Auth from '../pkg/auth';
 
 
-function EventForm({tags = [], icons = {}, factors = [], activities = {}, event = null}) {
+function EventForm({tags = [], icons = {}, factors = [], activities = {}, event = null, closeModal}) {
     const [selectedActivity, setSelectedActivity] = useState(event ? activities[event.activity_id].name : '');
     const [description, setDescription] = useState(event ? event.description : '');
     const [selectedTags, setSelectedTags] = useState(event ? event.tags : []);
@@ -68,7 +68,7 @@ function EventForm({tags = [], icons = {}, factors = [], activities = {}, event 
                 activity_id: event.activity_id,
             })
                 .then(response => {
-                    window.location.reload();
+                    closeModal();
                 })
                 .catch(error => {
                     console.error(error);
@@ -108,7 +108,7 @@ function EventForm({tags = [], icons = {}, factors = [], activities = {}, event 
 
         request
             .then(response => {
-                window.location.reload();
+                closeModal();
             })
             .catch(error => {
                 console.log(error);
@@ -119,7 +119,7 @@ function EventForm({tags = [], icons = {}, factors = [], activities = {}, event 
         // Make a DELETE request to delete the event
         Auth.axiosInstance.delete(`/api/v1/homepage/events/`, {data: {id: event.id}})
             .then(response => {
-                window.location.reload();
+                closeModal();
             })
             .catch(error => {
                 console.log(error);
@@ -204,6 +204,7 @@ function EventForm({tags = [], icons = {}, factors = [], activities = {}, event 
             {event && !event.finished && (
                 <button type="button" className="button-orange" onClick={handleFinishEvent}>Закончить</button>
             )}
+            <button type="button" className="button-orange" onClick={closeModal}>Назад</button>
         </form>
     </div>);
 }

@@ -22,7 +22,7 @@ const FactorsList = () => {
 
     useEffect(() => {
         fetchFactors();
-    }, []);
+    }, [isAddDialogOpen, isEditDialogOpen]);
 
     const openEditDialog = (factor) => {
         setSelectedFactor(factor);
@@ -32,7 +32,6 @@ const FactorsList = () => {
     const closeEditDialog = () => {
         setSelectedFactor(null);
         setIsEditDialogOpen(false);
-        window.location.reload()
         //fetchFactors();
     };
 
@@ -42,7 +41,6 @@ const FactorsList = () => {
 
     const closeAddDialog = () => {
         setIsAddDialogOpen(false);
-        window.location.reload()
         //fetchFactors();
     };
 

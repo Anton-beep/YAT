@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 
-const TagsFilter = ({ tags, onTagSelection }) => {
-    const [selectedTags, setSelectedTags] = useState([]);
+const TagsFilter = ({ tags, onTagSelection, oldSelectedTags}) => {
+    const [selectedTags, setSelectedTags] = useState(oldSelectedTags || []);
 
     const handleTagClick = (tagId) => {
         const isSelected = selectedTags.includes(tagId);

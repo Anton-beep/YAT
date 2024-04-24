@@ -92,6 +92,7 @@ const AddActivityForm = ({activity = null, onClose}) => {
                 </div>
                 <button type="submit" className="button-green button-gap">Сохранить</button>
                 {editMode && <button type="button" className="button-red" onClick={handleDelete}>Удалить</button>}
+                <button type="button" className="button-orange" onClick={onClose}>Назад</button>
             </form>
         </div>
     );

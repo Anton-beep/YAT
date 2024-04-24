@@ -30,7 +30,7 @@ const ActivityList = () => {
 
     useEffect(() => {
         fetchActivity();
-    }, []);
+    }, [isAddDialogOpen, selectedActivities]);
 
     const openEditDialog = (activity) => {
         setSelectedActivities(activity);
@@ -40,8 +40,6 @@ const ActivityList = () => {
     const closeEditDialog = () => {
         setSelectedActivities(null);
         setIsEditDialogOpen(false);
-        window.location.reload();
-        //fetchActivity();
     };
 
     const openAddDialog = () => {
@@ -50,8 +48,6 @@ const ActivityList = () => {
 
     const closeAddDialog = () => {
         setIsAddDialogOpen(false);
-        //fetchActivity();
-        window.location.reload()
     };
 
     return (
