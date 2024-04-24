@@ -2,6 +2,7 @@ import React, {useState} from 'react';
 import Auth from '../../pkg/auth';
 import Layout from "./../Layout";
 import styles from './RegisterForm.module.css';
+import Loading from "./../Loading/Loading";
 
 const RegisterForm = () => {
     const [email, setEmail] = useState('');
@@ -10,6 +11,7 @@ const RegisterForm = () => {
     const [lastName, setLastName] = useState('');
     const [message, setMessage] = useState('');
     const [error, setError] = useState(false);
+    const [loading, setLoading] = useState(false);
 
     const validatePassword = (password) => {
         // Password must be at least 8 characters long, contain at least one number and one letter
@@ -18,6 +20,7 @@ const RegisterForm = () => {
     };
 
     const handleSubmit = async (event) => {
+        setLoading(true);
         event.preventDefault();
         if (!validatePassword(password)) {
             setMessage("Пароль должен быть не менее 8 символов и содержать хотя бы одну букву и одну цифру");
@@ -40,6 +43,7 @@ const RegisterForm = () => {
                             setMessage("Ошибка сервера, попробуйте позже");
                             setError(true);
                             console.error(error);
+                            setLoading(false);
                             return;
                         }
                         setMessage(Object.values(error.response.data).join(", "));
@@ -50,6 +54,7 @@ const RegisterForm = () => {
         } catch (error) {
             console.error(error);
         }
+        setLoading(false);
     };
 
     return (
@@ -88,6 +93,7 @@ const RegisterForm = () => {
                 {message === "" ? null : <div className={error ? "alert alert-danger" : "alert alert-success"}>
                     {message}
                 </div>}
+                {loading ? <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center'}}><Loading/></div> : null}
             </form>
         </Layout>
     );
