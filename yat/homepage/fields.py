@@ -1,7 +1,5 @@
 from datetime import datetime, timezone as tz
 
-from django.utils import timezone
-
 from rest_framework import serializers
 
 __all__ = []

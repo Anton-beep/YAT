@@ -202,7 +202,10 @@ class EventSerializer(SerializerWithTagsAndScores):
     created = TimestampField(required=False)
     finished = TimestampField(required=False)
     description = serializers.CharField(required=False, allow_blank=True)
-    activity = serializers.PrimaryKeyRelatedField(queryset=models.Activity.objects.all(), required=False)
+    activity = serializers.PrimaryKeyRelatedField(
+        queryset=models.Activity.objects.all(),
+        required=False,
+    )
 
     def to_representation(self, instance):
         data = super().to_representation(instance)
