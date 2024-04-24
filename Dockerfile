@@ -1,0 +1,12 @@
+FROM python:3.12
+
+ENV PYTHONDONTWRITEBYTECODE 1
+ENV PYTHONUNBUFFERED 1
+
+WORKDIR /backend
+
+COPY . .
+
+RUN pip install -r requirements/prod.txt
+
+EXPOSE 8000
