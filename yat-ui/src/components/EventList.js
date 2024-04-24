@@ -19,7 +19,7 @@ const iconComponents = {
 };
 
 
-const EventsList = ({created, finished, onMain}) => {
+const EventsList = ({created, finished, onMain, rerender}) => {
     const [refreshKey, setRefreshKey] = useState(0);
 
     const [events, setEvents] = useState([]);
@@ -41,8 +41,7 @@ const EventsList = ({created, finished, onMain}) => {
 
     const formatTime = (utcTimestamp) => {
         const date = new Date(utcTimestamp * 1000);
-        const userTimezoneDate = date.toLocaleString().slice(10)
-        return userTimezoneDate;
+        return date.toLocaleTimeString();
     };
 
     useEffect(() => {
@@ -61,7 +60,7 @@ const EventsList = ({created, finished, onMain}) => {
             .catch(error => {
                 console.error(error);
             })
-    }, []);
+    }, [rerender.activities]);
 
     useEffect(() => {
         Auth.axiosInstance.get('/api/v1/homepage/events/', {
@@ -76,7 +75,7 @@ const EventsList = ({created, finished, onMain}) => {
             .catch(error => {
                 console.error(error);
             })
-    }, [created, finished, isFormOpen]);
+    }, [created, finished, isFormOpen, rerender.activities, rerender.factors, rerender.tags]);
 
     useEffect(() => {
         Auth.axiosInstance.get('/api/v1/homepage/tags/')
@@ -94,7 +93,7 @@ const EventsList = ({created, finished, onMain}) => {
             .catch(error => {
                 console.error(error);
             })
-    }, []);
+    }, [rerender.tags]);
 
     useEffect(() => {
         setSelectedTags(tags.filter(tag => tag.checked).map(tag => tag.id));
@@ -109,7 +108,7 @@ const EventsList = ({created, finished, onMain}) => {
             .catch(error => {
                 console.error(error);
             })
-    }, []);
+    }, [rerender.factors]);
 
     useEffect(() => {
         const intervalIds = {};

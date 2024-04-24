@@ -12,7 +12,7 @@ const iconComponents = {
     "bob.svg": Bob,
 };
 
-const ActivityList = () => {
+const ActivityList = ({rerender}) => {
     const [activities, setActivities] = useState([]);
     const [selectedActivities, setSelectedActivities] = useState(null);
     const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
@@ -40,6 +40,7 @@ const ActivityList = () => {
     const closeEditDialog = () => {
         setSelectedActivities(null);
         setIsEditDialogOpen(false);
+        rerender();
     };
 
     const openAddDialog = () => {
@@ -48,6 +49,7 @@ const ActivityList = () => {
 
     const closeAddDialog = () => {
         setIsAddDialogOpen(false);
+        rerender();
     };
 
     return (

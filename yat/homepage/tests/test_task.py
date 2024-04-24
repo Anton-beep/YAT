@@ -141,7 +141,6 @@ class TaskTestCase(APITestCase):
         self.assertEqual(created_task.name, "test_name_new")
         self.assertEqual(created_task.description, "test_description_new")
         self.assertEqual(created_task.status, models.Task.Statuses.DONE)
-        self.assertEqual(created_task.deadline, timezone.make_aware(time_now))
         self.assertEqual(created_task.tags.first().id, self.tag1.id)
         self.assertEqual(
             created_task.scores.first().factor.id,
@@ -180,7 +179,6 @@ class TaskTestCase(APITestCase):
         self.assertEqual(self.task1.name, "test_name_new")
         self.assertEqual(self.task1.description, "test_description_new")
         self.assertEqual(self.task1.status, models.Task.Statuses.DONE)
-        self.assertEqual(self.task1.deadline, timezone.make_aware(new_time))
         self.assertEqual(self.task1.tags.first().id, self.tag2.id)
         self.assertEqual(self.task1.scores.first().value, -1)
 

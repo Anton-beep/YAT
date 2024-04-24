@@ -4,7 +4,7 @@ import Auth from '../../pkg/auth';
 import AddTagForm from '../AddTagForm/AddTagForm';
 import '../../App.css';
 
-const TagsList = () => {
+const TagsList = ({rerender}) => {
     const [tags, setTags] = useState([]);
     const [selectedTag, setSelectedTag] = useState(null);
     const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
@@ -13,7 +13,6 @@ const TagsList = () => {
     const fetchTags = () => {
         Auth.axiosInstance.get('/api/v1/homepage/tags/')
             .then(response => {
-                console.log("tags", response.data)
                 setTags(response.data.tags);
             })
             .catch(error => {
@@ -33,6 +32,7 @@ const TagsList = () => {
     const closeEditDialog = () => {
         setSelectedTag(null);
         setIsEditDialogOpen(false);
+        rerender();
     };
 
     const openAddDialog = () => {
@@ -41,6 +41,7 @@ const TagsList = () => {
 
     const closeAddDialog = () => {
         setIsAddDialogOpen(false);
+        rerender();
     };
 
     return (

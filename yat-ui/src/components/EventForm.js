@@ -37,13 +37,6 @@ function EventForm({tags = [], icons = {}, factors = [], activities = {}, event 
         setFinished(timestamp.toString());
     };
 
-    const formatElapsedTime = (seconds) => {
-        const hours = Math.floor(seconds / 3600);
-        const minutes = Math.floor((seconds % 3600) / 60);
-        const secs = seconds % 60;
-        return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
-    };
-
     if (Object.keys(activities).length === 0) {
         return (
             <h2>
@@ -51,11 +44,6 @@ function EventForm({tags = [], icons = {}, factors = [], activities = {}, event 
             </h2>
         );
     }
-
-    const updateSelection = (activityName) => {
-        setSelectedActivity(activityName);
-
-    };
 
     const handleFinishEvent = () => {
         if (event) {
@@ -187,7 +175,7 @@ function EventForm({tags = [], icons = {}, factors = [], activities = {}, event 
 
             <div className="mb-3">
                 <label htmlFor="tags" className="form-label">Теги:</label>
-                {tags.map(tag => (<div key={tag.id}>
+                {tags.filter(tag => tag.visible).map(tag => (<div key={tag.id}>
                     <input value={tag.id} className="form-check-input" type="checkbox"
                            onChange={handleTagChange} checked={selectedTags.includes(tag.id)}/>
                     <label className="form-check-label">{tag.name}</label>

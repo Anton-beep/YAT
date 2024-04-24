@@ -15,6 +15,9 @@ class TimestampField(serializers.Field):
         if data == "":
             return None
 
+        if not data.isnumeric() or int(data) < 0:
+            raise serializers.ValidationError("Invalid timestamp")
+
         try:
             return datetime.fromtimestamp(int(data), tz.utc)
         except (OSError, ValueError, OverflowError, TypeError):

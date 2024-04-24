@@ -74,14 +74,6 @@ class TagSerializer(UserContextSerializer):
         fields = ["id", "name", "visible"]
 
 
-class NoteSerializer(UserContextSerializer):
-    class Meta:
-        model = models.Note
-        fields = ["id", "name", "description"]
-
-    description = serializers.CharField(required=False, allow_blank=True)
-
-
 class FactorSerializer(UserContextSerializer):
     class Meta:
         model = models.Factor
@@ -125,6 +117,19 @@ class SerializerWithTagsAndScores(UserContextSerializer):
         ]
         del data["scores"]
         return data
+
+
+class NoteSerializer(UserContextSerializer):
+    class Meta:
+        model = models.Note
+        fields = ["id", "name", "description", "tags"]
+
+    description = serializers.CharField(required=False, allow_blank=True)
+    tags = serializers.PrimaryKeyRelatedField(
+        queryset=models.Tag.objects.all(),
+        many=True,
+        required=False,
+    )
 
 
 class TaskSerializer(SerializerWithTagsAndScores):

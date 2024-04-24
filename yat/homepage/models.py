@@ -41,6 +41,7 @@ class Note(models.Model):
         related_name="notes",
         on_delete=models.CASCADE,
     )
+    tags = models.ManyToManyField(Tag, related_name="notes")
 
     def __str__(self):
         return f"Примечание: {self.name}"

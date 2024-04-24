@@ -197,7 +197,7 @@ class EventTestCase(APITestCase):
         self.assertEqual(response.status_code, HTTPStatus.CREATED)
         new_event_id = response.data["id"]
         event = models.Event.objects.get(id=new_event_id)
-        self.assertEqual(event.created, timezone.make_aware(created))
+        self.assertEqual(event.created.timestamp(), created.timestamp())
 
     def test_created_bigger_than_finished(self):
         response = self.client.post(

@@ -19,7 +19,7 @@ const TagsFilter = ({ tags, onTagSelection, oldSelectedTags, closeModal}) => {
     return (
         <div>
             <h2>Теги для фильтрации</h2>
-            {tags.map((tag) => (
+            {tags.filter(tag => tag.visible).map(tag => (
                 <div key={tag.id} style={{borderBottom: '1px solid gray', paddingBottom: '10px', marginBottom: '10px'}}>
                     <input
                         type="checkbox"

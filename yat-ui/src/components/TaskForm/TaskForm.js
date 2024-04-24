@@ -106,7 +106,7 @@ function TaskForm({task, tags = [], closeModal}) {
                 <h4>{task ? 'Редактировать задачу' : 'Создать задачу'}</h4>
                 <div className="mb-3">
                     <label className="form-label">Название</label>
-                    <input type="text" value={name} onChange={handleNameChange} className="form-control"/>
+                    <input type="text" value={name} onChange={handleNameChange} className="form-control" required/>
                 </div>
                 <div className="mb-3">
                     <label className="form-label">Описание</label>

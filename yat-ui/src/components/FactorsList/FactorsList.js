@@ -4,7 +4,7 @@ import Auth from '../../pkg/auth';
 import AddFactorForm from '../AddFactorForm/AddFactorForm';
 import '../../App.css';
 
-const FactorsList = () => {
+const FactorsList = ({rerender}) => {
     const [factors, setFactors] = useState([]);
     const [selectedFactor, setSelectedFactor] = useState(null);
     const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
@@ -32,6 +32,7 @@ const FactorsList = () => {
     const closeEditDialog = () => {
         setSelectedFactor(null);
         setIsEditDialogOpen(false);
+        rerender();
         //fetchFactors();
     };
 
@@ -41,6 +42,7 @@ const FactorsList = () => {
 
     const closeAddDialog = () => {
         setIsAddDialogOpen(false);
+        rerender();
         //fetchFactors();
     };
 
