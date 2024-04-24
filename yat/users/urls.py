@@ -8,7 +8,6 @@ from users.views import (
     ForgotPasswordView,
     RegisterUserView,
     RestorationView,
-    SecretView,
     UserView,
 )
 

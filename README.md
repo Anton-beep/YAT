@@ -17,7 +17,9 @@ Go to http://localhost:80 to see the UI.
 
 To see emails sent by the server, use:
 ```shell
+docker cp team-9-backend-1:backend/sent_emails .
 ```
+And view all emails in the `sent_emails` directory.
 
 # dev
 
