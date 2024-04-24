@@ -1,17 +1,21 @@
-FROM node:21-alpine3.18
+#React app image
+FROM node:lts-alpine as build
 
 WORKDIR /app
 
-COPY package.json ./
-COPY package-lock.json ./
-RUN npm update -g npm
-RUN npm install --silent
-RUN npm install react-scripts@3.4.1 -g --silent
-RUN npm install -g --silent serve
+COPY package*.json ./
 
-COPY . ./
+RUN npm ci
 
-EXPOSE 3000
+COPY . .
 
 RUN npm run build
-CMD ["serve", "-s", "build"]
+
+FROM nginx:latest as prod
+
+COPY --from=build /app/build /usr/share/nginx/html
+COPY nginx.conf /etc/nginx/nginx.conf
+
+EXPOSE 80/tcp
+
+CMD ["/usr/sbin/nginx", "-g", "daemon off;"]
