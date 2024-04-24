@@ -20,7 +20,7 @@ const Header = () => {
         navContent = (
             <>
                 <NavLink className="nav-link" activeclassname="nav-link active" to="/dashboard">Панель управления</NavLink>
-                <NavLink className="nav-link" activeclassname="nav-link active" to="/statistics">Статистика</NavLink>
+                {/*<NavLink className="nav-link" activeclassname="nav-link active" to="/statistics">Статистика</NavLink>*/}
                 <NavLink className="nav-link" activeclassname="nav-link active" to="/logout">Выйти</NavLink>
             </>
         );
