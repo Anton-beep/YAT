@@ -193,3 +193,5 @@ yarn-debug.log*
 yarn-error.log*
 /yat-ui/node_modules/
 yat/sent-emails/
+
+*/.coverage
