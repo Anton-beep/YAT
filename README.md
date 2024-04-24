@@ -1,5 +1,5 @@
 # YAT
-Yet Another Tracker
+*Yet Another Tracker*\
 With this application you can track your habits and evaluate your progress. Furthermore, you can create and control your day using tasks and notes.
 
 # Run
