@@ -202,7 +202,7 @@ function EventForm({tags = [], icons = {}, factors = [], activities = {}, event 
             <button type="submit" className="button-green button-gap">Сохранить</button>
             {event && <button type="button" className="button-red button-gap" onClick={handleDelete}>Удалить</button>}
             {event && !event.finished && (
-                <button type="button" className="button-orange" onClick={handleFinishEvent}>Закончить</button>
+                <button type="button" className="button-orange button-gap" onClick={handleFinishEvent}>Закончить</button>
             )}
             <button type="button" className="button-orange" onClick={closeModal}>Назад</button>
         </form>

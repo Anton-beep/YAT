@@ -202,7 +202,7 @@ const EventsList = ({created, finished, onMain}) => {
             </Modal>
 
             <div className="header">
-                <h2>События</h2>
+                <h2 style={{marginTop: '10px'}}>События</h2>
             </div>
             <div className="buttons">
                 {onMain &&

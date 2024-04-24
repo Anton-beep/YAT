@@ -104,7 +104,7 @@ const TaskList = ({created, finished, done, onMain}) => {
                     }
                 }}
             >
-                <TagsFilter tags={tags} onTagSelection={setSelectedTags} />
+                <TagsFilter tags={tags} onTagSelection={setSelectedTags} closeModal={() => setIsFilterOpen(false)}/>
             </Modal>
 
             {/*<Modal*/}
@@ -169,7 +169,7 @@ const TaskList = ({created, finished, done, onMain}) => {
             {/*</Modal>*/}
 
             <div className="header">
-                <h2>Задачи</h2>
+                <h2 style={{marginTop: '10px'}}>Задачи</h2>
             </div>
             <div className="buttons">
                 {onMain &&

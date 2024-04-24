@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 
-const TagsFilter = ({ tags, onTagSelection, oldSelectedTags}) => {
+const TagsFilter = ({ tags, onTagSelection, oldSelectedTags, closeModal}) => {
     const [selectedTags, setSelectedTags] = useState(oldSelectedTags || []);
 
     const handleTagClick = (tagId) => {
@@ -20,17 +20,18 @@ const TagsFilter = ({ tags, onTagSelection, oldSelectedTags}) => {
         <div>
             <h2>Теги для фильтрации</h2>
             {tags.map((tag) => (
-                <div key={tag.id} style={{ borderBottom: '1px solid gray', paddingBottom: '10px', marginBottom: '10px' }}>
+                <div key={tag.id} style={{borderBottom: '1px solid gray', paddingBottom: '10px', marginBottom: '10px'}}>
                     <input
                         type="checkbox"
                         id={`tag-${tag.id}`}
                         checked={selectedTags.includes(tag.id)}
                         onChange={() => handleTagClick(tag.id)}
-                        style={{ marginRight: '5px'}}
+                        style={{marginRight: '5px'}}
                     />
                     <label htmlFor={`tag-${tag.id}`}>{tag.name}</label>
                 </div>
             ))}
+            <button type="button" onClick={closeModal} className="button-orange">Назад</button>
         </div>
     );
 };

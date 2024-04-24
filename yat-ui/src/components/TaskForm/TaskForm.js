@@ -71,6 +71,22 @@ function TaskForm({task, tags = [], closeModal}) {
         }
     };
 
+    const handleComplete = () => {
+        if (task) {
+            let putTask = task;
+            delete putTask.deadline;
+
+            const updatedTask = {...putTask, status: task.status === 'done' ? 'not done' : 'done'};
+            Auth.axiosInstance.put(`/api/v1/homepage/tasks/`, updatedTask)
+                .then((response) => {
+                    closeModal();
+                })
+                .catch((error) => {
+                    console.log(error);
+                });
+        }
+    }
+
     function convertUTCToLocalTime(utcTimestamp) {
         // Convert the UTC timestamp from seconds to milliseconds
         const date = new Date(utcTimestamp * 1000);
@@ -119,7 +135,11 @@ function TaskForm({task, tags = [], closeModal}) {
                 </div>
                 {errorMessage && <div className="alert alert-danger" role="alert">{errorMessage}</div>}
                 <button type="submit" className="button-green button-gap">Сохранить</button>
-                {task && <button type="button" onClick={handleDelete} className="button-red button-gap">Удалить</button>}
+                <button type="button" onClick={handleComplete} className="button-light-blue button-gap">
+                    {task && task.status === 'done' ? 'Отметить как незавершенное' : 'Завершить'}
+                </button>
+                {task &&
+                    <button type="button" onClick={handleDelete} className="button-red button-gap">Удалить</button>}
                 <button type="button" className="button-orange" onClick={closeModal}>Назад</button>
             </form>
         </div>
