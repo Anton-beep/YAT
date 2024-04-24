@@ -114,12 +114,12 @@ const Dashboard = () => {
                             }}
                         />
                     </div>
-                    {/*{startDate.toDateString() !== new Date().toDateString() && <div className="col">*/}
-                    {/*    <button className="button-light-blue" style={{marginLeft: "10px"}}*/}
-                    {/*            onClick={resetDate}>Сбросить дату*/}
-                    {/*    </button>*/}
-                    {/*</div>*/}
-                    {/*}*/}
+                    {startDate.toDateString() !== new Date().toDateString() && <div className="col">
+                        <button className="button-orange" style={{marginLeft: "10px"}}
+                                onClick={resetDate}>Вернуться к сегодняшнему дню
+                        </button>
+                    </div>
+                    }
                 </div>
             </div>
 

@@ -174,7 +174,7 @@ const EventsList = ({created, finished, onMain}) => {
         }, {});
 
     return (
-        <div style={{border: '1px solid lightgrey', borderRadius: '10px'}}>
+        <div style={{border: '1px solid lightgrey', borderRadius: '10px', marginLeft: '10px'}}>
             <Modal
                 isOpen={isFilterOpen}
                 onRequestClose={() => setIsFilterOpen(false)}
@@ -283,7 +283,6 @@ const EventsList = ({created, finished, onMain}) => {
                         )
                     })}
             </div>
-
         </div>
     )
 };

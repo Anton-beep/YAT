@@ -32,21 +32,24 @@ function TaskForm({task, tags = []}) {
     const handleSubmit = (event) => {
         event.preventDefault();
 
+        if (name === '') {
+            setErrorMessage('Введите название задачи');
+            return;
+        }
+
         const data = {
             name,
             description,
             tags: selectedTags,
         };
 
-        if (deadline !== null) {
+        if (deadline !== null && deadline !== '') {
             data.deadline = Date.parse(deadline) / 1000;
         }
 
         const request = task ?
             Auth.axiosInstance.put(`/api/v1/homepage/tasks/`, {...data, id: task.id}) :
             Auth.axiosInstance.post(`/api/v1/homepage/tasks/`, data);
-
-        console.log(data);
         request
             .then((response) => {
                 window.location.reload();
@@ -112,7 +115,7 @@ function TaskForm({task, tags = []}) {
                     <label className="form-label">Дедлайн</label>
                     <input type="datetime-local" value={task && task.deadline ? convertUTCToLocalTime(task.deadline) : deadline} onChange={handleDeadlineChange} className="form-control"/>
                 </div>
-                {errorMessage && <p>{errorMessage}</p>}
+                {errorMessage && <div className="alert alert-danger" role="alert">{errorMessage}</div>}
                 <button type="submit" className="button-green button-gap">Сохранить</button>
                 {task && <button type="button" onClick={handleDelete} className="button-red">Удалить</button>}
             </form>

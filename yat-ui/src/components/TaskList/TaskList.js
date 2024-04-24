@@ -10,6 +10,7 @@ import {ReactComponent as Star} from "../../icons/star.svg";
 import Auth from '../../pkg/auth';
 import '../../App.css';
 import TaskForm from "../TaskForm/TaskForm";
+import TagsFilter from "../TagsFilter/TagsFilter";
 // import TaskFinish from "../TaskFinish/TaskFinish";
 
 const iconComponents = {
@@ -112,7 +113,21 @@ const TaskList = ({created, finished, done, onMain}) => {
     }, []);
 
     return (
-        <div style={{border: '1px solid lightgrey', borderRadius: '10px'}}>
+        <div style={{border: '1px solid lightgrey', borderRadius: '10px', marginRight: '10px'}}>
+            <Modal
+                isOpen={isFilterOpen}
+                onRequestClose={() => setIsFilterOpen(false)}
+                style={{
+                    content: {
+                        width: '40%',
+                        height: '80%',
+                        margin: 'auto',
+                    }
+                }}
+            >
+                <TagsFilter tags={tags} onTagSelection={setSelectedTags} />
+            </Modal>
+
             <Modal
                 isOpen={isFormOpen}
                 onRequestClose={() => setIsFormOpen(false)}
@@ -199,15 +214,12 @@ const TaskList = ({created, finished, done, onMain}) => {
                     </button>}
                 <button className="button-orange button-gap" onClick={() => setIsFilterOpen(true)}>Фильтр по тегам
                 </button>
-            </div>
-
-            <div className="buttons" style={{marginTop: "10px"}}>
                 {Boolean(selectedTags.length !== 0) && <button className="button-orange button-gap" onClick={() => {
                     setSelectedTags([]);
                     setTags(tags.map(tag => ({...tag, checked: false})));
                 }}>
                     {tags.filter(tag => tag.checked).map(tag => tag.name).join(', ')}
-                    {"  "} <X fill="red" className="icon-fixed-size"/>
+                    <X fill="red"/>
                 </button>}
             </div>
 
