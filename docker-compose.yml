@@ -1,0 +1,26 @@
+version: '3.8'
+
+services:
+  db:
+    env_file:
+      - postgresql.env
+    image: postgres:16
+    ports:
+      - "5432:5432"
+
+  backend:
+    env_file:
+      - .env
+    build: .
+    volumes:
+      - ./yat/:/backend/
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+    command: bash -c "sleep 5 && python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
+
+  frontend:
+    build: ./yat-ui
+    ports:
+      - "3000:3000"
