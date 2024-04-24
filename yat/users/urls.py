@@ -35,7 +35,6 @@ urlpatterns = [
         name="forgotpassword",
     ),
     path("restoration/", RestorationView.as_view(), name="restoration"),
-    path("secret/", SecretView.as_view(), name="secret"),
     path("settings/", ChangeUserView.as_view(), name="settings"),
     path("user/", UserView.as_view(), name="user"),
 ]
