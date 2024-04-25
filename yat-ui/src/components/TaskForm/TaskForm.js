@@ -5,7 +5,7 @@ function TaskForm({task, tags = [], closeModal}) {
     const [name, setName] = useState(task ? task.name : '');
     const [description, setDescription] = useState(task ? task.description : '');
     const [selectedTags, setSelectedTags] = useState(task ? task.tags : []);
-    const [deadline, setDeadline] = useState(task ? task.deadline : '');
+    const [deadline, setDeadline] = useState(task ? convertUTCToLocalTime(task.deadline) : '');
     const [errorMessage, setErrorMessage] = useState('');
 
     const handleNameChange = (event) => {
@@ -44,8 +44,11 @@ function TaskForm({task, tags = [], closeModal}) {
         };
 
         if (deadline !== null && deadline !== '') {
-            data.deadline = Date.parse(deadline) / 1000;
+            data.deadline = Date.parse(deadline.toString()) / 1000;
         }
+
+        console.log(deadline)
+        console.log(data)
 
         const request = task ?
             Auth.axiosInstance.put(`/api/v1/homepage/tasks/`, {...data, id: task.id}) :

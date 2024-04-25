@@ -70,7 +70,9 @@ class WheelView(APIView):
         )
         res = {"factors": []}
         for factor in queryset:
-            res["factors"].append({factor.id: sum(queryset[factor]) / len(queryset[factor])})
+            res["factors"].append(
+                {factor.id: sum(queryset[factor]) / len(queryset[factor])}
+            )
 
         return Response(res, status=status.HTTP_200_OK)
 

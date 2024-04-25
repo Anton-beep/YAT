@@ -94,7 +94,9 @@ class ChangeUserView(APIView):
 
     def put(self, request):
         user = request.user
-        serializer = ChangeUserSerializer(user, data=request.data, partial=True)
+        serializer = ChangeUserSerializer(
+            user, data=request.data, partial=True
+        )
         if serializer.is_valid():
             if (
                 "email" in serializer.validated_data
