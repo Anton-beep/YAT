@@ -20,6 +20,8 @@ import homepage.serializers
 
 __all__ = []
 
+from homepage.models import Factor
+
 
 def normalize_interval(interval):
     if interval is not None:
@@ -32,6 +34,7 @@ def normalize_interval(interval):
             end = timezone.make_aware(
                 datetime.datetime.fromtimestamp(int(interval[1])),
             )
+        end = end.replace(hour=23, minute=59, second=59)
 
         return start, end
 
@@ -39,53 +42,22 @@ def normalize_interval(interval):
 
 
 def calculate_average_for_factors(queryset, request):
-    filtrer_tasks = {}
-    filter_events = {}
+    finished = request.GET.get("finished")  # 1714003200
+    created = request.GET.get("created")  # 1714003200
+    if finished is not None and created is not None:
+        interval = normalize_interval([created, finished])
 
-    finished = request.data.get("finished")
-    if finished is not None:
-        finished_interval = normalize_interval(finished)
-        filtrer_tasks["scores__tasks__done__gt"] = finished_interval[0]
-        filtrer_tasks["scores__tasks__done__lt"] = finished_interval[1]
-        filter_events["scores__events__finished__gt"] = finished_interval[0]
-        filter_events["scores__events__finished__lt"] = finished_interval[1]
+        queryset = queryset.filter(
+            created__gt=interval[0],
+            finished__lt=interval[1],
+        )
 
-    created = request.data.get("created")
-    if created is not None:
-        created_interval = normalize_interval(created)
-        filtrer_tasks["scores__tasks__created__gt"] = created_interval[0]
-        filtrer_tasks["scores__tasks__created__lt"] = created_interval[1]
-        filter_events["scores__events__created__gt"] = created_interval[0]
-        filter_events["scores__events__created__lt"] = created_interval[1]
-
-    tags = request.data.get("tags")
-    if tags is not None:
-        filtrer_tasks["scores__tasks__tags__id__in"] = tags
-        filter_events["scores__events__tags__id__in"] = tags
-
-    # Apply the filters to the queryset
-
-    # Annotate each factor with the sum of scores from related tasks and events
-    factors = queryset.annotate(
-        total_sum_score=Sum(
-            "scores__value",
-            filter=(Q(**filtrer_tasks) | Q(**filter_events)),
-        ),
-    )
-
-    # Annotate each factor with the count of scores
-    factors = factors.annotate(
-        count_scores=Count("scores__tasks", filter=Q(**filtrer_tasks))
-        + Count("scores__events", filter=Q(**filter_events)),
-    )
-
-    # Annotate each factor with the average of the sum of scores
-    return factors.annotate(
-        average_sum_score=ExpressionWrapper(
-            Cast(F("total_sum_score"), FloatField()) / F("count_scores"),
-            output_field=FloatField(),
-        ),
-    )
+    result = {}
+    for event in queryset:
+        for score in event.scores.all():
+            result.setdefault(score.factor, [])
+            result[score.factor].append(score.value)
+    return result
 
 
 class WheelView(APIView):
@@ -93,12 +65,12 @@ class WheelView(APIView):
 
     def get(self, request):
         queryset = calculate_average_for_factors(
-            homepage.models.Factor.objects.filter(user=request.user),
+            homepage.models.Event.objects.filter(user=request.user),
             request,
         )
         res = {"factors": []}
         for factor in queryset:
-            res["factors"].append({factor.id: factor.average_sum_score})
+            res["factors"].append({factor.id: sum(queryset[factor]) / len(queryset[factor])})
 
         return Response(res, status=status.HTTP_200_OK)
 
