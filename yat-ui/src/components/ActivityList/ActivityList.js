@@ -1,15 +1,37 @@
 import React, {useEffect, useState} from 'react';
 import Modal from 'react-modal';
 import Auth from '../../pkg/auth';
-import {ReactComponent as Bib} from '../../icons/bib.svg';
-import {ReactComponent as Bob} from '../../icons/bob.svg';
+
+import {ReactComponent as Alt} from "../../icons/alt.svg";
+import {ReactComponent as Archive} from "../../icons/archive.svg";
+import {ReactComponent as Bag} from "../../icons/bag.svg";
+import {ReactComponent as Basket} from "../../icons/basket.svg";
+import {ReactComponent as Book} from "../../icons/book.svg";
+import {ReactComponent as Briefcase} from "../../icons/briefcase.svg";
+import {ReactComponent as BrokenLine} from "../../icons/brokenLine.svg";
+import {ReactComponent as Brush} from "../../icons/brush.svg";
+import {ReactComponent as Calendar_Event} from "../../icons/calendarEvent.svg";
+import {ReactComponent as Geo} from "../../icons/geo.svg";
+import {ReactComponent as House} from "../../icons/house.svg";
+import {ReactComponent as Journal} from "../../icons/journal.svg";
+
 import AddFactorForm from '../AddFactorForm/AddFactorForm';
 import '../../App.css';
 import AddActivityForm from "../AddActivityForm/AddActivityForm";
 
 const iconComponents = {
-    "bib.svg": Bib,
-    "bob.svg": Bob,
+    "alt": Alt,
+    "archive": Archive,
+    "bag": Bag,
+    "basket": Basket,
+    "book": Book,
+    "briefcase": Briefcase,
+    "brokenLine": BrokenLine,
+    "brush": Brush,
+    "calendarEvent": Calendar_Event,
+    "geo": Geo,
+    "house": House,
+    "journal": Journal,
 };
 
 const ActivityList = ({rerender}) => {

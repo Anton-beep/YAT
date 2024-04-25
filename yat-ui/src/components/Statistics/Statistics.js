@@ -41,7 +41,7 @@ const Statistics = () => {
     useEffect(() => {
         Auth.axiosInstance.get('/api/v1/statistics/wheel/', {
             params: {
-                created: startDate.getTime() / 1000, finished: endDate.getTime() / 1000,
+                created: Math.round(startDate.getTime() / 1000), finished: Math.round(endDate.getTime() / 1000),
             }
         })
             .then(response => {
@@ -147,6 +147,7 @@ const Statistics = () => {
                 <EventsList created={Math.floor(startDate.getTime() / 1000)}
                             finished={Math.floor(endDate.getTime() / 1000)}
                             onMain={false}
+                            rerender={{activities: 0, factors: 0, tags: 0}}
                 />
             </div>
             <div className="col-6">
@@ -154,6 +155,7 @@ const Statistics = () => {
                          finished={Math.floor(endDate.getTime() / 1000)}
                          done="all"
                          onMain={false}
+                         rerender={{activities: 0, factors: 0, tags: 0}}
                 />
             </div>
         </div>

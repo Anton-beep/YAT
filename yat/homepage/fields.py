@@ -13,7 +13,7 @@ class TimestampField(serializers.Field):
         if data == "":
             return None
 
-        if not data.isnumeric() or int(data) < 0:
+        if not str(data).isnumeric() or int(data) < 0:
             raise serializers.ValidationError("Invalid timestamp")
 
         try:

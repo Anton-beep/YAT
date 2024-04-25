@@ -12,7 +12,7 @@ function EventForm({tags = [], icons = {}, factors = [], activities = {}, event 
     const [elapsedTime, setElapsedTime] = useState(0);
 
     const activitiesArray = Object.keys(activities).map((id) => ({id, name: activities[id].name}));
-    const [activityId, setActivityId] = useState(activitiesArray[0].id);
+    const [activityId, setActivityId] = useState(event ? event.activity_id : activitiesArray[0].id);
     const [factorsFromChild, setFactorsFromChild] = useState([]);
     const [factorsToSendFromChild, setFactorsToSendFromChild] = useState([]);
     const [errorMessage, setErrorMessage] = useState('');
@@ -151,7 +151,8 @@ function EventForm({tags = [], icons = {}, factors = [], activities = {}, event 
                 <select id="activity" className="form-select" aria-label="Default select example"
                         onChange={handleActivityChange} value={activityId}>
                     {activitiesArray.map((activity) => (
-                        <option key={activity.id} value={activity.id}>{activity.name}</option>))}
+                        <option key={activity.id} value={activity.id}>{activity.name}</option>
+                    ))}
                 </select>
             </div>
 
