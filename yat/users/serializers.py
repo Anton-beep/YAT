@@ -21,3 +21,20 @@ class UserSerializer(serializers.ModelSerializer):
         user.set_password(password)
         user.save()
         return user
+
+
+class ChangeUserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ["email", "first_name", "last_name", "password"]
+
+    first_name = serializers.CharField(required=False)
+    last_name = serializers.CharField(required=False)
+    password = serializers.CharField(required=False)
+    email = serializers.EmailField(required=False)
+
+    # def update(self, instance, validated_data):
+    #     instance.first_name = validated_data.get("first_name", instance.first_name)
+    #     instance.last_name = validated_data.get("last_name", instance.last_name)
+    #     instance.save()
+    #     return instance

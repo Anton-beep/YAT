@@ -10,7 +10,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.views import TokenObtainPairView
 
-from users.serializers import UserSerializer
+from users.serializers import UserSerializer, ChangeUserSerializer
 
 __all__ = []
 
@@ -94,7 +94,7 @@ class ChangeUserView(APIView):
 
     def put(self, request):
         user = request.user
-        serializer = UserSerializer(user, data=request.data, partial=True)
+        serializer = ChangeUserSerializer(user, data=request.data, partial=True)
         if serializer.is_valid():
             if (
                 "email" in serializer.validated_data
@@ -110,8 +110,8 @@ class ChangeUserView(APIView):
                 )
                 send_mail(
                     "Confirm your new email",
-                    f"To confirm your new email, "
-                    f"please go to the following link: {confirm_url}",
+                    f"Чтобы подтвердить новую почту, "
+                    f"перейдите по ссылке: {confirm_url}",
                     "yat@bibbob.com",
                     [serializer.validated_data["email"]],
                     fail_silently=False,

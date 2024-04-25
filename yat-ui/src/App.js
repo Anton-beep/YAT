@@ -10,6 +10,7 @@ import Restoration from "./components/Restoration/Restoration";
 import Confirm from "./components/Confirm/Confirm";
 import Dashboard from './components/Dashboard/Dashboard';
 import Statistics from './components/Statistics/Statistics';
+import UserProfile from "./components/UserProfile/UserProfile";
 
 import './bootstrap/bootstrap.min.css';
 import 'jquery';
@@ -38,6 +39,7 @@ function App() {
             <Route path="/register" element={<RegisterForm/>}/>
             <Route path="/dashboard" element={<Dashboard/>}/>
             <Route path="/statistics" element={<Statistics/>}/>
+            <Route path="/profile" element={<UserProfile/>}/>
         </Routes>
     </Router>
 );

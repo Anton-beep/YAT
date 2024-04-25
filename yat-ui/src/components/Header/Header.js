@@ -2,6 +2,7 @@ import React, {useContext, useEffect, useState} from "react";
 import {NavLink} from "react-router-dom";
 import Auth from "../../pkg/auth";
 import logo from '../../logo.svg';
+import {Nav} from "react-bootstrap";
 
 const Header = () => {
     const [user, setUser] = useState("");
@@ -20,7 +21,9 @@ const Header = () => {
         navContent = (
             <>
                 <NavLink className="nav-link" activeclassname="nav-link active" to="/dashboard">Панель управления</NavLink>
+                {/*🤓*/}
                 {/*<NavLink className="nav-link" activeclassname="nav-link active" to="/statistics">Статистика</NavLink>*/}
+                <NavLink className="nav-link" activeclassname="nav-link active" to="/profile">Профиль</NavLink>
                 <NavLink className="nav-link" activeclassname="nav-link active" to="/logout">Выйти</NavLink>
             </>
         );
