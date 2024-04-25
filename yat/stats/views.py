@@ -1,15 +1,11 @@
 import datetime
 
 from django.db.models import (
-    Count,
     DateTimeField,
     ExpressionWrapper,
     F,
-    FloatField,
-    Q,
     Sum,
 )
-from django.db.models.functions import Cast
 from django.utils import timezone
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
@@ -19,8 +15,6 @@ from rest_framework.views import APIView
 import homepage.serializers
 
 __all__ = []
-
-from homepage.models import Factor
 
 
 def normalize_interval(interval):
@@ -34,8 +28,8 @@ def normalize_interval(interval):
             end = timezone.make_aware(
                 datetime.datetime.fromtimestamp(int(interval[1])),
             )
-        end = end.replace(hour=23, minute=59, second=59)
 
+        end = end.replace(hour=23, minute=59, second=59)
         return start, end
 
     raise ValueError("Interval is None, looks like we make a mistake")
@@ -57,6 +51,7 @@ def calculate_average_for_factors(queryset, request):
         for score in event.scores.all():
             result.setdefault(score.factor, [])
             result[score.factor].append(score.value)
+
     return result
 
 
@@ -71,7 +66,7 @@ class WheelView(APIView):
         res = {"factors": []}
         for factor in queryset:
             res["factors"].append(
-                {factor.id: sum(queryset[factor]) / len(queryset[factor])}
+                {factor.id: sum(queryset[factor]) / len(queryset[factor])},
             )
 
         return Response(res, status=status.HTTP_200_OK)

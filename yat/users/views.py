@@ -10,7 +10,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.views import TokenObtainPairView
 
-from users.serializers import UserSerializer, ChangeUserSerializer
+from users.serializers import ChangeUserSerializer, UserSerializer
 
 __all__ = []
 
@@ -95,7 +95,9 @@ class ChangeUserView(APIView):
     def put(self, request):
         user = request.user
         serializer = ChangeUserSerializer(
-            user, data=request.data, partial=True
+            user,
+            data=request.data,
+            partial=True,
         )
         if serializer.is_valid():
             if (
