@@ -230,7 +230,7 @@ const EventsList = ({created, finished, onMain}) => {
                         if (event.factors.length === 0) {
                             factorMean = "Нет оценок";
                         } else {
-                            factorMean = event.factors.reduce((sum, factor) => sum + factor.value, 0) / event.factors.length;
+                            factorMean = Math.round((event.factors.reduce((sum, factor) => sum + factor.value, 0) / event.factors.length) * 100) / 100;
                         }
                         const factorColor = factorMean > 5 ? 'green' : factorMean < -5 ? 'red' : 'black';
                         return (

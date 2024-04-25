@@ -24,7 +24,7 @@ const Statistics = () => {
     useEffect(() => {
         Auth.axiosInstance.get('/api/v1/homepage/factors/', {
             data: {
-                start_date: startDate.toISOString().substr(0, 10), end_date: endDate.toISOString().substr(0, 10),
+                created: startDate.toISOString().substr(0, 10), finished: endDate.toISOString().substr(0, 10),
             }
         })
             .then(response => {
@@ -40,10 +40,9 @@ const Statistics = () => {
 
     useEffect(() => {
         Auth.axiosInstance.get('/api/v1/statistics/wheel/', {
-            data: {
-                start_date: startDate.toISOString().substr(0, 10), end_date: endDate.toISOString().substr(0, 10),
+            params: {
+                created: startDate.getTime() / 1000, finished: endDate.getTime() / 1000,
             }
-
         })
             .then(response => {
                 const new_factors = response.data.factors.reduce((acc, factor) => {
@@ -89,8 +88,8 @@ const Statistics = () => {
 
     useEffect(() => {
         setRadarData(Object.keys(factorNames).map(key => ({
-            name: factorNames[key], value: factorValues[key]
-        })));
+            name: factorNames[key], value: Math.round(factorValues[key] * 100) / 100,
+        })).filter(item => (item.value !== undefined && !isNaN(item.value))));
     }, [factorNames, factorValues]);
 
     useEffect(() => {
@@ -139,7 +138,7 @@ const Statistics = () => {
         {pieData && <div style={{height: `${width}px`, width: "auto"}}>
             <MyPieChart data={pieData}/>
         </div>}
-        {timeRangeData && <div style={{height: `${width}px`, width: "auto"}}>
+        {(timeRangeData.length > 0) && <div style={{height: `${width}px`, width: "auto"}}>
             <MyResponsiveTimeRange data={timeRangeData} startDate={startDate} endDate={endDate}/>
         </div>}
 
