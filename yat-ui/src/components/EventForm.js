@@ -7,8 +7,8 @@ function EventForm({tags = [], icons = {}, factors = [], activities = {}, event 
     const [description, setDescription] = useState(event ? event.description : '');
     const [selectedTags, setSelectedTags] = useState(event ? event.tags : []);
     const [icon, setIcon] = useState({name: 'bib.svg', color: '#2a82a8'});
-    const [created, setCreated] = useState(event ? event.created : '');
-    const [finished, setFinished] = useState(event ? event.finished : '');
+    const [created, setCreated] = useState(event ? convertUTCToLocalTime(event.created) : '');
+    const [finished, setFinished] = useState(event ? convertUTCToLocalTime(event.finished) : '');
     const [elapsedTime, setElapsedTime] = useState(0);
 
     const activitiesArray = Object.keys(activities).map((id) => ({id, name: activities[id].name}));
@@ -26,15 +26,11 @@ function EventForm({tags = [], icons = {}, factors = [], activities = {}, event 
     };
 
     const handleCreatedChange = (event) => {
-        const datetime = new Date(event.target.value);
-        const timestamp = Math.floor(datetime.getTime() / 1000); // convert to seconds
-        setCreated(timestamp.toString());
+        setCreated(event.target.value);
     };
 
     const handleFinishedChange = (event) => {
-        const datetime = new Date(event.target.value);
-        const timestamp = Math.floor(datetime.getTime() / 1000); // convert to seconds
-        setFinished(timestamp.toString());
+        setFinished(event.target.value);
     };
 
     if (Object.keys(activities).length === 0) {
@@ -84,10 +80,10 @@ function EventForm({tags = [], icons = {}, factors = [], activities = {}, event 
         };
 
         if (finished !== null) {
-            data.finished = finished;
+            data.finished = Date.parse(finished.toString()) / 1000;
         }
         if (created !== null) {
-            data.created = created;
+            data.created = Date.parse(created.toString()) / 1000;
         }
 
         const request = event ?
@@ -159,13 +155,13 @@ function EventForm({tags = [], icons = {}, factors = [], activities = {}, event 
             {Boolean(finished) && <div className="mb-3">
                 <label htmlFor="created" className="form-label">Начало:</label>
                 <input type="datetime-local" id="created" className="form-control" onChange={handleCreatedChange}
-                       value={event && event.created ? convertUTCToLocalTime(created) : ''}/>
+                       value={created}/>
             </div>}
 
             <div className="mb-3">
                 <label htmlFor="finished" className="form-label">Конец:</label>
                 <input type="datetime-local" id="finished" className="form-control" onChange={handleFinishedChange}
-                       value={event && event.finished ? convertUTCToLocalTime(finished) : ''}/>
+                       value={finished}/>
             </div>
 
             <div className="mb-3">

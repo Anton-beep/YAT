@@ -47,9 +47,6 @@ function TaskForm({task, tags = [], closeModal}) {
             data.deadline = Date.parse(deadline.toString()) / 1000;
         }
 
-        console.log(deadline)
-        console.log(data)
-
         const request = task ?
             Auth.axiosInstance.put(`/api/v1/homepage/tasks/`, {...data, id: task.id}) :
             Auth.axiosInstance.post(`/api/v1/homepage/tasks/`, data);
@@ -133,7 +130,7 @@ function TaskForm({task, tags = [], closeModal}) {
                 <div className="mb-3">
                     <label className="form-label">Дедлайн</label>
                     <input type="datetime-local"
-                           value={task && task.deadline ? convertUTCToLocalTime(task.deadline) : deadline}
+                           value={deadline}
                            onChange={handleDeadlineChange} className="form-control"/>
                 </div>
                 {errorMessage && <div className="alert alert-danger" role="alert">{errorMessage}</div>}
