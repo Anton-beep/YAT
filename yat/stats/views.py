@@ -53,7 +53,6 @@ def calculate_average_for_factors(queryset, request):
         )
 
     result = {}
-    print(queryset)
     for event in queryset:
         for score in event.scores.all():
             result.setdefault(score.factor, [])
