@@ -96,8 +96,7 @@ const Dashboard = () => {
                         <button className="button-orange" style={{marginLeft: "10px"}}
                                 onClick={resetDate}>Вернуться к сегодняшнему дню
                         </button>
-                    </div>
-                    }
+                    </div>}
                 </div>
             </div>
 

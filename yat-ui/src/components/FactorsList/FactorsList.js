@@ -46,20 +46,19 @@ const FactorsList = ({rerender}) => {
         //fetchFactors();
     };
 
-    return (
-        <div>
+    return (<div>
             <div className="header">
                 <h1 className="list-title">Факторы</h1>
-                <button className="button-light-blue button-gap" style={{marginLeft: "10px"}} onClick={openAddDialog}>Добавить фактор</button>
+                <button className="button-light-blue button-gap" style={{marginLeft: "10px"}}
+                        onClick={openAddDialog}>Добавить фактор
+                </button>
             </div>
             <div className="event-container" style={{height: '100%', overflowY: 'auto', boxSizing: 'border-box'}}>
                 {factors.filter(factor => factor.visible).map((factor, index) => {
-                    return (
-                        <div key={factor.id} className="event-card" onClick={() => openEditDialog(factor)}
-                             style={{boxSizing: 'border-box'}}>
+                    return (<div key={factor.id} className="event-card" onClick={() => openEditDialog(factor)}
+                                 style={{boxSizing: 'border-box'}}>
                             <h2 className="card-event-name">{factor.name}</h2>
-                        </div>
-                    )
+                        </div>)
                 })}
             </div>
             <Modal isOpen={isEditDialogOpen} onRequestClose={closeEditDialog} style={{
@@ -67,7 +66,7 @@ const FactorsList = ({rerender}) => {
                     width: '35%', height: '75%', margin: 'auto',
                 }
             }}>
-                <AddFactorForm factor={selectedFactor} onClose={closeEditDialog} onDelete={fetchFactors} />
+                <AddFactorForm factor={selectedFactor} onClose={closeEditDialog} onDelete={fetchFactors}/>
             </Modal>
             <Modal isOpen={isAddDialogOpen} onRequestClose={closeAddDialog} style={{
                 content: {
@@ -76,8 +75,7 @@ const FactorsList = ({rerender}) => {
             }}>
                 <AddFactorForm onClose={closeAddDialog}/>
             </Modal>
-        </div>
-    )
+        </div>)
 };
 
 export default FactorsList;

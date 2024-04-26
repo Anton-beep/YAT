@@ -38,18 +38,17 @@ function TaskForm({task, tags = [], closeModal}) {
         }
 
         const data = {
-            name,
-            description,
-            tags: selectedTags,
+            name, description, tags: selectedTags,
         };
 
         if (deadline !== null && deadline !== '') {
             data.deadline = Date.parse(deadline.toString()) / 1000;
         }
 
-        const request = task ?
-            Auth.axiosInstance.put(`/api/v1/homepage/tasks/`, {...data, id: task.id}) :
-            Auth.axiosInstance.post(`/api/v1/homepage/tasks/`, data);
+        const request = task ? Auth.axiosInstance.put(`/api/v1/homepage/tasks/`, {
+            ...data,
+            id: task.id
+        }) : Auth.axiosInstance.post(`/api/v1/homepage/tasks/`, data);
         request
             .then((response) => {
                 closeModal();
@@ -100,8 +99,7 @@ function TaskForm({task, tags = [], closeModal}) {
         return localTime;
     }
 
-    return (
-        <div>
+    return (<div>
             <form onSubmit={handleSubmit}>
                 <h4>{task ? 'Редактировать задачу' : 'Создать задачу'}</h4>
                 <div className="mb-3">
@@ -114,8 +112,7 @@ function TaskForm({task, tags = [], closeModal}) {
                 </div>
                 <div className="mb-3">
                     <label className="form-label">Теги</label>
-                    {tags.map((tag) => (
-                        <div key={tag.id} className="form-check">
+                    {tags.map((tag) => (<div key={tag.id} className="form-check">
                             <input
                                 type="checkbox"
                                 value={tag.id}
@@ -124,8 +121,7 @@ function TaskForm({task, tags = [], closeModal}) {
                                 className="form-check-input"
                             />
                             <label className="form-check-label">{tag.name}</label>
-                        </div>
-                    ))}
+                        </div>))}
                 </div>
                 <div className="mb-3">
                     <label className="form-label">Дедлайн</label>
@@ -142,8 +138,7 @@ function TaskForm({task, tags = [], closeModal}) {
                     <button type="button" onClick={handleDelete} className="button-red button-gap">Удалить</button>}
                 <button type="button" className="button-orange" onClick={closeModal}>Назад</button>
             </form>
-        </div>
-    );
+        </div>);
 }
 
 export default TaskForm;

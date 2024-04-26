@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import Auth from '../../pkg/auth';
 
 const AddTagForm = ({tag = null, onClose}) => {
@@ -44,8 +44,7 @@ const AddTagForm = ({tag = null, onClose}) => {
             });
     };
 
-    return (
-        <form onSubmit={handleSubmit}>
+    return (<form onSubmit={handleSubmit}>
             <div className="form-group">
                 {tag ? <h1 className="list-title">Редактировать тег</h1> : <h1 className="list-title">Добавить тег</h1>}
                 <label htmlFor="name">Имя тега</label>
@@ -61,8 +60,7 @@ const AddTagForm = ({tag = null, onClose}) => {
             <button type="submit" className="button-green button-gap">Сохранить</button>
             {tag && <button type="button" className="button-red button-gap" onClick={handleDelete}>Удалить</button>}
             <button type="button" className="button-orange" onClick={onClose}>Назад</button>
-        </form>
-    );
+        </form>);
 };
 
 export default AddTagForm;

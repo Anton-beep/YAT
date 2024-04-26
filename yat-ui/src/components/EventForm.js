@@ -34,11 +34,9 @@ function EventForm({tags = [], icons = {}, factors = [], activities = {}, event 
     };
 
     if (Object.keys(activities).length === 0) {
-        return (
-            <h2>
+        return (<h2>
                 Добавте сначала хотя бы одну активность
-            </h2>
-        );
+            </h2>);
     }
 
     const handleFinishEvent = () => {
@@ -73,10 +71,7 @@ function EventForm({tags = [], icons = {}, factors = [], activities = {}, event 
             .map(factor => ({id: factor.id, value: factor.value}));
 
         const data = {
-            description,
-            tags: selectedTags,
-            factors: finished !== '' ? factorsToSend : [],
-            activity_id: activityId
+            description, tags: selectedTags, factors: finished !== '' ? factorsToSend : [], activity_id: activityId
         };
 
         if (finished !== null) {
@@ -86,9 +81,10 @@ function EventForm({tags = [], icons = {}, factors = [], activities = {}, event 
             data.created = Date.parse(created.toString()) / 1000;
         }
 
-        const request = event ?
-            Auth.axiosInstance.put(`/api/v1/homepage/events/`, {...data, id: event.id}) :
-            Auth.axiosInstance.post('/api/v1/homepage/events/', data);
+        const request = event ? Auth.axiosInstance.put(`/api/v1/homepage/events/`, {
+            ...data,
+            id: event.id
+        }) : Auth.axiosInstance.post('/api/v1/homepage/events/', data);
 
         request
             .then(response => {
@@ -147,8 +143,7 @@ function EventForm({tags = [], icons = {}, factors = [], activities = {}, event 
                 <select id="activity" className="form-select" aria-label="Default select example"
                         onChange={handleActivityChange} value={activityId}>
                     {activitiesArray.map((activity) => (
-                        <option key={activity.id} value={activity.id}>{activity.name}</option>
-                    ))}
+                        <option key={activity.id} value={activity.id}>{activity.name}</option>))}
                 </select>
             </div>
 
@@ -186,9 +181,8 @@ function EventForm({tags = [], icons = {}, factors = [], activities = {}, event 
             {errorMessage && <div className="alert alert-danger" role="alert">{errorMessage}</div>}
             <button type="submit" className="button-green button-gap">Сохранить</button>
             {event && <button type="button" className="button-red button-gap" onClick={handleDelete}>Удалить</button>}
-            {event && !event.finished && (
-                <button type="button" className="button-orange button-gap" onClick={handleFinishEvent}>Закончить</button>
-            )}
+            {event && !event.finished && (<button type="button" className="button-orange button-gap"
+                                                  onClick={handleFinishEvent}>Закончить</button>)}
             <button type="button" className="button-orange" onClick={closeModal}>Назад</button>
         </form>
     </div>);
@@ -200,8 +194,7 @@ const FactorsComponent = ({factors, eventFactors, updateFactorsFromChild, update
     const visibleFactors = factors
         .filter(factor => factor.visible)
         .map(factor => ({
-            ...factor,
-            value: eventFactors.find(eventFactor => eventFactor.id === factor.id)?.value || 5
+            ...factor, value: eventFactors.find(eventFactor => eventFactor.id === factor.id)?.value || 5
         }));
     const [factorsShow, setFactorShow] = useState([...visibleFactors, ...eventFactors.filter(eventFactor => !visibleFactors.find(factor => factor.id === eventFactor.id))]);
     const [factorsToSend, setFactorsToSend] = useState(factorsShow.map(factor => eventFactors.some(eventFactor => eventFactor.id === factor.id)));

@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React, {useEffect, useState} from 'react';
 
-const TagsFilter = ({ tags, onTagSelection, oldSelectedTags, closeModal}) => {
+const TagsFilter = ({tags, onTagSelection, oldSelectedTags, closeModal}) => {
     const [selectedTags, setSelectedTags] = useState(oldSelectedTags || []);
 
     const handleTagClick = (tagId) => {
@@ -16,8 +16,7 @@ const TagsFilter = ({ tags, onTagSelection, oldSelectedTags, closeModal}) => {
         onTagSelection(selectedTags);
     }, [selectedTags]);
 
-    return (
-        <div>
+    return (<div>
             <h2>Теги для фильтрации</h2>
             {tags.filter(tag => tag.visible).map(tag => (
                 <div key={tag.id} style={{borderBottom: '1px solid gray', paddingBottom: '10px', marginBottom: '10px'}}>
@@ -29,11 +28,9 @@ const TagsFilter = ({ tags, onTagSelection, oldSelectedTags, closeModal}) => {
                         style={{marginRight: '5px'}}
                     />
                     <label htmlFor={`tag-${tag.id}`}>{tag.name}</label>
-                </div>
-            ))}
+                </div>))}
             <button type="button" onClick={closeModal} className="button-orange">Назад</button>
-        </div>
-    );
+        </div>);
 };
 
 export default TagsFilter;

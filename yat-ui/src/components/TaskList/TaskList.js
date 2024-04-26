@@ -14,9 +14,7 @@ import TagsFilter from "../TagsFilter/TagsFilter";
 // import TaskFinish from "../TaskFinish/TaskFinish";
 
 const iconComponents = {
-    "done": SquareCheck,
-    "not done": Square,
-    "failed": SquareX,
+    "done": SquareCheck, "not done": Square, "failed": SquareX,
 };
 
 const TaskList = ({created, finished, done, onMain, rerender}) => {
@@ -36,10 +34,7 @@ const TaskList = ({created, finished, done, onMain, rerender}) => {
     useEffect(() => {
         Auth.axiosInstance.get('/api/v1/homepage/tasks/', {
             params: {
-                "created": created,
-                "finished": finished,
-                "tags": [],
-                "status": done,
+                "created": created, "finished": finished, "tags": [], "status": done,
             }
         })
             .then(response => {
@@ -53,15 +48,11 @@ const TaskList = ({created, finished, done, onMain, rerender}) => {
     useEffect(() => {
         Auth.axiosInstance.get('/api/v1/homepage/tags/')
             .then(response => {
-                    const newTags = response.data.tags.map(tag => ({
-                        ...tag,
-                        id: tag.id,
-                        name: tag.name,
-                        checked: false,
-                    }));
-                    setTags(newTags);
-                }
-            )
+                const newTags = response.data.tags.map(tag => ({
+                    ...tag, id: tag.id, name: tag.name, checked: false,
+                }));
+                setTags(newTags);
+            })
             .catch(error => {
                 console.error(error);
             })
@@ -74,32 +65,28 @@ const TaskList = ({created, finished, done, onMain, rerender}) => {
     useEffect(() => {
         Auth.axiosInstance.get('/api/v1/homepage/factors/')
             .then(response => {
-                    const new_factors = response.data.factors.reduce((acc, factor) => ({
-                        ...acc,
-                        [factor.id]: factor.name,
-                    }), {});
-                    setFactors(new_factors);
-                }
-            )
+                const new_factors = response.data.factors.reduce((acc, factor) => ({
+                    ...acc, [factor.id]: factor.name,
+                }), {});
+                setFactors(new_factors);
+            })
             .catch(error => {
                 console.error(error);
             })
     }, [rerender.factors]);
 
-    return (
-        <div style={{border: '1px solid lightgrey', borderRadius: '10px', marginRight: '10px'}}>
+    return (<div style={{border: '1px solid lightgrey', borderRadius: '10px', marginRight: '10px'}}>
             <Modal
                 isOpen={isFilterOpen}
                 onRequestClose={() => setIsFilterOpen(false)}
                 style={{
                     content: {
-                        width: '40%',
-                        height: '80%',
-                        margin: 'auto',
+                        width: '40%', height: '80%', margin: 'auto',
                     }
                 }}
             >
-                <TagsFilter tags={tags} onTagSelection={setSelectedTags} oldSelectedTags={selectedTags} closeModal={() => setIsFilterOpen(false)}/>
+                <TagsFilter tags={tags} onTagSelection={setSelectedTags} oldSelectedTags={selectedTags}
+                            closeModal={() => setIsFilterOpen(false)}/>
             </Modal>
 
             <Modal
@@ -110,15 +97,14 @@ const TaskList = ({created, finished, done, onMain, rerender}) => {
                 }}
                 style={{
                     content: {
-                        width: '40%',
-                        height: '80%',
-                        margin: 'auto',
+                        width: '40%', height: '80%', margin: 'auto',
                     }
                 }}
             >
                 <TaskForm task={selectedTask} tags={tags} closeModal={() => {
                     setIsFormOpen(false)
-                    setSelectedTask(null)}}/>
+                    setSelectedTask(null)
+                }}/>
             </Modal>
 
             <div className="header">
@@ -157,8 +143,7 @@ const TaskList = ({created, finished, done, onMain, rerender}) => {
                         const diffDays = Math.ceil(diffTime / oneDay);
 
                         const deadlineColor = diffDays <= 1 ? 'red' : 'black';
-                        return (
-                            <div key={task.id} className="event-card" onClick={() => {
+                        return (<div key={task.id} className="event-card" onClick={() => {
                                 setSelectedTask(task);
                                 setIsFormOpen(true);
                             }}>
@@ -185,12 +170,10 @@ const TaskList = ({created, finished, done, onMain, rerender}) => {
                                         <span style={{color: deadlineColor}}>{formatTime(task.deadline)}</span>
                                     </div>
                                 </div>}
-                            </div>
-                        )
+                            </div>)
                     })}
             </div>
-        </div>
-    )
+        </div>)
 };
 
 export default TaskList;

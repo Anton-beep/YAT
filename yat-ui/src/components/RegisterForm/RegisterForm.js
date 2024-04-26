@@ -29,36 +29,31 @@ const RegisterForm = () => {
         }
         try {
             Auth.register({email: email, password: password, first_name: firstName, last_name: lastName})
-                .then(
-                    response => {
-                        if (response.data) {
-                            setMessage("Успешная регистрация, подтвердите почту перейдя по ссылке в письме");
-                            setError(false);
-                        }
+                .then(response => {
+                    if (response.data) {
+                        setMessage("Успешная регистрация, подтвердите почту перейдя по ссылке в письме");
+                        setError(false);
                     }
-                )
-                .catch(
-                    error => {
-                        if (error.response === undefined) {
-                            setMessage("Ошибка сервера, попробуйте позже");
-                            setError(true);
-                            console.error(error);
-                            setLoading(false);
-                            return;
-                        }
-                        setMessage(Object.values(error.response.data).join(", "));
+                })
+                .catch(error => {
+                    if (error.response === undefined) {
+                        setMessage("Ошибка сервера, попробуйте позже");
                         setError(true);
                         console.error(error);
+                        setLoading(false);
+                        return;
                     }
-                )
+                    setMessage(Object.values(error.response.data).join(", "));
+                    setError(true);
+                    console.error(error);
+                })
         } catch (error) {
             console.error(error);
         }
         setLoading(false);
     };
 
-    return (
-        <Layout>
+    return (<Layout>
             <form onSubmit={handleSubmit} className={styles.container}>
                 <h1>Регистрация</h1>
                 <div>
@@ -93,10 +88,10 @@ const RegisterForm = () => {
                 {message === "" ? null : <div className={error ? "alert alert-danger" : "alert alert-success"}>
                     {message}
                 </div>}
-                {loading ? <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center'}}><Loading/></div> : null}
+                {loading ? <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center'}}><Loading/>
+                </div> : null}
             </form>
-        </Layout>
-    );
+        </Layout>);
 };
 
 export default RegisterForm;

@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState} from 'react';
 import Auth from "../../pkg/auth";
 
 function NoteForm({note, closeModal, tags}) {
@@ -61,8 +61,7 @@ function NoteForm({note, closeModal, tags}) {
         console.log(selectedTags);
     };
 
-    return (
-        <form onSubmit={handleSubmit} className="task-form">
+    return (<form onSubmit={handleSubmit} className="task-form">
             <h4>{note ? 'Изменить задачу' : 'Создать задачу'}</h4>
             <div className="mb-3">
                 <label className="form-label">Название заметки</label>
@@ -84,11 +83,9 @@ function NoteForm({note, closeModal, tags}) {
                 </div>))}
             </div>
             <button type="submit" className="button-green button-gap">Сохранить</button>
-            {note &&
-                <button type="button" onClick={handleDeleteNote} className="button-red">Удалить заметку</button>}
+            {note && <button type="button" onClick={handleDeleteNote} className="button-red">Удалить заметку</button>}
             {errorMessage && <div className="alert alert-danger" role="alert">{errorMessage}</div>}
-        </form>
-    );
+        </form>);
 }
 
 export default NoteForm;

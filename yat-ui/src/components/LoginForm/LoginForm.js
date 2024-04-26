@@ -15,22 +15,18 @@ const LoginForm = () => {
         event.preventDefault();
         try {
             Auth.login({email: email, password: password})
-                .then(
-                    response => {
-                        if (response.access) {
-                            setMessage("Успешный вход");
-                            setError(false);
-                        }
-                        window.location = '/dashboard';
+                .then(response => {
+                    if (response.access) {
+                        setMessage("Успешный вход");
+                        setError(false);
                     }
-                )
-                .catch(
-                    error => {
-                        setMessage("Неверный логин или пароль или вы не подтвердили почту");
-                        setError(true);
-                        console.error(error);
-                    }
-                )
+                    window.location = '/dashboard';
+                })
+                .catch(error => {
+                    setMessage("Неверный логин или пароль или вы не подтвердили почту");
+                    setError(true);
+                    console.error(error);
+                })
         } catch (error) {
             if (error.response.status !== 401) {
                 setMessage("Что-то пошло не так");
@@ -43,8 +39,7 @@ const LoginForm = () => {
         }
     };
 
-    return (
-        <Layout>
+    return (<Layout>
             <form onSubmit={handleSubmit} className={styles.container}>
                 <h1>Вход</h1>
                 <div>
@@ -69,8 +64,7 @@ const LoginForm = () => {
                     {message}
                 </div>}
             </form>
-        </Layout>
-    );
+        </Layout>);
 };
 
 export default LoginForm;

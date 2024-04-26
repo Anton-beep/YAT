@@ -21,8 +21,7 @@ const ForgotPasswordForm = () => {
             })
     };
 
-    return (
-        <Layout>
+    return (<Layout>
             <form onSubmit={handleSubmit} className={styles.container}>
                 <h1>Забыл пароль</h1>
                 <div>
@@ -38,8 +37,7 @@ const ForgotPasswordForm = () => {
                     {message}
                 </div>}
             </form>
-        </Layout>
-    );
+        </Layout>);
 };
 
 export default ForgotPasswordForm;

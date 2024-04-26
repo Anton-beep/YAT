@@ -25,25 +25,20 @@ const Restoration = () => {
             return;
         }
         Auth.restore(token, password)
-            .then(
-                response => {
-                    if (response.data) {
-                        setMessage("Пароль успешно изменен");
-                        setError(false);
-                    }
+            .then(response => {
+                if (response.data) {
+                    setMessage("Пароль успешно изменен");
+                    setError(false);
                 }
-            )
-            .catch(
-                error => {
-                    setMessage("Ошибка изменения пароля");
-                    setError(true);
-                    console.error(error);
-                }
-            )
+            })
+            .catch(error => {
+                setMessage("Ошибка изменения пароля");
+                setError(true);
+                console.error(error);
+            })
     };
 
-    return (
-        <Layout>
+    return (<Layout>
             <div className={styles.container}>
                 <h1>Восстановление пароля</h1>
                 <form onSubmit={handleSubmit}>
@@ -65,12 +60,11 @@ const Restoration = () => {
                         <button type="submit">Поменять пароль</button>
                     </div>
                     {message === "" ? null : <div className={error ? "alert alert-danger" : "alert alert-success"}>
-                    {message}
-                </div>}
+                        {message}
+                    </div>}
                 </form>
             </div>
-        </Layout>
-    );
+        </Layout>);
 };
 
 export default Restoration;

@@ -70,8 +70,7 @@ const EventsList = ({created, finished, onMain, rerender}) => {
         Auth.axiosInstance.get('/api/v1/homepage/activities/')
             .then(response => {
                 const new_activities = response.data.activities.reduce((acc, activity) => ({
-                    ...acc,
-                    [activity.id]: {
+                    ...acc, [activity.id]: {
                         "name": activity.name,
                         "icon": {"name": activity.icon.name, "color": activity.icon.color},
                         "visible": activity.visible,
@@ -87,8 +86,7 @@ const EventsList = ({created, finished, onMain, rerender}) => {
     useEffect(() => {
         Auth.axiosInstance.get('/api/v1/homepage/events/', {
             params: {
-                "created": created,
-                "tags": [],
+                "created": created, "tags": [],
             }
         })
             .then(response => {
@@ -102,16 +100,11 @@ const EventsList = ({created, finished, onMain, rerender}) => {
     useEffect(() => {
         Auth.axiosInstance.get('/api/v1/homepage/tags/')
             .then(response => {
-                    const newTags = response.data.tags.map(tag => ({
-                        ...tag,
-                        id: tag.id,
-                        name: tag.name,
-                        visible: tag.visible,
-                        checked: false,
-                    }));
-                    setTags(newTags);
-                }
-            )
+                const newTags = response.data.tags.map(tag => ({
+                    ...tag, id: tag.id, name: tag.name, visible: tag.visible, checked: false,
+                }));
+                setTags(newTags);
+            })
             .catch(error => {
                 console.error(error);
             })
@@ -124,9 +117,8 @@ const EventsList = ({created, finished, onMain, rerender}) => {
     useEffect(() => {
         Auth.axiosInstance.get('/api/v1/homepage/factors/')
             .then(response => {
-                    setFactors(response.data.factors);
-                }
-            )
+                setFactors(response.data.factors);
+            })
             .catch(error => {
                 console.error(error);
             })
@@ -177,20 +169,18 @@ const EventsList = ({created, finished, onMain, rerender}) => {
             return obj;
         }, {});
 
-    return (
-        <div style={{border: '1px solid lightgrey', borderRadius: '10px', marginLeft: '10px'}}>
+    return (<div style={{border: '1px solid lightgrey', borderRadius: '10px', marginLeft: '10px'}}>
             <Modal
                 isOpen={isFilterOpen}
                 onRequestClose={() => setIsFilterOpen(false)}
                 style={{
                     content: {
-                        width: '40%',
-                        height: '80%',
-                        margin: 'auto',
+                        width: '40%', height: '80%', margin: 'auto',
                     }
                 }}
             >
-                <TagsFilter tags={tags} onTagSelection={setSelectedTags} closeModal={() => setIsFilterOpen(false)} oldSelectedTags={selectedTags}/>
+                <TagsFilter tags={tags} onTagSelection={setSelectedTags} closeModal={() => setIsFilterOpen(false)}
+                            oldSelectedTags={selectedTags}/>
             </Modal>
 
             <Modal
@@ -201,25 +191,19 @@ const EventsList = ({created, finished, onMain, rerender}) => {
                 }}
                 style={{
                     content: {
-                        width: '40%',
-                        height: '80%',
-                        margin: 'auto',
+                        width: '40%', height: '80%', margin: 'auto',
                     }
                 }}
             >
-                {Object.keys(activities).length > 0 ? (
-                    <EventForm
+                {Object.keys(activities).length > 0 ? (<EventForm
                         tags={tags}
                         factors={factors}
                         activities={visibleActivities}
                         event={selectedEvent}
                         closeModal={() => setIsFormOpen(false)}
-                    />
-                ) : (
-                    <div className="alert alert-danger">
+                    />) : (<div className="alert alert-danger">
                         Доступных активностей нет. Сначала добавьте активность, чтобы создать событие.
-                    </div>
-                )}
+                    </div>)}
             </Modal>
 
             <div className="header">
@@ -254,8 +238,7 @@ const EventsList = ({created, finished, onMain, rerender}) => {
                             factorMean = Math.round((event.factors.reduce((sum, factor) => sum + factor.value, 0) / event.factors.length) * 100) / 100;
                         }
                         const factorColor = factorMean > 5 ? 'green' : factorMean < -5 ? 'red' : 'black';
-                        return (
-                            <div key={event.id} className="event-card" onClick={() => {
+                        return (<div key={event.id} className="event-card" onClick={() => {
                                 setSelectedEvent(event);
                                 setIsFormOpen(true);
                             }}>
@@ -284,12 +267,10 @@ const EventsList = ({created, finished, onMain, rerender}) => {
                                         <span>{!Boolean(event.finished) ? formatElapsedTime(elapsedTimes[event.id] || 0) : formatTime(event.created)}</span>
                                     </div>
                                 </div>}
-                            </div>
-                        )
+                            </div>)
                     })}
             </div>
-        </div>
-    )
+        </div>)
 };
 
 export default EventsList;

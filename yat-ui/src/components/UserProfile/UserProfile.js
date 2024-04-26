@@ -25,9 +25,7 @@ function UserProfile() {
                 setLastName(response.data.last_name);
                 setEmail(response.data.email);
                 setCurrentUser({
-                    firstName: response.data.first_name,
-                    lastName: response.data.last_name,
-                    email: response.data.email
+                    firstName: response.data.first_name, lastName: response.data.last_name, email: response.data.email
                 })
             })
             .catch(error => {
@@ -90,8 +88,7 @@ function UserProfile() {
         });
     };
 
-    return (
-        <Layout>
+    return (<Layout>
             <form onSubmit={handleSubmit} className={styles.container}>
                 <label>
                     Имя
@@ -117,8 +114,7 @@ function UserProfile() {
                 <button type="submit">Сохранить</button>
                 {errorMessage !== '' ? <div className="alert alert-danger">{errorMessage}</div> : null}
             </form>
-        </Layout>
-    );
+        </Layout>);
 }
 
 export default UserProfile;

@@ -1,5 +1,4 @@
 import React, {useEffect} from 'react';
-import {useNavigate} from 'react-router-dom';
 import Auth from '../pkg/auth';
 
 const Logout = () => {
@@ -8,10 +7,8 @@ const Logout = () => {
         window.location = '/';
     }, []);
 
-    return (
-        <>
-        </>
-    );
+    return (<>
+        </>);
 };
 
 export default Logout;

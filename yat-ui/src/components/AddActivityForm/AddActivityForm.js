@@ -49,9 +49,7 @@ const AddActivityForm = ({activity = null, onClose}) => {
         const url = 'api/v1/homepage/activities/';
         const method = activity ? 'put' : 'post';
         const data = {
-            name: name,
-            icon_name: icon,
-            icon_color: color
+            name: name, icon_name: icon, icon_color: color
         };
 
         if (activity) {
@@ -71,10 +69,8 @@ const AddActivityForm = ({activity = null, onClose}) => {
 
     const handleDelete = () => {
         Auth.axiosInstance.put(`api/v1/homepage/activities/`, {
-                id: activity.id,
-                visible: false
-            }
-        )
+            id: activity.id, visible: false
+        })
             .then(() => {
                 onClose();
             })
@@ -86,8 +82,7 @@ const AddActivityForm = ({activity = null, onClose}) => {
 
     const SelectedIcon = iconComponents[icon];
 
-    return (
-        <div>
+    return (<div>
             <h2 className="mt-3">{activity ? 'Редактировать активность' : 'Добавить активность'}</h2>
             <form onSubmit={handleSubmit} className="mt-3">
                 <div className="mb-3">
@@ -99,8 +94,7 @@ const AddActivityForm = ({activity = null, onClose}) => {
                     <label htmlFor="icon" className="form-label">Иконка:</label>
                     <select className="form-control" id="icon" value={icon} onChange={(e) => setIcon(e.target.value)}>
                         {Object.keys(iconComponents).map((iconName, index) => (
-                            <option key={index} value={iconName}>{iconName}</option>
-                        ))}
+                            <option key={index} value={iconName}>{iconName}</option>))}
                     </select>
                     <div style={{display: 'flex', justifyContent: 'center'}}>
                         <SelectedIcon fill={color} style={{width: '50%', height: 'auto', marginTop: "20px"}}/>
@@ -112,11 +106,11 @@ const AddActivityForm = ({activity = null, onClose}) => {
                            onChange={(e) => setColor(e.target.value)}/>
                 </div>
                 <button type="submit" className="button-green button-gap">Сохранить</button>
-                {editMode && <button type="button" className="button-red button-gap" onClick={handleDelete}>Удалить</button>}
+                {editMode &&
+                    <button type="button" className="button-red button-gap" onClick={handleDelete}>Удалить</button>}
                 <button type="button" className="button-orange" onClick={onClose}>Назад</button>
             </form>
-        </div>
-    );
+        </div>);
 };
 
 export default AddActivityForm;

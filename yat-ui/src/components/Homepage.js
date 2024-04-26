@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect} from 'react';
 import Auth from '../pkg/auth';
 import Layout from './Layout';
 import About from './About/About';
@@ -15,11 +15,9 @@ const Homepage = () => {
             });
     }, []);
 
-    return (
-        <Layout>
-            <About />
-        </Layout>
-    )
+    return (<Layout>
+            <About/>
+        </Layout>)
 };
 
 export default Homepage;

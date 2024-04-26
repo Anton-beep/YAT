@@ -1,12 +1,10 @@
 import Header from "./Header/Header";
 
 const Layout = ({children}) => {
-    return (
-        <div>
+    return (<div>
             <Header/>
             {children}
-        </div>
-    )
+        </div>)
 }
 
 export default Layout;

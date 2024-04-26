@@ -44,20 +44,19 @@ const TagsList = ({rerender}) => {
         rerender();
     };
 
-    return (
-        <div>
+    return (<div>
             <div className="header">
                 <h1 className="list-title">Теги</h1>
-                <button className="button-light-blue button-gap" style={{marginLeft: "10px"}} onClick={openAddDialog}>Добавить тег</button>
+                <button className="button-light-blue button-gap" style={{marginLeft: "10px"}}
+                        onClick={openAddDialog}>Добавить тег
+                </button>
             </div>
             <div className="event-container" style={{height: '100%', overflowY: 'auto', boxSizing: 'border-box'}}>
                 {tags.filter(tag => tag.visible).map((tag, index) => {
-                    return (
-                        <div key={tag.id} className="event-card" onClick={() => openEditDialog(tag)}
-                             style={{boxSizing: 'border-box'}}>
+                    return (<div key={tag.id} className="event-card" onClick={() => openEditDialog(tag)}
+                                 style={{boxSizing: 'border-box'}}>
                             <h2 className="card-event-name">{tag.name}</h2>
-                        </div>
-                    )
+                        </div>)
                 })}
             </div>
             <Modal isOpen={isEditDialogOpen} onRequestClose={closeEditDialog} style={{
@@ -65,17 +64,16 @@ const TagsList = ({rerender}) => {
                     width: '35%', height: '75%', margin: 'auto',
                 }
             }}>
-                <AddTagForm tag={selectedTag} onClose={closeEditDialog} />
+                <AddTagForm tag={selectedTag} onClose={closeEditDialog}/>
             </Modal>
             <Modal isOpen={isAddDialogOpen} onRequestClose={closeAddDialog} style={{
                 content: {
                     width: '35%', height: '75%', margin: 'auto',
                 }
             }}>
-                <AddTagForm onClose={closeAddDialog} />
+                <AddTagForm onClose={closeAddDialog}/>
             </Modal>
-        </div>
-    )
+        </div>)
 };
 
 export default TagsList;

@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, {useEffect, useState} from 'react';
 import Auth from "../../pkg/auth";
 
-const AddFactorForm = ({ factor = null, onClose }) => {
+const AddFactorForm = ({factor = null, onClose}) => {
     const [name, setName] = useState(factor ? factor.name : '');
     const [editMode, setEditMode] = useState(!!factor);
 
@@ -19,7 +19,7 @@ const AddFactorForm = ({ factor = null, onClose }) => {
         event.preventDefault();
 
         if (editMode) {
-            Auth.axiosInstance.put(`/api/v1/homepage/factors/`, { id: factor.id, name: name })
+            Auth.axiosInstance.put(`/api/v1/homepage/factors/`, {id: factor.id, name: name})
                 .then(() => {
                     onClose();
                 }).catch((error) => {
@@ -36,7 +36,7 @@ const AddFactorForm = ({ factor = null, onClose }) => {
     };
 
     const handleDelete = () => {
-        Auth.axiosInstance.delete(`/api/v1/homepage/factors/`, { data: { id: factor.id } })
+        Auth.axiosInstance.delete(`/api/v1/homepage/factors/`, {data: {id: factor.id}})
             .then(() => {
                 onClose();
             }).catch((error) => {
@@ -44,8 +44,7 @@ const AddFactorForm = ({ factor = null, onClose }) => {
         });
     };
 
-    return (
-        <div>
+    return (<div>
             <h2 className="mt-3">{editMode ? 'Редактировать фактор' : 'Добавить фактор'}</h2>
             <form onSubmit={handleSubmit} className="mt-3">
                 <div className="mb-3">
@@ -54,11 +53,11 @@ const AddFactorForm = ({ factor = null, onClose }) => {
                            onChange={(e) => setName(e.target.value)}/>
                 </div>
                 <button type="submit" className="button-green button-gap">Сохранить</button>
-                {editMode && <button type="button" className="button-red button-gap" onClick={handleDelete}>Удалить</button>}
+                {editMode &&
+                    <button type="button" className="button-red button-gap" onClick={handleDelete}>Удалить</button>}
                 <button type="button" className="button-orange" onClick={onClose}>Назад</button>
             </form>
-        </div>
-    );
+        </div>);
 };
 
 export default AddFactorForm;

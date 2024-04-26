@@ -17,15 +17,11 @@ function NoteList({rerender}) {
     useEffect(() => {
         Auth.axiosInstance.get('/api/v1/homepage/tags/')
             .then(response => {
-                    const newTags = response.data.tags.map(tag => ({
-                        ...tag,
-                        id: tag.id,
-                        name: tag.name,
-                        checked: false,
-                    }));
-                    setTags(newTags);
-                }
-            )
+                const newTags = response.data.tags.map(tag => ({
+                    ...tag, id: tag.id, name: tag.name, checked: false,
+                }));
+                setTags(newTags);
+            })
             .catch(error => {
                 console.error(error);
             })
@@ -49,15 +45,15 @@ function NoteList({rerender}) {
         setIsFormOpen(true);
     };
 
-    return (
-        <div style={{border: '1px solid lightgrey', borderRadius: '10px', marginRight: '10px'}}>
+    return (<div style={{border: '1px solid lightgrey', borderRadius: '10px', marginRight: '10px'}}>
             <div className="header">
                 <h2 style={{marginTop: '10px'}}>Заметки</h2>
             </div>
 
             <div className="buttons">
                 <button className="button-green button-gap" onClick={handleAddNote}>Добавить заметку</button>
-                <button className="button-orange button-gap" onClick={() => setIsFilterOpen(true)}>Фильтр по тегам</button>
+                <button className="button-orange button-gap" onClick={() => setIsFilterOpen(true)}>Фильтр по тегам
+                </button>
                 {Boolean(selectedTags.length !== 0) && <button className="button-orange button-gap" onClick={() => {
                     setSelectedTags([]);
                     setTags(tags.map(tag => ({...tag, checked: false})));
@@ -75,9 +71,7 @@ function NoteList({rerender}) {
                 }}
                 style={{
                     content: {
-                        width: '40%',
-                        height: '80%',
-                        margin: 'auto',
+                        width: '40%', height: '80%', margin: 'auto',
                     }
                 }}
             >
@@ -92,31 +86,27 @@ function NoteList({rerender}) {
                 onRequestClose={() => setIsFilterOpen(false)}
                 style={{
                     content: {
-                        width: '40%',
-                        height: '80%',
-                        margin: 'auto',
+                        width: '40%', height: '80%', margin: 'auto',
                     }
                 }}
             >
-                <TagsFilter tags={tags} onTagSelection={setSelectedTags} oldSelectedTags={selectedTags} closeModal={() => setIsFilterOpen(false)}/>
+                <TagsFilter tags={tags} onTagSelection={setSelectedTags} oldSelectedTags={selectedTags}
+                            closeModal={() => setIsFilterOpen(false)}/>
             </Modal>
 
             <div className="note-list">
                 {notes.filter(note => selectedTags.length === 0 || selectedTags.every(tag => note.tags.includes(tag))).map(note => (
-                        <div key={note.id} className="event-card" onClick={() => {
-                            setSelectedNote(note);
-                            setIsFormOpen(true);
-                        }}>
-                            <div className="text-with-icon">
-                                <StickyIcon className="icon-fixed-size"/>
-                                <h4>{note.name}</h4>
-                            </div>
+                    <div key={note.id} className="event-card" onClick={() => {
+                        setSelectedNote(note);
+                        setIsFormOpen(true);
+                    }}>
+                        <div className="text-with-icon">
+                            <StickyIcon className="icon-fixed-size"/>
+                            <h4>{note.name}</h4>
                         </div>
-                    )
-                )}
+                    </div>))}
             </div>
-        </div>
-    );
+        </div>);
 }
 
 export default NoteList;
