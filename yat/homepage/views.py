@@ -15,7 +15,7 @@ class UserContextViewSet(ModelViewSet):
     permission_classes = [IsAuthenticated]
     lookup_field = "id"
 
-    def get_queryset(self, *args, **kwargs):
+    def get_queryset(self, *args, **kwargs):  # noqa
         self.kwargs["id"] = self.request.data.get("id")
         return self.serializer_class.Meta.model.objects.filter(
             user=self.request.user,
@@ -27,7 +27,7 @@ class UserContextViewSet(ModelViewSet):
 
 
 class VisibleDelete(ModelViewSet):
-    def destroy(self, request, *args, **kwargs):
+    def destroy(self, request, *args, **kwargs):  # noqa
         instance = self.get_object()
         instance.visible = False
         instance.save()

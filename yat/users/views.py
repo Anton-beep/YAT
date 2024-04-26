@@ -41,7 +41,7 @@ class RegisterUserView(APIView):
 
 
 class ConfirmEmailView(APIView):
-    def post(self, request, token, new_email=None):
+    def post(self, request, token, new_email=None):  # noqa
         try:
             user = User.objects.get(activation_token=token)
             if new_email:
@@ -64,7 +64,7 @@ class ConfirmEmailView(APIView):
 
 
 class CustomTokenObtainPairView(TokenObtainPairView):
-    def post(self, request, *args, **kwargs):
+    def post(self, request, *args, **kwargs):  # noqa
         serializer = self.get_serializer(data=request.data)
         try:
             serializer.is_valid(raise_exception=True)
@@ -80,7 +80,7 @@ class CustomTokenObtainPairView(TokenObtainPairView):
 class SecretView(APIView):
     permission_classes = [IsAuthenticated]
 
-    def get(self, request):
+    def get(self, request):  # noqa
         return Response(
             {
                 "message": "This is a secret message for"

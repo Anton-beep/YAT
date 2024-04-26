@@ -8,7 +8,13 @@ User = get_user_model()
 
 
 class AuthenticationBackend(ModelBackend):
-    def authenticate(self, request, username=None, password=None, **kwargs):
+    def authenticate(
+        self,
+        request,  # noqa
+        username=None,
+        password=None,
+        **kwargs,
+    ):
         if username is None:
             username = kwargs.get(User.USERNAME_FIELD)
 

@@ -148,7 +148,8 @@ class WheelTestCase(APITestCase):
         )
         self.assertEqual(response.status_code, 200)
         self.assertEqual(
-            round(response.data["factors"][0][self.factor1.id], 2), 5.33
+            round(response.data["factors"][0][self.factor1.id], 2),
+            5.33,
         )
 
         data = json.dumps(
@@ -173,7 +174,8 @@ class WheelTestCase(APITestCase):
         )
         self.assertEqual(response.status_code, 200)
         self.assertEqual(
-            round(response.data["factors"][0][self.factor1.id], 2), 5.33
+            round(response.data["factors"][0][self.factor1.id], 2),
+            5.33,
         )
 
     def test_wheel_get_average_with_finished(self):
@@ -199,7 +201,8 @@ class WheelTestCase(APITestCase):
         )
         self.assertEqual(response.status_code, 200)
         self.assertEqual(
-            round(response.data["factors"][0][self.factor1.id], 2), 5.33
+            round(response.data["factors"][0][self.factor1.id], 2),
+            5.33,
         )
 
         data = json.dumps(
@@ -224,7 +227,8 @@ class WheelTestCase(APITestCase):
         )
         self.assertEqual(response.status_code, 200)
         self.assertEqual(
-            round(response.data["factors"][0][self.factor1.id], 2), 5.33
+            round(response.data["factors"][0][self.factor1.id], 2),
+            5.33,
         )
 
     def test_wheel_get_tags(self):
@@ -243,11 +247,7 @@ class WheelTestCase(APITestCase):
         )
         self.assertEqual(response.status_code, 200)
         self.assertEqual(
-            list(
-                map(
-                    lambda x: round(x, 2), response.data["factors"][0].values()
-                )
-            ),
+            [round(x, 2) for x in response.data["factors"][0].values()],
             [5.33],
         )
 
@@ -267,7 +267,8 @@ class WheelTestCase(APITestCase):
         self.assertEqual(response.status_code, 200)
         try:
             self.assertEqual(
-                round(response.data["factors"][0][self.factor1.id], 2), 5.33
+                round(response.data["factors"][0][self.factor1.id], 2),
+                5.33,
             )
         except KeyError:
             self.assertEqual(response.data["factors"][1][self.factor1.id], 3)
