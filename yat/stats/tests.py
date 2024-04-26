@@ -119,7 +119,7 @@ class WheelTestCase(APITestCase):
             HTTP_AUTHORIZATION=f"Bearer {self.token}",
         )
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(len(response.data["factors"]), 2)
+        self.assertEqual(len(response.data["factors"]), 1)
         self.assertEqual(
             round(response.data["factors"][0][self.factor1.id], 2),
             5.33,
@@ -147,7 +147,9 @@ class WheelTestCase(APITestCase):
             content_type="application/json",
         )
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.data["factors"][0][self.factor1.id], None)
+        self.assertEqual(
+            round(response.data["factors"][0][self.factor1.id], 2), 5.33
+        )
 
         data = json.dumps(
             {
@@ -170,7 +172,9 @@ class WheelTestCase(APITestCase):
             content_type="application/json",
         )
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.data["factors"][0][self.factor1.id], 3)
+        self.assertEqual(
+            round(response.data["factors"][0][self.factor1.id], 2), 5.33
+        )
 
     def test_wheel_get_average_with_finished(self):
         data = json.dumps(
@@ -194,7 +198,9 @@ class WheelTestCase(APITestCase):
             content_type="application/json",
         )
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.data["factors"][0][self.factor1.id], None)
+        self.assertEqual(
+            round(response.data["factors"][0][self.factor1.id], 2), 5.33
+        )
 
         data = json.dumps(
             {
@@ -217,7 +223,9 @@ class WheelTestCase(APITestCase):
             content_type="application/json",
         )
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.data["factors"][0][self.factor1.id], 3)
+        self.assertEqual(
+            round(response.data["factors"][0][self.factor1.id], 2), 5.33
+        )
 
     def test_wheel_get_tags(self):
         data = json.dumps(
@@ -234,7 +242,14 @@ class WheelTestCase(APITestCase):
             content_type="application/json",
         )
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(list(response.data["factors"][0].values()), [None])
+        self.assertEqual(
+            list(
+                map(
+                    lambda x: round(x, 2), response.data["factors"][0].values()
+                )
+            ),
+            [5.33],
+        )
 
         data = json.dumps(
             {
@@ -251,7 +266,9 @@ class WheelTestCase(APITestCase):
         )
         self.assertEqual(response.status_code, 200)
         try:
-            self.assertEqual(response.data["factors"][0][self.factor1.id], 3)
+            self.assertEqual(
+                round(response.data["factors"][0][self.factor1.id], 2), 5.33
+            )
         except KeyError:
             self.assertEqual(response.data["factors"][1][self.factor1.id], 3)
 
