@@ -1,6 +1,5 @@
 import axios from 'axios';
 import Cookies from 'js-cookie';
-import React from 'react';
 
 const API_URL = 'http://127.0.0.1:8000/';
 
@@ -33,10 +32,17 @@ class Auth {
             async error => {
                 const originalRequest = error.config;
                 if (error.response.status === 401 && !originalRequest._retry) {
-                    originalRequest._retry = true;
-                    const access_token = await this.refreshToken();
-                    Cookies.set('access', access_token, {secure: true});
-                    return this.axiosInstance(originalRequest);
+                    const refresh_token = Cookies.get('refresh');
+                    if (refresh_token) {
+                        originalRequest._retry = true;
+                        const access_token = await this.refreshToken();
+                        if (access_token) {
+                            Cookies.set('access', access_token, {secure: true});
+                            return this.axiosInstance(originalRequest);
+                        }
+                    }
+                    // Handle case when refresh token is null or refreshing access token failed
+                    //window.location.href = '/login';
                 }
                 return Promise.reject(error);
             }

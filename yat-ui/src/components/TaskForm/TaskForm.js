@@ -5,7 +5,7 @@ function TaskForm({task, tags = [], closeModal}) {
     const [name, setName] = useState(task ? task.name : '');
     const [description, setDescription] = useState(task ? task.description : '');
     const [selectedTags, setSelectedTags] = useState(task ? task.tags : []);
-    const [deadline, setDeadline] = useState(task ? convertUTCToLocalTime(task.deadline) : '');
+    const [deadline, setDeadline] = useState(task && task.deadline ? convertUTCToLocalTime(task.deadline) : '');
     const [errorMessage, setErrorMessage] = useState('');
 
     const handleNameChange = (event) => {
