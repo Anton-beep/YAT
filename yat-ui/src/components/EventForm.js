@@ -76,7 +76,7 @@ function EventForm({tags = [], icons = {}, factors = [], activities = {}, event 
 
 
         if (finished !== null && finished !== '') {
-            data.finished = finished
+            data.finished = Date.parse(finished.toString()) / 1000;
         }
         if (created !== null && created !== '') {
             data.created = Date.parse(created.toString()) / 1000;
